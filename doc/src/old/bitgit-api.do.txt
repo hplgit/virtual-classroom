@@ -1,0 +1,87 @@
+======= Automatic operation of GitHub and Bitbucket =======
+
+
+
+!bsummary Conclusions
+ * Drop fork and pull, use clone and push with a course-specific account
+ * Need to describe in detail "how to operate multiple acounts": "http://dbushell.com/2013/01/27/multiple-accounts-and-ssh-keys/" as the lecturer and TA has to do that
+ * Do not use Python wrappers - use the REST APIs directly from
+   home-made Python code, because the APIs are much better documented
+   than the Python wrappers.
+ * Use "Requests": "http://docs.python-requests.org/en/latest/index.html"
+   library in Python
+!esummary
+
+Further work:
+
+ * Instructor must be able to
+  * give one assessment group access to another group's exercise
+  * give two students access to two individual exercises, or maybe it is
+    sufficient to have one student with access to one exercises and then
+    they sit together and look at the same screen
+  * automate this process of pairing students or groups and giving
+    them read/write access (for 3331 and 5620) - the latter thing is easy if
+    the instructor has admin access and can use REST API to set and remove
+    new accesses
+ * First, check out organization accounts and how github thinks about classroom use:
+  * "GitHub goes to school": "https://github.com/blog/1775-github-goes-to-school", see also URL: "https://education.github.com/"
+  * "GitHub doc for using Git in the classroom": "https://education.github.com/guide" (GitHub has thought about this so understand their model first)
+  * "Access permissions to GitHub accounts": "https://help.github.com/articles/what-are-the-different-access-permissions"
+  * "Employing Git in the classroom": "http://www.academia.edu/5968989/Employing_Git_in_the_Classroom" (Very similar set-up to INF5620)
+  * "Interesting new method for INF5620": "http://db.grinnell.edu/sigcse/sigcse2013/Program/viewAcceptedProposal.pdf?sessionType=paper&sessionNumber=257"
+  * "Application to exams": "http://lfborjas.com/2010/10/30/git-classroom-exams.html"
+  * "OpenShift used in teaching": "https://www.openshift.com/blogs/openshift-goes-to-school-how-a-little-automation-goes-a-long-way-in-the-classroom"
+
+===== GitHub =====
+
+ * Intro: URL: "http://developer.github.com/guides/getting-started/"
+ * "Python example using reskit": "http://agrimmsreality.blogspot.no/2012/05/sampling-github-api-v3-in-python.html"
+ * "All about OAuth authorization from Python": "http://goodcode.io/wp-content/uploads/2012/06/OAuth-edited.pdf"
+
+=== What we want to do ===
+
+ o Fork a repo URL: "http://developer.github.com/v3/repos/forks/#create-a-fork"
+ o Give TAs full rights to the forked repo URL: "http://developer.github.com/v3/repos/collaborators/#add-collaborator"
+ o Create a pull request URL: "https://developer.github.com/v3/pulls/#create-a-pull-request", see "this script": "http://pastebin.com/F9n3nPuu"
+
+The rest is plain git commands from the OS.
+
+!bbox
+A simpler scheme is to just clone and push, but the students must then
+give access to the private repo to both the lecturer and the teaching
+assistant.
+!ebox
+
+Or can the lecturer clone and then copy the repo to share it with the TA?
+What about a course specific bitbucket account? Must then learn how to
+operate multiple accounts:
+URL: "http://dbushell.com/2013/01/27/multiple-accounts-and-ssh-keys/".
+With just clone and push rather than fork and pull, it all becomes easier
+to automate!
+
+=== Search ===
+
+!bc
+https://api.github.com/search/repositories?q=5620
+!ec
+
+===== Bitbucket =====
+
+Read the "intro": "https://confluence.atlassian.com/display/BITBUCKET/Use+the+Bitbucket+REST+APIs" first.
+
+ * "Command-line tool from Atlassian to operate Bitbucket": "https://bitbucket.org/atlassian/stash-command-line-tools" (can do pull request)
+ * "Another, Python-based command-line tool": "https://bitbucket.org/zhemao/bitbucket-cli" (look at the code, but it's easier to do this directly with the API)
+ * "Python access to API": "https://github.com/Sheeprider/BitBucket-api"
+   but cannot do fork, or add collaborator (or maybe *service* module can add hook for that?)
+ * Bitbucket REST API:
+   * "Set access permissions": "https://confluence.atlassian.com/display/BITBUCKET/privileges+Endpoint#privilegesEndpoint-PUTanewprivilege"
+   * "Invite users to a repo": "https://confluence.atlassian.com/display/BITBUCKET/invitations+Endpoint"
+   * "Fork or clone a repo": "https://confluence.atlassian.com/display/BITBUCKET/repository+Resource+1.0#repositoryResource1.0-POSTanewfork", see also "this": "https://confluence.atlassian.com/display/BITBUCKET/repository+Resource" and "this": "http://stackoverflow.com/questions/11640035/using-bitbuckets-api-to-fork-a-repository"
+
+=== What we want to do ===
+
+ * "Access": "https://bitbucket-api.readthedocs.org/en/latest/usage.html"
+ * "Overview": "https://bitbucket-api.readthedocs.org/en/latest/bitbucket.html"
+ * "Fork": "https://confluence.atlassian.com/display/BITBUCKET/repository+Resource+1.0#repositoryResource1.0-POSTanewfork" (googling indicates this is not straightforward)
+
+Seems that github is best for what I want.

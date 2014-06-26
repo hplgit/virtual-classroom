@@ -1,0 +1,99 @@
+TITLE: Virtual classroom for INF5620
+AUTHOR: Hans Petter
+AUTHOR: Aslak
+AUTHOR: Solveig
+DATE: today
+
+======= The workflow in a virtual GitHub classroom =======
+
+ * All students have *one* personal, private repo with all their
+   files in a course.
+ * All communication of electronic documents and other files
+   happens via the repo.
+ * Teachers can assign an evaluation team to evaluate a student's
+   work.
+ * The evaluation team
+  * gets temporary access to the student's repo,
+  * clones the repo,
+  * studies relevant files,
+  * writes a feedback file (according to conventions),
+  * pushes the feedback file (and maybe annotated files) to the repo.
+ * The evaluation team can the lecturer, teaching assistants, or
+   a team of (e.g.) three other students.
+
+This classroom model is advantageous when exercises and projects may
+consist of numerous files. Systems where each file has to be attached
+(as in email) are tedious to use both for the students and the evaluators.
+The model above also calls for automation: if one teacher is supposed
+to evaluate the work of all students, all repos can be cloned or
+pulled, and a script can visit the relevant files in each repo,
+pop up an editor for writing feedback, add this file, commit, and
+push everything back.
+
+===== Use in INF5620 =====
+
+ * Students show up for a 2h project lab.
+ * The teacher has a list of all students and marks those who are present.
+ * A script assigns teams of three students to evaluate three other projects.
+   The script gives the team members access to the repos to be evaluated and
+   sends an email to the team members with repo details (clone command).
+ * The teams study the files under supervision of and with help from teachers.
+ * The teams write a feedback file for each repo and push it back.
+ * A script will some time after the project lab close down access
+   to private student repos.
+
+Teams can be assigned at random, one can use fixed teams, or they can
+form themselves on the fly.
+
+Only the students who show up in the project lab will have their work
+evaluated.
+
+Pros and cons:
+
+ * + students will have many more exercises and projects evaluated
+   and in more detail
+ * + students learn a lot from first having done an exercise and
+   then evaluating three others
+ * - the quality of a thorough evaluation performed by a teacher
+   will be higher
+
+======= Functionality to be developed =======
+
+ * File format with list of all students. Convention for marking who
+   will enter an evaluation. Content: full name, username, email.
+ * Function for creating a new private repo for the student in
+   the "GitHub classroom": "https://github.com/UiO-INF5620".
+   Send email to the student when
+   the account as created with info on how to obtain ssh access.
+ * Function for creating teams (based on the students present).
+ * Function for giving a list of users access to a given repo
+   and for sending email to those who are granted access.
+ * Function for removing all access to a given repo, except for the owner.
+
+The virtual classroom is hosted at GitHub:
+URL: "https://github.com/UiO-INF5620".
+
+!bsummary Programming tools
+Based on some research, it seems best to use the "`requests`":
+"http://docs.python-requests.org/en/latest/index.html" module in
+Python and call the API directly instead of using Python wrappers for
+the API (e.g., "githubpy": "http://michaelliao.github.io/githubpy/").
+!esummary
+
+=== Resources ===
+
+ * Intro: URL: "http://developer.github.com/guides/getting-started/"
+ * "Python example using reskit": "http://agrimmsreality.blogspot.no/2012/05/sampling-github-api-v3-in-python.html"
+ * "All about OAuth authorization from Python": "http://goodcode.io/wp-content/uploads/2012/06/OAuth-edited.pdf"
+
+=== GitHub and education ===
+
+ * "GitHub goes to school": "https://github.com/blog/1775-github-goes-to-school", see also URL: "https://education.github.com/"
+ * "GitHub doc for using Git in the classroom": "https://education.github.com/guide" (GitHub has thought about this so understand their model first)
+ * "Access permissions to GitHub accounts": "https://help.github.com/articles/what-are-the-different-access-permissions"
+ * "Employing Git in the classroom": "http://www.academia.edu/5968989/Employing_Git_in_the_Classroom" (Very similar set-up to INF5620)
+ * "Interesting new method for INF5620": "http://db.grinnell.edu/sigcse/sigcse2013/Program/viewAcceptedProposal.pdf?sessionType=paper&sessionNumber=257"
+ * "Application to exams": "http://lfborjas.com/2010/10/30/git-classroom-exams.html"
+ * "OpenShift used in teaching": "https://www.openshift.com/blogs/openshift-goes-to-school-how-a-little-automation-goes-a-long-way-in-the-classroom"
+
+

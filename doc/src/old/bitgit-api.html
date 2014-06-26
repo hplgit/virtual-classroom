@@ -1,0 +1,141 @@
+
+<!-- tocinfo
+{'highest level': 1,
+ 'sections': [(' Automatic operation of GitHub and Bitbucket ',
+               1,
+               None,
+               '___sec0'),
+              (' GitHub ', 2, None, '___sec1'),
+              (' What we want to do ', 3, None, '___sec2'),
+              (' Search ', 3, None, '___sec3'),
+              (' Bitbucket ', 2, None, '___sec4'),
+              (' What we want to do ', 3, None, '___sec5')]}
+end of tocinfo -->
+
+
+<!-- ------------------- main content ---------------------- -->
+
+<h1>Automatic operation of GitHub and Bitbucket  <a name="___sec0"></a></h1>
+
+<div class="alert alert-block alert-summary alert-text-normal"><b>Conclusions.</b>
+
+<ul>
+ <li> Drop fork and pull, use clone and push with a course-specific account</li>
+ <li> Need to describe in detail <a href="http://dbushell.com/2013/01/27/multiple-accounts-and-ssh-keys/" target="_self">how to operate multiple acounts</a> as the lecturer and TA has to do that</li>
+ <li> Do not use Python wrappers - use the REST APIs directly from
+   home-made Python code, because the APIs are much better documented
+   than the Python wrappers.</li>
+ <li> Use <a href="http://docs.python-requests.org/en/latest/index.html" target="_self">Requests</a>
+   library in Python</li>
+</ul>
+</div>
+
+
+<p>
+Further work:
+
+<ul>
+ <li> Instructor must be able to</li>
+
+<ul>
+  <li> give one assessment group access to another group's exercise</li>
+  <li> give two students access to two individual exercises, or maybe it is
+    sufficient to have one student with access to one exercises and then
+    they sit together and look at the same screen</li>
+  <li> automate this process of pairing students or groups and giving
+    them read/write access (for 3331 and 5620) - the latter thing is easy if
+    the instructor has admin access and can use REST API to set and remove
+    new accesses</li>
+</ul>
+
+ <li> First, check out organization accounts and how github thinks about classroom use:</li>
+
+<ul>
+  <li> <a href="https://github.com/blog/1775-github-goes-to-school" target="_self">GitHub goes to school</a>, see also <a href="https://education.github.com/" target="_self"><tt>https://education.github.com/</tt></a></li>
+  <li> <a href="https://education.github.com/guide" target="_self">GitHub doc for using Git in the classroom</a> (GitHub has thought about this so understand their model first)</li>
+  <li> <a href="https://help.github.com/articles/what-are-the-different-access-permissions" target="_self">Access permissions to GitHub accounts</a></li>
+  <li> <a href="http://www.academia.edu/5968989/Employing_Git_in_the_Classroom" target="_self">Very similar set-up to INF5620</a></li>
+  <li> <a href="http://db.grinnell.edu/sigcse/sigcse2013/Program/viewAcceptedProposal.pdf?sessionType=paper&sessionNumber=257" target="_self">Interesting new method for INF5620</a></li>
+  <li> <a href="http://lfborjas.com/2010/10/30/git-classroom-exams.html" target="_self">Application to exams</a></li>
+  <li> <a href="http://www.classes.cs.uchicago.edu/archive/2013/spring/12300-1/labs/lab1/" target="_self">Quick intro to Git and GitHub, like my bitgit</a></li>
+  <li> <a href="https://www.openshift.com/blogs/openshift-goes-to-school-how-a-little-automation-goes-a-long-way-in-the-classroom" target="_self">OpenShift used in teaching</a></li>
+</ul>
+
+</ul>
+
+<h2>GitHub  <a name="___sec1"></a></h2>
+
+<ul>
+ <li> Intro: <a href="http://developer.github.com/guides/getting-started/" target="_self"><tt>http://developer.github.com/guides/getting-started/</tt></a></li>
+ <li> Promising: <a href="http://michaelliao.github.io/githubpy/" target="_self">githubpy</a></li>
+ <li> <a href="http://agrimmsreality.blogspot.no/2012/05/sampling-github-api-v3-in-python.html" target="_self">Python example using reskit</a></li>
+ <li> <a href="http://goodcode.io/wp-content/uploads/2012/06/OAuth-edited.pdf" target="_self">All about OAuth authorization from Python</a></li>
+</ul>
+
+<h3>What we want to do  <a name="___sec2"></a></h3>
+
+<ol>
+<li> Fork a repo <a href="http://developer.github.com/v3/repos/forks/#create-a-fork" target="_self"><tt>http://developer.github.com/v3/repos/forks/#create-a-fork</tt></a></li>
+<li> Give TAs full rights to the forked repo <a href="http://developer.github.com/v3/repos/collaborators/#add-collaborator" target="_self"><tt>http://developer.github.com/v3/repos/collaborators/#add-collaborator</tt></a></li>
+<li> Create a pull request <a href="https://developer.github.com/v3/pulls/#create-a-pull-request" target="_self"><tt>https://developer.github.com/v3/pulls/#create-a-pull-request</tt></a>, see <a href="http://pastebin.com/F9n3nPuu" target="_self">this script</a></li>
+</ol>
+
+The rest is plain git commands from the OS.
+
+<p>
+
+<!-- begin box -->
+<div style="width: 95%; padding: 10px; border: 1px solid #000; border-radius: 4px;">
+A simpler scheme is to just clone and push, but the students must then
+give access to the private repo to both the lecturer and the teaching
+assistant.
+</div>
+<!-- end box -->
+
+
+<p>
+Or can the lecturer clone and then copy the repo to share it with the TA?
+What about a course specific bitbucket account? Must then learn how to
+operate multiple accounts:
+<a href="http://dbushell.com/2013/01/27/multiple-accounts-and-ssh-keys/" target="_self"><tt>http://dbushell.com/2013/01/27/multiple-accounts-and-ssh-keys/</tt></a>.
+With just clone and push rather than fork and pull, it all becomes easier
+to automate!
+
+<h3>Search  <a name="___sec3"></a></h3>
+
+
+<!-- code=text typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">https://api.github.com/search/repositories?q=5620
+</pre></div>
+
+<h2>Bitbucket  <a name="___sec4"></a></h2>
+
+Read the <a href="https://confluence.atlassian.com/display/BITBUCKET/Use+the+Bitbucket+REST+APIs" target="_self">intro</a> first.
+
+<ul>
+ <li> <a href="https://bitbucket.org/atlassian/stash-command-line-tools" target="_self">Command-line tool from Atlassian to operate Bitbucket</a> (can do pull request)</li>
+ <li> <a href="https://bitbucket.org/zhemao/bitbucket-cli" target="_self">Another, Python-based command-line tool</a> (look at the code, but it's easier to do this directly with the API)</li>
+ <li> <a href="https://github.com/Sheeprider/BitBucket-api" target="_self">Python access to API</a>
+   but cannot do fork, or add collaborator (or maybe <em>service</em> module can add hook for that?)</li>
+ <li> Bitbucket REST API:</li>
+
+<ul>
+   <li> <a href="https://confluence.atlassian.com/display/BITBUCKET/privileges+Endpoint#privilegesEndpoint-PUTanewprivilege" target="_self">Set access permissions</a></li>
+   <li> <a href="https://confluence.atlassian.com/display/BITBUCKET/invitations+Endpoint" target="_self">Invite users to a repo</a></li>
+   <li> <a href="https://confluence.atlassian.com/display/BITBUCKET/repository+Resource+1.0#repositoryResource1.0-POSTanewfork" target="_self">Fork or clone a repo</a>, see also <a href="https://confluence.atlassian.com/display/BITBUCKET/repository+Resource" target="_self">this</a> and <a href="http://stackoverflow.com/questions/11640035/using-bitbuckets-api-to-fork-a-repository" target="_self">this</a></li>
+</ul>
+
+</ul>
+
+<h3>What we want to do  <a name="___sec5"></a></h3>
+
+<ul>
+ <li> <a href="https://bitbucket-api.readthedocs.org/en/latest/usage.html" target="_self">Access</a></li>
+ <li> <a href="https://bitbucket-api.readthedocs.org/en/latest/bitbucket.html" target="_self">Overview</a></li>
+ <li> <a href="https://confluence.atlassian.com/display/BITBUCKET/repository+Resource+1.0#repositoryResource1.0-POSTanewfork" target="_self">Fork</a> (googling indicates this is not straightforward)</li>
+</ul>
+
+Seems that github is best for what I want.
+
+<!-- ------------------- end of main content --------------- -->
+
