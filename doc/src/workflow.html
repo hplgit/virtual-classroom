@@ -1,0 +1,228 @@
+<!--
+Automatically generated HTML file from Doconce source
+(https://github.com/hplgit/doconce/)
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Doconce: https://github.com/hplgit/doconce/" />
+<meta name="description" content="Virtual classroom for INF5620">
+
+
+
+<!-- Bootstrap style: bootswatch_journal -->
+<link href="http://netdna.bootstrapcdn.com/bootswatch/3.1.1/journal/bootstrap.min.css" rel="stylesheet">
+<!-- not necessary
+<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+-->
+
+</head>
+
+<!-- tocinfo
+{'highest level': 1,
+ 'sections': [(' The workflow in a virtual GitHub classroom ',
+               1,
+               None,
+               '___sec0'),
+              (' Use in INF5620 ', 2, None, '___sec1'),
+              (' Functionality to be developed ', 1, None, '___sec2'),
+              (' Resources ', 3, None, '___sec3'),
+              (' GitHub and education ', 3, None, '___sec4')]}
+end of tocinfo -->
+
+<body>
+
+    
+<!-- Bootstrap navigation bar -->
+<div class="navbar navbar-default navbar-fixed-top">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="workflow.html">Virtual classroom for INF5620</a>
+  </div>
+  <div class="navbar-collapse collapse navbar-responsive-collapse">
+    <ul class="nav navbar-nav navbar-right">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contents <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+     <!-- navigation toc: "The workflow in a virtual GitHub classroom" --> <li><a href="#___sec0" style="font-size: 80%;"><b>The workflow in a virtual GitHub classroom</b></a></li>
+     <!-- navigation toc: "Use in INF5620" --> <li><a href="#___sec1" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Use in INF5620</a></li>
+     <!-- navigation toc: "Functionality to be developed" --> <li><a href="#___sec2" style="font-size: 80%;"><b>Functionality to be developed</b></a></li>
+
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+</div> <!-- end of navigation bar -->
+
+<div class="container">
+
+<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p> <!-- add vertical space -->
+
+<!-- ------------------- main content ---------------------- -->
+
+
+<title>Virtual classroom for INF5620</title>
+
+<div class="jumbotron">
+<center><h1>Virtual classroom for INF5620</h1></center>  <!-- document title -->
+
+<p>
+<!-- author(s): Hans Petter, Aslak, and Solveig -->
+
+<center>
+<b>Hans Petter</b> 
+</center>
+
+<center>
+<b>Aslak</b> 
+</center>
+
+<center>
+<b>Solveig</b> 
+</center>
+
+
+<p>
+<!-- institution(s) -->
+<p>
+<center><h4>Jun 26, 2014</h4></center> <!-- date -->
+<p>
+
+
+</div> <!-- end jumbotron -->
+
+<h1>The workflow in a virtual GitHub classroom  <a name="___sec0"></a></h1>
+
+<ul>
+ <li> All students have <em>one</em> personal, private repo with all their
+   files in a course.</li>
+ <li> All communication of electronic documents and other files
+   happens via the repo.</li>
+ <li> Teachers can assign an evaluation team to evaluate a student's
+   work.</li>
+ <li> The evaluation team</li>
+
+<ul>
+  <li> gets temporary access to the student's repo,</li>
+  <li> clones the repo,</li>
+  <li> studies relevant files,</li>
+  <li> writes a feedback file (according to conventions),</li>
+  <li> pushes the feedback file (and maybe annotated files) to the repo.</li>
+</ul>
+
+ <li> The evaluation team can the lecturer, teaching assistants, or
+   a team of (e.g.) three other students.</li>
+</ul>
+
+This classroom model is advantageous when exercises and projects may
+consist of numerous files. Systems where each file has to be attached
+(as in email) are tedious to use both for the students and the evaluators.
+The model above also calls for automation: if one teacher is supposed
+to evaluate the work of all students, all repos can be cloned or
+pulled, and a script can visit the relevant files in each repo,
+pop up an editor for writing feedback, add this file, commit, and
+push everything back.
+
+<h2>Use in INF5620  <a name="___sec1"></a></h2>
+
+<ul>
+ <li> Students show up for a 2h project lab.</li>
+ <li> The teacher has a list of all students and marks those who are present.</li>
+ <li> A script assigns teams of three students to evaluate three other projects.
+   The script gives the team members access to the repos to be evaluated and
+   sends an email to the team members with repo details (clone command).</li>
+ <li> The teams study the files under supervision of and with help from teachers.</li>
+ <li> The teams write a feedback file for each repo and push it back.</li>
+ <li> A script will some time after the project lab close down access
+   to private student repos.</li>
+</ul>
+
+Teams can be assigned at random, one can use fixed teams, or they can
+form themselves on the fly.
+
+<p>
+Only the students who show up in the project lab will have their work
+evaluated.
+
+<p>
+Pros and cons:
+
+<ul>
+ <li> + students will have many more exercises and projects evaluated
+   and in more detail</li>
+ <li> + students learn a lot from first having done an exercise and
+   then evaluating three others</li>
+ <li> - the quality of a thorough evaluation performed by a teacher
+   will be higher</li>
+</ul>
+
+<h1>Functionality to be developed  <a name="___sec2"></a></h1>
+
+<ul>
+ <li> File format with list of all students. Convention for marking who
+   will enter an evaluation. Content: full name, username, email.</li>
+ <li> Function for creating a new private repo for the student in
+   the <a href="https://github.com/UiO-INF5620" target="_self">GitHub classroom</a>.
+   Send email to the student when
+   the account as created with info on how to obtain ssh access.</li>
+ <li> Function for creating teams (based on the students present).</li>
+ <li> Function for giving a list of users access to a given repo
+   and for sending email to those who are granted access.</li>
+ <li> Function for removing all access to a given repo, except for the owner.</li>
+</ul>
+
+The virtual classroom is hosted at GitHub:
+<a href="https://github.com/UiO-INF5620" target="_self"><tt>https://github.com/UiO-INF5620</tt></a>.
+
+<p>
+<div class="alert alert-block alert-warning alert-text-normal"><b>Programming tools.</b>
+Based on some research, it seems best to use the <a href="http://docs.python-requests.org/en/latest/index.html" target="_self"><tt>requests</tt></a> module in
+Python and call the API directly instead of using Python wrappers for
+the API (e.g., <a href="http://michaelliao.github.io/githubpy/" target="_self">githubpy</a>).
+</div>
+
+
+<h3>Resources  <a name="___sec3"></a></h3>
+
+<ul>
+ <li> Intro: <a href="http://developer.github.com/guides/getting-started/" target="_self"><tt>http://developer.github.com/guides/getting-started/</tt></a></li>
+ <li> <a href="http://agrimmsreality.blogspot.no/2012/05/sampling-github-api-v3-in-python.html" target="_self">Python example using reskit</a></li>
+ <li> <a href="http://goodcode.io/wp-content/uploads/2012/06/OAuth-edited.pdf" target="_self">All about OAuth authorization from Python</a></li>
+</ul>
+
+<h3>GitHub and education  <a name="___sec4"></a></h3>
+
+<ul>
+ <li> <a href="https://github.com/blog/1775-github-goes-to-school" target="_self">GitHub goes to school</a>, see also <a href="https://education.github.com/" target="_self"><tt>https://education.github.com/</tt></a></li>
+ <li> <a href="https://education.github.com/guide" target="_self">GitHub doc for using Git in the classroom</a> (GitHub has thought about this so understand their model first)</li>
+ <li> <a href="https://help.github.com/articles/what-are-the-different-access-permissions" target="_self">Access permissions to GitHub accounts</a></li>
+ <li> <a href="http://www.academia.edu/5968989/Employing_Git_in_the_Classroom" target="_self">Employing Git in the classroom</a> (Very similar set-up to INF5620)</li>
+ <li> <a href="http://db.grinnell.edu/sigcse/sigcse2013/Program/viewAcceptedProposal.pdf?sessionType=paper&sessionNumber=257" target="_self">Interesting new method for INF5620</a></li>
+ <li> <a href="http://lfborjas.com/2010/10/30/git-classroom-exams.html" target="_self">Application to exams</a></li>
+ <li> <a href="https://www.openshift.com/blogs/openshift-goes-to-school-how-a-little-automation-goes-a-long-way-in-the-classroom" target="_self">OpenShift used in teaching</a></li>
+</ul>
+
+
+<!-- ------------------- end of main content --------------- -->
+
+</div>  <!-- end container -->
+<!-- include javascript, jQuery *first* -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<!-- Bootstrap footer
+<footer>
+<a href="http://..."><img width="250" align=right src="http://..."></a>
+</footer>
+-->
+
+
+</body>
+</html>
+    
+
