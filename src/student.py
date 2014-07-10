@@ -1,57 +1,63 @@
+import requests
 
-class user()
 
-    def __init__(self, name, username, course):
+class Student()
+   
+    def __init__(self, name, username, classroom, course, admin, p):
         self.name = name
         self.username = username
+        self.classroom = classroom
         self.course = course
-    #TODO: extend baseclass for users
+        self.auth = (admin, p)
+        self.url = 'https://api.github.com/orgs/%s' % classroom
 
+        # Check that there is an user with the given username
+        assert_is_user()
 
-class Student(user)
-   
-    def __init__(self, name, username):
-        super(name, username, course)
-        if not repository_exists():
-             create_repository(username)
+        # Check if user have a repository
+        if not is_member():
+             create_repository()
 
-    def create_repository(self, username):
-        #TODO: create a repository for the username
-        #TODO: Give a good feedback if the student doesn't have a user or the username
-        #      is incorrect.
+    def assert_is_user(self):
+        # Check if username is valid
+        ref = requests.get('https://api.github.com/users/%s' % self.username)
+        msg = "User: %s does not exist on GitHub and a \
+               repository will not be created." % user 
+        assert True if ref.status_code == 200 else False, msg         
+
+    def create_repository(self):
+        """Creates a repository '<course>-<first name>' and a team '<full name>'."""
+        key_repo = {
+                    "name": "%s-%s" % (self.course, self.name.split()[0])
+                    "auto_init": True
+                    "private": True
+                   }
+
+        key_team = {
+                    "name": self.name,
+                    "permission": "admin",
+                    "repo_names": 
+                      [ 
+                         "github/%s/%s-%s" % 
+                         (self.classroom, 
+                         self.course, 
+                         self.name.split()[0])
+                      ]
+                   }
+
+        r_repo = requests.post(self.url+"/repos",data=json.dumps(key_repo), auth=self.auth)
+        r_team = requests.post(self.url+"/teams",data=json.dumps(key_ream), auth=self.auth)
+        url_add = self.url+"/teams/" + self.name + "/members/" + self.username 
+        r_add = requests.put(url_add, auth=self.auth)
+        # TODO: Check if the operation was a success        
 
     def add_presens(self):
         #TODO: Store number of times present in some file
+        pass
 
-    def give_access(self, other):
-        #TODO: give access to other students
-
-    def repository_exists(self):
-        #TODO: Check if repo exists
-
+    def is_member(self):        
+        ref = request.get(self.url + '/members/%s' % self.username), auth=self.auth)
+        return True if ref.status_code == 204 else False
+            
     def get_stats(self):
         #TODO: Get number of commits and so on, number of times present ect.
-
-    def revoke_access(self):
-        #TODO: Remove access after a group seassion. 
-
-
-class TeachingAssistent(user)
-
-    def __init__(self, name, username, course):
-        super(name, username, course)
-        if not is_admin(username):
-            print("Username: %s is not admin, and can not be a teaching assistent." \
-                    % username)
-
-    def is_admin(username):
-        #TODO: Check if user is admin
-
-    def get_all_repsitoris(self, class_room)
-        #TODO: Get all repositories beloning to students
-
-    def give_alle_student_access(self, students):
-        #TODO: Give students access to solutions ect.
-
-
-class Professor(user)   #TODO: Do we need methods spesific for the professor?
