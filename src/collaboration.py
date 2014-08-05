@@ -16,6 +16,10 @@ class Collaboration():
             for i in range(number_of_groups):        
                 self.groups.append(list(students.values())[i::number_of_groups])
 
+        self.auth = groups[0][0].auth
+        self.url_orgs = groups[0][0].url_orgs
+        self.org = grooups[0][0].org
+
         n = 0
         for team in self.groups:
             n = n+1 if len(self.groups)>n+1 else 0
@@ -28,18 +32,18 @@ class Collaboration():
                         "repo_names": repo_names
                        }
             r_team = requests.post(
-                                   team[0].url+"/teams",
+                                   team[0].url_orgs+"/teams",
                                    data=json.dumps(team_key), 
-                                   auth=team[0].auth
+                                   auth=self.auth
                                   )
 
             # Add students to the team
             for s in team:
-                url_add = s.url+"/teams/Team-%d/members/%s" % (n+1, s.username)
+                url_add = s.url_team+"/teams/%s/members/%s" % (str(r_team.json()['id']), s.username)
                 r_add = requests.put(url_add, auth=s.auth)
                 if r_add.status_code != 204:
-                    assert False, "Can't give user: %s access to Team-%d" \
-                                   % (s.username, n+1)
+                    print("Can't give user: %s access to Team-%d" \
+                                   % (s.username, n+1))
              
             
     def get_repo_names(self, team):
@@ -47,6 +51,8 @@ class Collaboration():
                                        for s in team]
 
     def remove_teams(self, classroom):
-        # Get list of all teams
-        # Remove the teams that fit Team-x
-        pass 
+        list_teams = requests.get(url_orgs+"/orgs/%s/teams" % self.org, auth=self.auth)
+
+        for team in list_teams.json():
+            if 'Team-' in team['name']:
+                requests.delete(url + "/teams/" + str(team['id']), auth=auth)
