@@ -16,9 +16,9 @@ class Collaboration():
             for i in range(number_of_groups):        
                 self.groups.append(list(students.values())[i::number_of_groups])
 
-        self.auth = groups[0][0].auth
-        self.url_orgs = groups[0][0].url_orgs
-        self.org = grooups[0][0].org
+        self.auth = self.groups[0][0].auth
+        self.url_orgs = self.groups[0][0].url_orgs
+        self.org = self.groups[0][0].org
 
         n = 0
         for team in self.groups:
@@ -27,9 +27,9 @@ class Collaboration():
             # Create a team with access to an another team's repos
             repo_names = self.get_repo_names(self.groups[n])
             team_key = {
-                        "name": "Team-%s" % (n+1),
+                        "name": "Team-%s" % (n),
                         "permission": "push", #or pull?
-                        "repo_names": repo_names
+                        "repo_names": repo_names # is this necessary
                        }
             r_team = requests.post(
                                    team[0].url_orgs+"/teams",
@@ -39,7 +39,8 @@ class Collaboration():
 
             # Add students to the team
             for s in team:
-                url_add = s.url_team+"/teams/%s/members/%s" % (str(r_team.json()['id']), s.username)
+                url_add = s.url_teams + "/%s/members/%s" \
+                           % (r_team.json()['id'], s.username)
                 r_add = requests.put(url_add, auth=s.auth)
                 if r_add.status_code != 204:
                     print("Can't give user: %s access to Team-%d" \
@@ -47,8 +48,7 @@ class Collaboration():
              
             
     def get_repo_names(self, team):
-        return ["github/%s-%s/%s-%s" % (s.university, s.course, s.course, s.name.split()[0]) 
-                                       for s in team]
+        return ["github/%s/%s-%s" % (s.org, s.course, s.repo_name) for s in team]
 
     def remove_teams(self, classroom):
         list_teams = requests.get(url_orgs+"/orgs/%s/teams" % self.org, auth=self.auth)

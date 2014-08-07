@@ -11,7 +11,7 @@ from getpass import getpass
 # Local import
 from student import Student
 from collaboration import Collaboration
-from email import Email
+from send_email import Email
 
 # Python3 and 2 compatible
 try: input = raw_input
@@ -53,12 +53,13 @@ def create_students(students_file, course, university):
     auth = (admin, p)
 
     # Initialize email
-    send_email = Email()
+    send_email = "" #send_email = Email()
 
     # Create a dict with students
     for line in text:
         pressent, name, username, email = re.split(r"\s*\/\/\s*", line)
-        students[name] = Student(name, username, university, course, email, auth, send_email)
+        if pressent == 'X':
+            students[name] = Student(name, username, university, course, email, auth, send_email)
 
     return students   
 

@@ -9,11 +9,11 @@ except NameError: pass
 
 class Email():
 
-    def __init__():
-        self.username = input("Username: ")
+    def __init__(self):
+        self.username = input("\nFor Gmail\nEmail address: ")
         self.password = getpass.getpass("Password:")
 
-    def send(student, event):
+    def send(self, student, event):
         """Sends an email to the list of students about the event"""
 
         # Get emails

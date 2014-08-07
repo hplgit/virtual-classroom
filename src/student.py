@@ -22,6 +22,7 @@ class Student():
 
         # Check if user have a repository
         if not self.has_team():
+            print(self.username, " has noe repo or team")
             self.create_repository()
 
     def is_user(self):
@@ -34,9 +35,9 @@ class Student():
     def create_repository(self):
         """Creates a repository '<course>-<first name>' and a team '<full name>'."""
         
-        repo_name = "%s-%s" % (self.course, self.name.split(" ")[0])
+        self.repo_name = "%s-%s" % (self.course, self.name.split(" ")[0])
         if self.repo_exist(reponame):  # Check if repo name allready exists
-            repo_name += self.name.split(" ")[1]
+            self.repo_name += self.name.split(" ")[1]
 
         key_repo = {
                     "name": repo_name,
@@ -79,8 +80,9 @@ class Student():
             print("Error: %d - did not manage to add usr:%s to team:%s" \
                    % (r_add_member.status_code, self.username, self.name))
         else:
+            pass
             # Send information to the student
-            send_email.send(self, "new_user")
+            #send_email.send(self, "new_user")
 
     def repo_exist(self, repo_name):
         list_repos = requests.get(url+"/orgs/UiO-INF5620/repos", auth=auth)
@@ -95,14 +97,12 @@ class Student():
         pass
 
     def has_team(self):        
-        list_teams = requests.get(self.url_orgs+"/orgs/%s/teams" % self.org, auth=self.auth)
-        status = False
-        for team in list_teams:
+        list_teams = requests.get(self.url_orgs+"/teams", auth=self.auth)
+        for team in list_teams.json():
             if self.name == team['name']:
-                status = True
-                break
+                return False
 
-        return status
+        return True
 
             
     def get_stats(self):
