@@ -1,5 +1,10 @@
 TODO:
 
-- Create a system for register pressens
-- Send email for alle events
-- Separere ut slutt gruppetime som et eget script
+(D) is development, is just an idea.
+
+- Push new attendance lists automaticaly
+- (D) Create a gui for regestring attendance?
+- Make a script that automaticaly copy students_base.txt for this group.
+- (D) generate stats: commits, comments, attendence ect.
+- Send email for new events.
+- Set up an email account for the course
