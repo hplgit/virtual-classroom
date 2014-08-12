@@ -25,14 +25,14 @@ list_repos = requests.get(url+"/orgs/UiO-INF5620/repos", auth=auth)
 
 # Find list of teams to delete
 teams_to_delete = []
-text = open('students_info.txt', 'r')
+text = open('students_base.txt', 'r')
 for line in text:
     line = re.split(r'\s*\/\/\s*', line)
     teams_to_delete.append(line[1])
 
 # Delete teams
 for team in list_teams.json():
-   if team['name'] in teams_to_delete:
+   if team['name'].encode('utf-8') in teams_to_delete:
        requests.delete(url + "/teams/" + str(team['id']), auth=auth)
 
 # Delete repos

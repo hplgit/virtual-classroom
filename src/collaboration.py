@@ -3,6 +3,9 @@ import json
 
 class Collaboration():
     def __init__(self, students, max_group_size):
+        #TODO: Check if there is come team calles Team-<number>
+        #      these should be deleted first.
+         
         if len(students.values()) < 2:
             assert False, "There are one or less students, no need for collaboration"
 
@@ -12,7 +15,9 @@ class Collaboration():
         else:
             self.groups = []
             number_of_students = len(students.values())
-            number_of_groups = number_of_students//max_group_size
+            rest = number_of_students%max_group_size
+            truediv = number_of_students//max_group_size
+            number_of_groups = truediv if rest == 0 else truediv + 1
             for i in range(number_of_groups):        
                 self.groups.append(list(students.values())[i::number_of_groups])
 
@@ -28,7 +33,7 @@ class Collaboration():
             repo_names = self.get_repo_names(self.groups[n])
             team_key = {
                         "name": "Team-%s" % (n),
-                        "permission": "push", #or pull?
+                        "permission": "push", #or pull? 
                         "repo_names": repo_names # is this necessary
                        }
             r_team = requests.post(
@@ -37,22 +42,24 @@ class Collaboration():
                                    auth=self.auth
                                   )
 
+            # Add repos to the team
+            for s in self.groups[n]:
+                url_add_repo = s.url_teams + "/%s/repos/%s/%s" \
+                           % (r_team.json()['id'], s.org, s.repo_name)
+                r_add_repo = requests.put(url_add_repo, auth=s.auth)
+                if r_add_repo.status_code != 204:
+                    print("Error: %d - Can't add repo:%s access to Team-%d" \
+                                   % (r_add_repo.status_code, s.repo_name, n))
+           
             # Add students to the team
             for s in team:
-                url_add = s.url_teams + "/%s/members/%s" \
+                url_add_member = s.url_teams + "/%s/members/%s" \
                            % (r_team.json()['id'], s.username)
-                r_add = requests.put(url_add, auth=s.auth)
-                if r_add.status_code != 204:
-                    print("Can't give user: %s access to Team-%d" \
-                                   % (s.username, n+1))
-             
+                r_add_member = requests.put(url_add_member, auth=s.auth)
+                if r_add_member.status_code != 204:
+                    print("Can't give user:%s access to Team-%d" \
+                                   % (s.username, n))
+  
             
     def get_repo_names(self, team):
         return ["github/%s/%s-%s" % (s.org, s.course, s.repo_name) for s in team]
-
-    def remove_teams(self, classroom):
-        list_teams = requests.get(url_orgs+"/orgs/%s/teams" % self.org, auth=self.auth)
-
-        for team in list_teams.json():
-            if 'Team-' in team['name']:
-                requests.delete(url + "/teams/" + str(team['id']), auth=auth)
