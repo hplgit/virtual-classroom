@@ -1,0 +1,5 @@
+Attendance/*
+build/*
+__pycache__/*
+
+*.pyc
