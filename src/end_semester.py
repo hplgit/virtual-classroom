@@ -25,7 +25,7 @@ list_repos = requests.get(url+"/orgs/UiO-INF5620/repos", auth=auth)
 
 # Find list of teams to delete
 teams_to_delete = []
-text = open('students_base.txt', 'r')
+text = open('Attendance/students_base.txt', 'r')
 for line in text:
     line = re.split(r'\s*\/\/\s*', line)
     teams_to_delete.append(line[1])
