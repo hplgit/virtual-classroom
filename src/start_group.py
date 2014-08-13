@@ -2,13 +2,15 @@
 #from __future__ import absolute_import
 
 # Python import
-import sys
-import re
-import os
-import requests
-import argparse
+from sys import exit
+from re import split
+from os import path
+from requests import put, get, delete
+from argparse import ArgumentParser
+from base64 import b64encode
 from getpass import getpass
 from datetime import datetime
+from json import dumps
 
 # Local import
 from student import Student
@@ -20,7 +22,7 @@ try: input = raw_input
 except NameError: pass
 
 def read_command_line():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
 
     # File with attendance
     date = datetime.now()
@@ -46,16 +48,15 @@ def read_command_line():
                         default=False,
                         help='Will only create repositories and teams for the students.')
 
-
     args = parser.parse_args()
 
     # Check if file exists    
-    if not os.path.isfile(args.f):
+    if not path.isfile(args.f):
        msg = "The file: %s does not exist. \nPlease provide a different file path, or" +\
              " create the file first. Use cp students_base.txt YYYY-MM-DD.txt" % \
               args.f
        print(msg)
-       sys.exit(1)
+       exit(1)
 
     # Make sure end and start_semester is a bool
     end = args.e if args.e == False else True
@@ -70,10 +71,10 @@ def get_password(place):
     p = getpass('Password:')
 
     # Check if username and password is correct
-    r = requests.get('https://api.github.com', auth=(admin, p))
+    r = get('https://api.github.com', auth=(admin, p))
     if r.status_code != 200:
-        print('Username or password is wrong, pleace try again!')
-        sys.exit(1)    
+        print('Username or password is wrong (%s), please try again!' % place)
+        exit(1)    
 
     return (admin, p)
 
@@ -85,46 +86,54 @@ def create_students(students_file, course, university):
     # Get username and password for admin to classroom
     auth = get_password('Github') 
   
-    #push_attendance(auth)
+    # Push the file with present
+    push_attendance(auth, course, university)
+
     # Initialize email
     send_email = Email()
 
     # Create a dict with students
     for line in text:
-        pressent, name, username, email = re.split(r"\s*\/\/\s*", line)
+        pressent, name, username, email = split(r"\s*\/\/\s*", line)
         if pressent == 'X':
             students[name] = Student(name, username, university, course, email, auth, send_email)
 
     return students   
 
-def push_attendance(auth):
-    # TODO: This is not tested, and not done
-    # Push the attendance file
+def push_attendance(auth, course, university):
     date = datetime.now()
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
 
-    key_push = { 'message': 'Attendance %d-%s-%d"'  % (date.year, month, date.day),
+    # Get content
+    filename = "%d-%s-%d.txt" % (date.year, month, date.day)
+    content = b64encode(open("Attendance/%s" % filename, 'r').read())
+
+    # Parameters
+    key_push = { 'message': 'Attendance %s'  % filename.split('.')[0],
                  'commiter': {
                                'name': 'Username: %s' % auth[0],
                                'email': 'inf5620@gmail.com'
                              },
-                 'content': 'some Base64 coded stuff'
+                 'content': content
                }
-    r = requests.put('repos/%-%/Attendance/git/commits',) 
-    os.chdir('..')
+    url = 'https://api.github.com/repos/%s-%s/Attendance/contents/%s' % \
+           (university, course, filename)
 
+    # Push file
+    r = put(url, data=dumps(key_push), auth=auth) 
+   
 
 def end_group(org):
     auth = get_password('Github')
     url_orgs = 'https://api.github.com/orgs/%s/teams' % (org)    
 
-    list_teams = requests.get(url_orgs, auth=auth)
+    list_teams = get(url_orgs, auth=auth)
     success = True
     number_deleted = 0
 
     for team in list_teams.json():
         if 'Team-' in team['name']:
-            r = requests.delete("https://api.github.com/teams/" + str(team['id']), auth=auth)
+            r = delete("https://api.github.com/teams/" + str(team['id']), auth=auth)
             if r.status_code != 204:
                 print('Could not delete team %s' % team['name'])
                 success = False
@@ -135,13 +144,16 @@ def end_group(org):
         print('Deleted all teams related to the group session (%d teams deleted)' % number_deleted)
 
 
-if __name__ == '__main__':
+def main():
     students_file, course, university, max_students, end, start_semester = read_command_line()
     if end:
         org = "%s-%s" % (university, course)
         end_group(org)
     else:
         students = create_students(students_file, course, university)
-
         if not start_semester:
             Collaboration(students, max_students)
+
+
+if __name__ == '__main__':
+    main()

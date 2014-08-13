@@ -2,6 +2,6 @@ TODO:
 
 (D) is development, is just an idea.
 
-- Push new attendance lists automaticaly
 - Make a script that automaticaly copy students_base.txt for this group.
-- (D) generate stats: commits, comments, attendence ect.
+- generate stats: commits, comments, attendence ect.
+- Make collaboration work with groups of one.

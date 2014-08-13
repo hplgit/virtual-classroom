@@ -1,12 +1,11 @@
-Hi, and %(name)s welcome to INF5620
------------------------------------
+Hi %(name)s, and welcome to INF5620
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In this course we will use GitHub as a tool for 
 version control and collaboration. You have now access to a repository 
 which is called %(name)s. It is very important that everything you do in
-this course is added to this repository.
-
-There is a lot of information about git on the web,
-and you will learn to use it during this course, but here is a short intro.
+this course is added to this repository. There is a lot of information 
+about git on the web, and you will learn to use it during this course, 
+but here is a short intro.
 
 First you need to install git, this can be done by the command:
 
@@ -31,7 +30,7 @@ So let's say you create a new file 'test.py' and want to "track" this file.
 	git add test.py
 
 Now git will follow changes made to this file. So, now we could tell git that we are ready to 
-commit this file. Let's say that we added some functionalty that now works. 
+commit this file. Let's say that we added some functionality that now works. 
 
 .. code-block:: 
 
@@ -45,7 +44,7 @@ We used add on the file.
 
 	git checkout test.py
 
-All the changes are stil on your local computer, so it's time to upload them to
+All the changes are still on your local computer, so it's time to upload them to
 the repository on github.
 
 .. code-block:: 
@@ -56,8 +55,8 @@ Some other handy commands are
 
 .. code-block:: 
 
-	git status                        # Overview of files
-	git diff                          # Differnce that are not staged for commit
+	git status                        # Overview of files that are changed
+	git diff                          # List over changes
 	git log                           # List over the last commits
 	git commit -a -m 'Some message'   # Commits all changes
 	git reset                         # Removes all changes to the last commit
