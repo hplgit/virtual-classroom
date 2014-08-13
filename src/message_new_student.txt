@@ -1,0 +1,67 @@
+<html>
+<head></head>
+<body>
+ <h3>Hi %(name)s!</h3>
+
+Welcome to INF5620. In this course we will use GitHub as a tool for 
+version control and collaboration. You have now access to a repository 
+which is called %(name)s. It is very important that everything you do in
+this course is in this file.
+
+There is alot of information about git on the web,
+and you will learn to use it during this course, but here is a short intro.
+
+First you need to install git, this can be done by
+
+<some environment>sudo apt-get install git</some environment>
+
+To get the repository you on your computer you simply type
+
+<some environment>git clone %(repo_adress)s</some environment>
+
+in your terminal. You then get a folder with the name of the repository. When you enter
+the folder you could say that you are in a git environment and you can now use it on
+our files. 
+
+So let's say you create a new file 'test.py' and want to "track" this file.
+
+<some environment>git add test.py</some environment>
+
+Now git will follow changed in this file. So, now we could tell git that we are ready to 
+commit this file. Let's say that we added some functionalty that now works. 
+
+<some environment>git commit test.py -m 'Add command line options'</some environment>
+
+Now we could continue to edit the file, but perhaps we did something that made
+the file crash. Then we could simply remove the changes done since the last commit.
+
+<some environment>git checkout test.py</some environment>
+
+All the changes are stil on your local computer, so it's time to upload them to
+the repository on github.
+
+<some environment>git push origin master</some environment>
+
+Some other handy commands is
+
+<some environment>git status
+git diff
+git log
+git commit -a -m 'Some message'
+git reset
+git checkout -b 'new branch name'
+</some environment>
+
+This is a short manual for working with your own repository. There will later on come a sort
+manual for collaboration.
+
+More information:
+<bullets>
+- If you want to learn more about git, the three first chapters <noe html=www...>here<\noe> is a good reference.
+- Course material
+- GitHubs own tutorial
+</bullets>
+<html>
+<head></head>
+<body>
+

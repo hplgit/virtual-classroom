@@ -1,0 +1,23 @@
+d></head>
+<body>
+ <h3>Hi %(name)s!</h3>
+
+This group session you will be working with %(group)s! You are a part
+of %(team)s. You will be correcting the assignments of
+
+%(correcting)s
+
+You now have access to push and pull to their repositories. You should make a temporary
+directory where you should execute
+
+<some environment>
+%(get_repos)s
+</some environment>
+
+Some text about how we want the students to work
+
+<html>
+<head></head>
+<body>
+
+
