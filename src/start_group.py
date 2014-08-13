@@ -110,10 +110,7 @@ def push_attendance(auth):
                              },
                  'content': 'some Base64 coded stuff'
                }
-    r = requests.put('repos/%-%/Attendance/contents/',) 
-    os.system('git add %d-%s-%d.txt'  % (date.year, month, date.day))
-    os.system('git commit -m "Attendance %d-%s-%d"'  % (date.year, month, date.day))
-    os.system('git push %s@git.com:%s-%s.git' % (auth[0], university, course))
+    r = requests.put('repos/%-%/Attendance/git/commits',) 
     os.chdir('..')
 
 

@@ -1,5 +1,5 @@
-Welcome to INF5620
-------------------
+Hi, and %(name)s welcome to INF5620
+-----------------------------------
 In this course we will use GitHub as a tool for 
 version control and collaboration. You have now access to a repository 
 which is called %(name)s. It is very important that everything you do in
@@ -38,7 +38,8 @@ commit this file. Let's say that we added some functionalty that now works.
 	git commit test.py -m 'Add command line options'
 
 Now we could continue to edit the file, but perhaps we did something that made
-the file crash. Then we could simply remove the changes done since the last commit.
+the file crash. Then we could simply remove the changes done since the last time.
+We used add on the file.
 
 .. code-block:: 
 
@@ -51,24 +52,20 @@ the repository on github.
 
 	git push origin master
 
-Some other handy commands is
+Some other handy commands are
 
 .. code-block:: 
 
-	git status
-	git diff
-	git log
-	git commit -a -m 'Some message'
-	git reset
-	git checkout -b 'new branch name'
+	git status                        # Overview of files
+	git diff                          # Differnce that are not staged for commit
+	git log                           # List over the last commits
+	git commit -a -m 'Some message'   # Commits all changes
+	git reset                         # Removes all changes to the last commit
+	git checkout -b 'new branch name' # Creates a new branch
 
-
-This is a short manual for working with your own repository. There will later on come a sort
+This is a short manual for working with your own repository. There will later on come a
 manual for collaboration.
 
 More information:
- * If you want to learn more about git, the three first chapters http://git-scm.com/book is a good reference.
- * Course material
- * GitHubs own tutorial
-
-
+ * See the `course material <http://hplgit.github.io/teamods/bitgit/Langtangen_github.pdf>`_ 
+ * If you want a more extensive introduction to git, see the three first chapters in `this book <http://git-scm.com/book>`_

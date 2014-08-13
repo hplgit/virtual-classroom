@@ -6,8 +6,8 @@ class Collaboration():
         #TODO: Check if there is come team calles Team-<number>
         #      these should be deleted first.
          
-        #if len(students.values()) < 2:
-        #    assert False, "There are one or less students, no need for collaboration"
+        if len(students.values()) < 2:
+            assert False, "There are one or less students, no need for collaboration"
 
         if max_group_size > len(students.values()):
             self.groups = list(students.values())
@@ -27,6 +27,7 @@ class Collaboration():
             self.auth = self.groups[0][0].auth
             self.url_orgs = self.groups[0][0].url_orgs
             self.org = self.groups[0][0].org
+            self.send_email = self.groupd[0][0].send_email
 
         n = 0
         for team in self.groups:
@@ -34,8 +35,9 @@ class Collaboration():
 
             # Create a team with access to an another team's repos
             repo_names = self.get_repo_names(self.groups[n])
+            team_name = "Team-%s" % (n)
             team_key = {
-                        "name": "Team-%s" % (n),
+                        "name": team_name,
                         "permission": "push", #or pull? 
                         "repo_names": repo_names # is this necessary
                        }
@@ -62,7 +64,9 @@ class Collaboration():
                 if r_add_member.status_code != 204:
                     print("Can't give user:%s access to Team-%d" \
                                    % (s.username, n))
-  
+            
+            # Send email
+            self.send_email.new_group(group[n-1], team_name, group[n]
             
     def get_repo_names(self, team):
         return ["github/%s/%s-%s" % (s.org, s.course, s.repo_name) for s in team]
