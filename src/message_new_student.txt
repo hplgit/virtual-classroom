@@ -5,7 +5,7 @@
 
 Welcome to INF5620. In this course we will use GitHub as a tool for 
 version control and collaboration. You have now access to a repository 
-which is called %(name)s. It is very important that everything you do in
+which is called %(repo_name)s. It is very important that everything you do in
 this course is in this file.
 
 There is alot of information about git on the web,
@@ -13,11 +13,11 @@ and you will learn to use it during this course, but here is a short intro.
 
 First you need to install git, this can be done by
 
-<some environment>sudo apt-get install git</some environment>
+<code>sudo apt-get install git</code>
 
 To get the repository you on your computer you simply type
 
-<some environment>git clone %(repo_adress)s</some environment>
+<code>git clone %(repo_adress)s</code>
 
 in your terminal. You then get a folder with the name of the repository. When you enter
 the folder you could say that you are in a git environment and you can now use it on
@@ -25,32 +25,32 @@ our files.
 
 So let's say you create a new file 'test.py' and want to "track" this file.
 
-<some environment>git add test.py</some environment>
+<code>git add test.py</code>
 
 Now git will follow changed in this file. So, now we could tell git that we are ready to 
 commit this file. Let's say that we added some functionalty that now works. 
 
-<some environment>git commit test.py -m 'Add command line options'</some environment>
+<code>git commit test.py -m 'Add command line options'</code>
 
 Now we could continue to edit the file, but perhaps we did something that made
 the file crash. Then we could simply remove the changes done since the last commit.
 
-<some environment>git checkout test.py</some environment>
+<code>git checkout test.py</code>
 
 All the changes are stil on your local computer, so it's time to upload them to
 the repository on github.
 
-<some environment>git push origin master</some environment>
+<code>git push origin master</code>
 
 Some other handy commands is
 
-<some environment>git status
+<code>git status
 git diff
 git log
 git commit -a -m 'Some message'
 git reset
 git checkout -b 'new branch name'
-</some environment>
+</code>
 
 This is a short manual for working with your own repository. There will later on come a sort
 manual for collaboration.

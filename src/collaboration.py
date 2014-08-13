@@ -6,11 +6,14 @@ class Collaboration():
         #TODO: Check if there is come team calles Team-<number>
         #      these should be deleted first.
          
-        if len(students.values()) < 2:
-            assert False, "There are one or less students, no need for collaboration"
+        #if len(students.values()) < 2:
+        #    assert False, "There are one or less students, no need for collaboration"
 
         if max_group_size > len(students.values()):
             self.groups = list(students.values())
+            self.auth = self.groups[0].auth
+            self.url_orgs = self.groups[0].url_orgs
+            self.org = self.groups[0].org
         
         else:
             self.groups = []
@@ -21,9 +24,9 @@ class Collaboration():
             for i in range(number_of_groups):        
                 self.groups.append(list(students.values())[i::number_of_groups])
 
-        self.auth = self.groups[0][0].auth
-        self.url_orgs = self.groups[0][0].url_orgs
-        self.org = self.groups[0][0].org
+            self.auth = self.groups[0][0].auth
+            self.url_orgs = self.groups[0][0].url_orgs
+            self.org = self.groups[0][0].org
 
         n = 0
         for team in self.groups:

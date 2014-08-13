@@ -42,6 +42,10 @@ def read_command_line():
     parser.add_argument('--e', '--end_group', type=bool,
                         default=False,
                         help='Will only delete the current teams on the form Team-<number>')
+    parser.add_argument('--i', '--start-semester', type=bool,
+                        default=False,
+                        help='Will only create repositories and teams for the students.')
+
 
     args = parser.parse_args()
 
@@ -53,10 +57,11 @@ def read_command_line():
        print(msg)
        sys.exit(1)
 
-    # Make sure end is a bool
+    # Make sure end and start_semester is a bool
     end = args.e if args.e == False else True
+    start_semester = args.i if args.i == False else True
 
-    return args.f, args.c, args.u, int(args.m), end
+    return args.f, args.c, args.u, int(args.m), end, start_semester
 
 
 def get_password(place):
@@ -82,7 +87,7 @@ def create_students(students_file, course, university):
   
     #push_attendance(auth)
     # Initialize email
-    send_email = "" # Email()
+    send_email = Email()
 
     # Create a dict with students
     for line in text:
@@ -100,12 +105,12 @@ def push_attendance(auth):
 
     key_push = { 'message': 'Attendance %d-%s-%d"'  % (date.year, month, date.day),
                  'commiter': {
-                               'name': 'Username: %s' % auth[0] 
+                               'name': 'Username: %s' % auth[0],
                                'email': 'inf5620@gmail.com'
                              },
                  'content': 'some Base64 coded stuff'
                }
-    r = requests.put('repos/%-%/Attendance/contents/', 
+    r = requests.put('repos/%-%/Attendance/contents/',) 
     os.system('git add %d-%s-%d.txt'  % (date.year, month, date.day))
     os.system('git commit -m "Attendance %d-%s-%d"'  % (date.year, month, date.day))
     os.system('git push %s@git.com:%s-%s.git' % (auth[0], university, course))
@@ -134,10 +139,12 @@ def end_group(org):
 
 
 if __name__ == '__main__':
-    students_file, course, university, max_students, end = read_command_line()
+    students_file, course, university, max_students, end, start_semester = read_command_line()
     if end:
         org = "%s-%s" % (university, course)
         end_group(org)
     else:
         students = create_students(students_file, course, university)
-        Collaboration(students, max_students)
+
+        if not start_semester:
+            Collaboration(students, max_students)
