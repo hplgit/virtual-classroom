@@ -1,7 +1,7 @@
 Hi %(name)s!
 ~~~~~~~~~~~~
 
-This group session you will be working with %(group_names)s! You are a part
+In this group session you will be working with %(group_names)s! You are part
 of %(team_name)s. You will be correcting the assignments of
 
 %(correcting_names)s

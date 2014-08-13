@@ -13,13 +13,13 @@ First you need to install git, this can be done by the command:
 
 	sudo apt-get install git
 
-to clone the repository you have been given access to you simply write
+To clone the repository you have been given access to, you simply write
 
 .. code-block:: 
 
 	git clone %(repo_adress)s
 
-it's smart to be located where you want the folder/repository to be downloaded into.  
+It is smart to be located where you want the folder/repository to be downloaded into.  
 When you enter the folder you could say that you are in a git environment and you can now use it on
 our files. 
 
@@ -37,8 +37,8 @@ commit this file. Let's say that we added some functionality that now works.
 	git commit test.py -m 'Add command line options'
 
 Now we could continue to edit the file, but perhaps we did something that made
-the file crash. Then we could simply remove the changes done since the last time.
-We used add on the file.
+the file crash. Then we could simply remove the changes done since the last time 
+we used "add" on the file.
 
 .. code-block:: 
 
@@ -62,8 +62,8 @@ Some other handy commands are
 	git reset                         # Removes all changes to the last commit
 	git checkout -b 'new branch name' # Creates a new branch
 
-This is a short manual for working with your own repository. There will later on come a
-manual for collaboration.
+This is a short manual for working with your own repository. A manual for collaboration 
+will be sent later on.
 
 More information:
  * See the `course material <http://hplgit.github.io/teamods/bitgit/Langtangen_github.pdf>`_ 
