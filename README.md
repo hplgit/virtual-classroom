@@ -1,7 +1,7 @@
 virtual-classroom
 =================
 
-Scripts for automating GitHub classrooms. In particular ment for courses with 
+Scripts for automating GitHub classrooms. In particular meant for courses with 
 collaboration between students during group sessions.
 
 
