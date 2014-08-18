@@ -2,6 +2,7 @@ from __future__ import print_function
 from getpass import getpass
 from smtplib import SMTP
 from docutils import core
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from sys import exit
@@ -41,22 +42,23 @@ class Email():
         # Variables for the email
         recipient = student.email
         email_var = {}
+        email_var['year'] = datetime.now().year
         email_var['name'] = student.name.split(' ')[0]
         email_var['repo_name'] = student.repo_name
-        email_var['repo_adress'] = 'https://github.com/%s/%s' % \
+        email_var['repo_adress'] = 'git@github.com:/%s/%s.git' % \
                                         (student.org, student.repo_name)
 
         # Compose message
         text = self.get_text('message_new_student.rst')
         text = text % email_var
-        text = self.rst_to_html(text)
+        text = self.rst_to_html(text).encode('utf-8') # ae, o, aa support
    
         # Compose email       
         msg = MIMEMultipart()
         msg['Subject']  = 'New repository'
         msg['To'] = recipient
         msg['From'] = self.username
-        body_text = MIMEText(text, 'html')
+        body_text = MIMEText(text, 'html', 'utf-8')
         msg.attach(body_text)
 
         self.send(msg, recipient)
@@ -69,7 +71,7 @@ class Email():
         correcting_names = ""
         for student in correcting:
             correcting_names += " "*4 + "* %s\n" % student.name
-            get_repos += ' '*4 + 'git clone https://github.com/%s/%s\n' % \
+            get_repos += ' '*4 + 'git clone git@github.com:%s/%s\n' % \
                                        (student.org, student.repo_name)
 
         email_var['get_repos'] = get_repos

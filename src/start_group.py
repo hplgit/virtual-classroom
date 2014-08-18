@@ -94,7 +94,7 @@ def create_students(students_file, course, university):
 
     # Create a dict with students
     for line in text:
-        pressent, name, username, email = split(r"\s*\/\/\s*", line)
+        pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
         if pressent == 'X':
             students[name] = Student(name, username, university, course, email, auth, send_email)
 
