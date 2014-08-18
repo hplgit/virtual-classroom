@@ -11,12 +11,12 @@ from sys import exit
 try: input = raw_input
 except NameError: pass
 
-
 class Email():
-
     def __init__(self):
+        "Get username and password from user and tests if it is correct"""
         self.username = input("\nFor Gmail\nEmail address: ")
         self.password = getpass("Password:")
+        #TODO: It it possible to not quit the server in order to skip login each time?
         try:
             server = SMTP('smtp.gmail.com:587')
             server.starttls()
@@ -27,16 +27,20 @@ class Email():
             exit(1)
 
     def get_text(self, filename):
+        """Read the given file"""
         file = open(filename, 'r')
         text = file.read()
         file.close()
         return text
     
     def rst_to_html(self, text):
+        """Convert the .rst file to html code"""
         parts = core.publish_parts(source=text, writer_name='html')
         return parts['body_pre_docinfo']+parts['fragment']
 
     def new_student(self, student):
+        """Compose an email for the event that a new student is added to
+        the course"""
         text = self.get_text('message_new_student.rst')
 
         # Variables for the email
@@ -64,7 +68,7 @@ class Email():
         self.send(msg, recipient)
 
     def new_group(self, group, team_name, correcting):
-
+        """Compose an email for the event that some collaboration has started."""
         # Variables for the email
         email_var = {}
         get_repos = ""
@@ -101,7 +105,7 @@ class Email():
             self.send(msg, recipient)
 
     def send(self, msg, recipients):
-
+        """Send email"""
         # Send email
         server = SMTP('smtp.gmail.com:587')
         server.starttls()

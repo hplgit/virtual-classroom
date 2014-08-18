@@ -2,8 +2,12 @@ from requests import get, put, post
 from json import dumps
 
 class Collaboration():
+    """Holds all the information about the groups during a group session"""
+
     def __init__(self, students, max_group_size):
-                 
+        """Divide the students in to groups and give them access to another groups
+           reposetories.
+        """                 
         if len(students.values()) < 2:
             assert False, "There are one or less students, no need for collaboration"
 

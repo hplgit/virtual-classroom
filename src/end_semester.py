@@ -1,3 +1,7 @@
+"""A script to end the semester. Removes all repositories matching the students in
+Attendence/student_base.txt and all teams Team-<number>. This script should not
+be invoked unless you are absolutly certain."""
+
 import requests
 import re
 import sys

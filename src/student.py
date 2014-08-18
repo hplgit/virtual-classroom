@@ -8,8 +8,12 @@ from sys import exit
 from unicodedata import normalize, category
 
 class Student():
-   
+    """Holdes all the information about the student.""" 
+
     def __init__(self, name, username, university, course, email, auth, send_email):
+        """When initialized it testes if the information is correct and if the
+           student has been initialized before. If not it calles create_repository()
+        """
         self.name = name
         self.email = email
         self.username = username
@@ -120,14 +124,15 @@ class Student():
             self.send_email.new_student(self)
 
     def repo_exist(self, repo_name):
+        """Check if there exixts a repo with the given name"""
         list_repos = get(self.url_orgs + "/repos", auth=self.auth)
         for repo in list_repos.json():
             if repo_name == repo['name'].encode('utf-8'):
                 return True
         return False
         
-
-    def has_team(self):        
+    def has_team(self):
+        """Check if there exist a team <full name>"""
         list_teams = get(self.url_orgs+"/teams", auth=self.auth)
         for team in list_teams.json():
             if self.name == team['name'].encode('utf-8'):
@@ -135,7 +140,5 @@ class Student():
 
         return False
 
-            
     def get_stats(self):
-        #TODO: Get number of commits and so on, number of times present ect.
         pass

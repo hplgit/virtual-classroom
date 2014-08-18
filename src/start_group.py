@@ -22,6 +22,7 @@ try: input = raw_input
 except NameError: pass
 
 def read_command_line():
+    """Read arguments from commandline"""
     parser = ArgumentParser()
 
     # File with attendance
@@ -29,24 +30,24 @@ def read_command_line():
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
     expected_file = "./Attendance/%d-%s-%d.txt" % (date.year, month, date.day)
 
-    parser.add_argument('--f', '--file', type=str,
+    parser.add_argument('-f', '--file', type=str,
                         default=expected_file, 
                         help=""" A file including all students, in this course. Format: \
                         Attendence(X/-) //  Name //  Username // email""", metavar="students_file")
-    parser.add_argument('--c', '--course', type=str,
+    parser.add_argument('-c', '--course', type=str,
                         default="INF5620", help="Name of the course", metavar="course")
-    parser.add_argument('--u', '--university', type=str,
+    parser.add_argument('-u', '--university', type=str,
                         default="UiO",
                         help="Name of the university, the viritual-classroom should \
                         be called <university>-<course>", metavar="university")
-    parser.add_argument('--m', '--max_students', type=str, default="3",
-                        help="Maximum number of students in each group.", metavar="university")
-    parser.add_argument('--e', '--end_group', type=bool,
-                        default=False,
-                        help='Will only delete the current teams on the form Team-<number>')
-    parser.add_argument('--i', '--start-semester', type=bool,
-                        default=False,
-                        help='Will only create repositories and teams for the students.')
+    parser.add_argument('-m', '--max_students', type=str, default="3",
+                        help="Maximum number of students in each group.", metavar="max group size")
+    parser.add_argument('-e', '--end_group', type=bool,
+                        default=False, metavar="end group (bool)", 
+                        help='Delete the current teams on the form Team-<number>')
+    parser.add_argument('-i', '--start-semester', type=bool,
+                        default=False, metavar="initialize group (bool)",
+                        help='Create repositories and teams for the students.')
 
     args = parser.parse_args()
 
@@ -66,6 +67,7 @@ def read_command_line():
 
 
 def get_password(place):
+    """Get password and username from the user"""
     # Get username and password for admin to classroom
     admin = input('For %s\nUsername: ' % place)
     p = getpass('Password:')
@@ -80,6 +82,7 @@ def get_password(place):
 
 
 def create_students(students_file, course, university):
+    """Creates a dicts of students with their full name as a key."""
     students = {}
     text = open(students_file).readlines()
 
@@ -101,6 +104,7 @@ def create_students(students_file, course, university):
     return students   
 
 def push_attendance(auth, course, university):
+    """Push the attendance file to the repo for later use"""
     date = datetime.now()
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
 
@@ -124,6 +128,7 @@ def push_attendance(auth, course, university):
    
 
 def end_group(org):
+    """Deletes all teams on the form Team-<number>"""
     auth = get_password('Github')
     url_orgs = 'https://api.github.com/orgs/%s/teams' % (org)    
 
