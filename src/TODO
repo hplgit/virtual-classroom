@@ -2,6 +2,12 @@ TODO:
 
 (D) is development, is just an idea.
 
-- Make a script that automaticaly copy students_base.txt for this group.
-- generate stats: commits, comments, attendence ect.
+- Make a script that automaticaly copy students_base.txt for a group. (script?)
+- Generate stats: commits, comments, attendence ect.
 - Make collaboration work with groups of one.
+- Change to OAuth
+- Check if there is an Attendance repository in the classrom, if not create one
+- Make it easy to switch between to courses. Parameter file? Script?
+- Look for potential speed ups, adding 40 students takes too long.
+- Make a option for sending emails or not.
+- Need a more robust way of handling special characters in student.py
