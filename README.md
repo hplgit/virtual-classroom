@@ -1,9 +1,6 @@
 virtual-classroom
 =================
 
-Description
------------
-
 Scripts for automating GitHub classrooms. In particular ment for courses with 
 collaboration between students during group sessions.
 
@@ -20,8 +17,6 @@ Installation
 
 To use virtual-classroom, there is no need for installation. You simply clone this repository
 and run the program by
-
- ..code-block::
 
     python start_group.py
 
