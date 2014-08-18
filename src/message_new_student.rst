@@ -1,69 +1,60 @@
 Hi %(name)s, and welcome to INF5620
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In this course we will use GitHub as a tool for 
-version control and collaboration. You have now access to a repository 
-which is called %(name)s. It is very important that everything you do in
-this course is added to this repository. There is a lot of information 
-about git on the web, and you will learn to use it during this course, 
-but here is a short intro.
+In this course we will use GitHub as a tool for version control and collaboration. 
+You have now access to a repository which is called %(repo_name)s. It is very important that 
+every file you make in this course that is supposed to be evaluated by others, is 
+added to this repo (short for repository). We recommend that you put all your course 
+work in the repo, because this serves as a backup and as an archive of previous versions 
+of the files. You work with the repo through the Git version control system. The 
+workflow may seem a bit cumbersome at first sight, but this is how professionals work 
+with software and technical documents all around the world in %(year)s.
 
-First you need to install git, this can be done by the command:
+
+There is a lot of information about git on the web, but below we give the quick need-to-know 
+steps for the course. First you need to install git. This can be done by the command:
 
 .. code-block::
 
 	sudo apt-get install git
 
-To clone the repository you have been given access to, you simply write
+The next step is to clone the repository you have been given access to. You simply write
 
 .. code-block:: 
 
 	git clone %(repo_adress)s
 
-It is smart to be located where you want the folder/repository to be downloaded into.  
-When you enter the folder you could say that you are in a git environment and you can now use it on
-our files. 
+which gives you a directory %(repo_name)s. When you enter the folder, you are in a Git-control 
+directory tree and must use certain Git commands to register files and update the repo. 
 
-So let's say you create a new file 'test.py' and want to "track" this file.
+So let's say you create a new file 'test.py' that you want Git to track 
+the history of. Then you must write
 
 .. code-block:: 
 
 	git add test.py
 
-Now git will follow changes made to this file. So, now we could tell git that we are ready to 
-commit this file. Let's say that we added some functionality that now works. 
+After you have worked with files and they seem to be in an acceptable state, or you stop 
+working for the day, you should do
 
 .. code-block:: 
 
-	git commit test.py -m 'Add command line options'
+	git commit test.py -am 'Short description of the changes you made to files since last git commit command...'
 
-Now we could continue to edit the file, but perhaps we did something that made
-the file crash. Then we could simply remove the changes done since the last time 
-we used "add" on the file.
-
-.. code-block:: 
-
-	git checkout test.py
-
-All the changes are still on your local computer, so it's time to upload them to
-the repository on github.
+The file changes are now on your computer only. To send them to the cloud and back them up, do
 
 .. code-block:: 
 
 	git push origin master
 
-Some other handy commands are
+If you work on multiple computers, or if you collaborate with others in the repo, it 
+is very important that you do
 
 .. code-block:: 
 
-	git status                        # Overview of files that are changed
-	git diff                          # List over changes
-	git log                           # List over the last commits
-	git commit -a -m 'Some message'   # Commits all changes
-	git reset                         # Removes all changes to the last commit
-	git checkout -b 'new branch name' # Creates a new branch
+        git pull origin master
 
-This is a short manual for working with your own repository. A manual for collaboration 
-will be sent later on.
+to download the latest version of the files before you start editing any of them.
+
 
 More information:
  * See the `course material <http://hplgit.github.io/teamods/bitgit/Langtangen_github.pdf>`_ 
