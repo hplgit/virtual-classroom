@@ -112,8 +112,6 @@ class Student():
             print("Error: %d - did not manage to add a team for %s" % \
                   (r_team.status_code, self.username))
         elif r_add_repo.status_code != 204:
-            print(self.repo_name)
-            print(r_add_repo.json())
             print("Error: %d - did not manage to add repo to team:%s" % \
                   (r_add_repo.status_code, self.name))
         elif r_add_member.status_code != 204:
