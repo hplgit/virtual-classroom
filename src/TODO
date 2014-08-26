@@ -11,3 +11,6 @@ TODO:
 - Look for potential speed ups, adding 40 students takes too long.
 - Make a option for sending emails or not.
 - Need a more robust way of handling special characters in student.py
+- Use s = request.Session() and set s.auth = auth, and then use s.put, s.get and
+  so on
+

@@ -28,22 +28,22 @@ class Student():
         self.url_teams = 'https://api.github.com/teams' 
 
         # Check that there is an user with the given username
-        self.is_user()
+        if self.is_user():
+            # Check if user have a team
+            if not self.has_team():
+                self.create_repository()
 
-        # Check if user have a team
-        if not self.has_team():
-            self.create_repository()
+            # Get repo name
+            else:
+                # Assume that there is less than 100 teams
+                r = get(self.url_orgs + "/teams", auth=auth, params={'per_page': 100})
+                for team in r.json():
+                    if team['name'].encode('utf-8') == self.name: 
+                        id_ = team['id']
 
-        # Get repo name
-        else:
-            r = get(self.url_orgs + "/teams", auth=auth)
-            for team in r.json():
-                if team['name'].encode('utf-8') == self.name: 
-                    id_ = team['id']
-
-            r = get(self.url_teams + "/" + str(id_) + "/repos", auth=auth)
-            for repo in r.json():
-                self.repo_name = repo['name'].encode('utf-8')
+                r = get(self.url_teams + "/" + str(id_) + "/repos", auth=auth)
+                for repo in r.json():
+                    self.repo_name = repo['name'].encode('utf-8')
  
     def is_user(self):
         """
@@ -51,10 +51,13 @@ class Student():
            If it is not a user the program will exit with a worning
         """
 
-        ref = get('https://api.github.com/users/%s' % self.username)
+        ref = get('https://api.github.com/users/%s' % self.username, auth=self.auth)
         msg = "User: %s does not exist on GitHub and a repository will not be created." \
                % self.username
-        if ref.status_code != 200: print(msg); exit(1)
+        if ref.status_code != 200: 
+            print(msg)
+            return False
+        return True
 
     def strip_accents(self, text):
         """Change special characters into ascii counterpart."""
@@ -131,8 +134,11 @@ class Student():
         
     def has_team(self):
         """Check if there exist a team <full name>"""
-        list_teams = get(self.url_orgs+"/teams", auth=self.auth)
+        # Assume that there are less than 100 teams.
+        list_teams = get(self.url_orgs+"/teams", auth=self.auth, params={'per_page': 100})
+        
         for team in list_teams.json():
+            print(self.name == team['name'].encode('utf-8'), self.name, team['name'].encode('utf-8'))
             if self.name == team['name'].encode('utf-8'):
                 return True
 

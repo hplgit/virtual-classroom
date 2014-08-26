@@ -30,22 +30,22 @@ def read_command_line():
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
     expected_file = "./Attendance/%d-%s-%d.txt" % (date.year, month, date.day)
 
-    parser.add_argument('-f', '--file', type=str,
+    parser.add_argument('--f', '--file', type=str,
                         default=expected_file, 
                         help=""" A file including all students, in this course. Format: \
                         Attendence(X/-) //  Name //  Username // email""", metavar="students_file")
-    parser.add_argument('-c', '--course', type=str,
+    parser.add_argument('--c', '--course', type=str,
                         default="INF5620", help="Name of the course", metavar="course")
-    parser.add_argument('-u', '--university', type=str,
+    parser.add_argument('--u', '--university', type=str,
                         default="UiO",
                         help="Name of the university, the viritual-classroom should \
                         be called <university>-<course>", metavar="university")
-    parser.add_argument('-m', '--max_students', type=str, default="3",
+    parser.add_argument('--m', '--max_students', type=str, default="3",
                         help="Maximum number of students in each group.", metavar="max group size")
-    parser.add_argument('-e', '--end_group', type=bool,
+    parser.add_argument('--e', '--end_group', type=bool,
                         default=False, metavar="end group (bool)", 
                         help='Delete the current teams on the form Team-<number>')
-    parser.add_argument('-i', '--start-semester', type=bool,
+    parser.add_argument('--i', '--start-semester', type=bool,
                         default=False, metavar="initialize group (bool)",
                         help='Create repositories and teams for the students.')
 
@@ -66,16 +66,16 @@ def read_command_line():
     return args.f, args.c, args.u, int(args.m), end, start_semester
 
 
-def get_password(place):
+def get_password():
     """Get password and username from the user"""
     # Get username and password for admin to classroom
-    admin = input('For %s\nUsername: ' % place)
+    admin = input('For GitHub\nUsername: ')
     p = getpass('Password:')
 
     # Check if username and password is correct
     r = get('https://api.github.com', auth=(admin, p))
     if r.status_code != 200:
-        print('Username or password is wrong (%s), please try again!' % place)
+        print('Username or password is wrong (GitHub), please try again!')
         exit(1)    
 
     return (admin, p)
@@ -87,10 +87,10 @@ def create_students(students_file, course, university):
     text = open(students_file).readlines()
 
     # Get username and password for admin to classroom
-    auth = get_password('Github') 
+    auth = get_password() 
   
     # Push the file with present
-    push_attendance(auth, course, university)
+    #push_attendance(auth, course, university)
 
     # Initialize email
     send_email = Email()

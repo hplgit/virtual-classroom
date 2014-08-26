@@ -46,6 +46,6 @@ string = 'Attendance // ' + ' // '.join(wks.get_all_values()[0][1:]) + '\n'
 for row in wks.get_all_values()[1:]:
     string += '- // ' + ' // '.join(row[1:]) + '\n' # Remove timestamp from each row
 
-student_base.write(string)
+student_base.write(string.encode('utf-8'))
 
 #TODO: Push the new file to a repository
