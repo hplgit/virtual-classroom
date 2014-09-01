@@ -25,22 +25,29 @@ def read_command_line():
     """Read arguments from commandline"""
     parser = ArgumentParser()
 
+    parameters = {}
+    lines = open('default_parameters.txt', 'r').readlines()
+    for line in lines:
+        key, value = line.split(':')
+        parameters[key] = value[:-1]
+        
     # File with attendance
     date = datetime.now()
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
-    expected_file = "./Attendance/%d-%s-%d.txt" % (date.year, month, date.day)
+    day = str(date.day) if date.day > 9 else "0" + str(date.day)
+    parameters['filepath'] = parameters['filepath'] % (date.year, month, day)
 
     parser.add_argument('--f', '--file', type=str,
-                        default=expected_file, 
+                        default=parameters['filepath'], 
                         help=""" A file including all students, in this course. Format: \
                         Attendence(X/-) //  Name //  Username // email""", metavar="students_file")
     parser.add_argument('--c', '--course', type=str,
-                        default="INF5620", help="Name of the course", metavar="course")
+                        default=parameters['course'], help="Name of the course", metavar="course")
     parser.add_argument('--u', '--university', type=str,
-                        default="UiO",
+                        default=parameters['university'],
                         help="Name of the university, the viritual-classroom should \
                         be called <university>-<course>", metavar="university")
-    parser.add_argument('--m', '--max_students', type=str, default="3",
+    parser.add_argument('--m', '--max_students', type=str, default=parameters['max_students'],
                         help="Maximum number of students in each group.", metavar="max group size")
     parser.add_argument('--e', '--end_group', type=bool,
                         default=False, metavar="end group (bool)", 
@@ -54,8 +61,8 @@ def read_command_line():
     # Check if file exists    
     if not path.isfile(args.f):
        msg = "The file: %s does not exist. \nPlease provide a different file path, or" +\
-             " create the file first. Use cp students_base.txt YYYY-MM-DD.txt" % \
-              args.f
+             " create the file first. Use cp students_base.txt %s YYYY-MM-DD.txt"
+       msg = msg % (args.f, args.c)
        print(msg)
        exit(1)
 
@@ -109,7 +116,7 @@ def push_attendance(auth, course, university):
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
 
     # Get content
-    filename = "%d-%s-%d.txt" % (date.year, month, date.day)
+    filename = "%s-%d-%s-%d.txt" % (course, date.year, month, date.day)
     content = b64encode(open("Attendance/%s" % filename, 'r').read())
 
     # Parameters

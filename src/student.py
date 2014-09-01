@@ -138,7 +138,6 @@ class Student():
         list_teams = get(self.url_orgs+"/teams", auth=self.auth, params={'per_page': 100})
         
         for team in list_teams.json():
-            print(self.name == team['name'].encode('utf-8'), self.name, team['name'].encode('utf-8'))
             if self.name == team['name'].encode('utf-8'):
                 return True
 
