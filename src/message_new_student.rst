@@ -1,5 +1,5 @@
-Hi %(name)s, and welcome to INF5620
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Hi %(name)s, and welcome to %(course)s
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In this course we will use GitHub as a tool for version control and collaboration. 
 You have now access to a repository which is called %(repo_name)s. It is very important that 
 every file you make in this course that is supposed to be evaluated by others, is 

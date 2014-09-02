@@ -2,15 +2,15 @@ TODO:
 
 (D) is development, is just an idea.
 
-- Make a script that automaticaly copy students_base.txt for a group. (script?)
 - Generate stats: commits, comments, attendence ect.
 - Make collaboration work with groups of one.
 - Change to OAuth
 - Check if there is an Attendance repository in the classrom, if not create one
-- Make it easy to switch between to courses. Parameter file? Script?
 - Look for potential speed ups, adding 40 students takes too long.
 - Make a option for sending emails or not.
 - Need a more robust way of handling special characters in student.py
 - Use s = request.Session() and set s.auth = auth, and then use s.put, s.get and
-  so on
-- Add a test for number of teams, now max is 100.
+  so on, is this faster?
+- Add a test for number of teams, now max is 100, need to iterate over each page.
+- The admin user is added to every new team, this is a bug.
+- For people with the same firstname it doesn't change the repo name.

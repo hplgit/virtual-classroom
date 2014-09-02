@@ -26,14 +26,26 @@ except ImportError:
 try: input = raw_input
 except NameError: pass
 
+# Get password and username
 email = input("For Google\nEmail: ")
 password = getpass.getpass("Password:")
 
-gc = gspread.login(email, password)
-wks = gc.open("INF5620").sheet1
+# Get parameters
+parameters_path = os.path.join(os.path.dirname(__file__), '..', 'default_parameters.txt')
+lines = open(parameters_path, 'r').readlines()
+parameters = {}
+for line in lines:
+    key, value = line.split(':')
+    parameters[key] = value[:-1]
 
-abs_path = os.path.abspath(__file__)
-filename = os.path.sep.join(abs_path.split(os.path.sep)[:-2]) + '/Attendance/students_base.txt'
+
+# Log on to disk
+gc = gspread.login(email, password)
+wks = gc.open(parameters['course']).sheet1
+
+# Store file in ../Attendance/ 
+filename = os.path.join(os.path.dirname(__file__), '..', 
+                        'Attendance', "%-studens_base.txt" % parameters['course']) 
 if os.path.isfile(filename):
    answ = input("The student_base file exists, are you" + \
                  "sure you want to overwrite this?! (yes/no): ")

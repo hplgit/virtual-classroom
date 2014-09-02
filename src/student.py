@@ -35,15 +35,27 @@ class Student():
 
             # Get repo name
             else:
-                # Assume that there is less than 100 teams
                 r = get(self.url_orgs + "/teams", auth=auth, params={'per_page': 100})
-                for team in r.json():
-                    if team['name'].encode('utf-8') == self.name: 
-                        id_ = team['id']
+                header = r.headers['link'].split(',')
+                for link in header:
+                    if 'rel="last"' in link:
+                        pages = int(link.split(';')[0][-2])
 
-                r = get(self.url_teams + "/" + str(id_) + "/repos", auth=auth)
-                for repo in r.json():
-                    self.repo_name = repo['name'].encode('utf-8')
+                id_ = False
+                for page in range(pages):
+                    r = get(self.url_orgs + "/teams", auth=auth, 
+                             params={'per_page': 100, 'page':page+1})
+
+                    for team in r.json():
+                        if team['name'].encode('utf-8') == self.name: 
+                            id_ = team['id']
+                            break
+
+                    if id_:
+                        r = get(self.url_teams + "/" + str(id_) + "/repos", auth=auth)
+                        for repo in r.json():
+                            self.repo_name = repo['name'].encode('utf-8')
+                            break
  
     def is_user(self):
         """
@@ -126,20 +138,36 @@ class Student():
 
     def repo_exist(self, repo_name):
         """Check if there exixts a repo with the given name"""
-        list_repos = get(self.url_orgs + "/repos", auth=self.auth)
-        for repo in list_repos.json():
-            if repo_name == repo['name'].encode('utf-8'):
-                return True
+        list_repos = get(self.url_orgs + "/repos", auth=self.auth, params={'per_page': 100})
+        header = list_repo.headers['link'].split(',')
+        for link in header:
+            if 'rel="last"' in link:
+                pages = int(link.split(';')[0][-2])
+
+        for page in range(pages):
+            list_repos = get(self.url_orgs + "/repos", auth=self.auth, 
+                              params={'per_page': 100, 'page':page+1})
+            for repo in list_repos.json():
+                if repo_name == repo['name'].encode('utf-8'):
+                    return True
+
         return False
         
     def has_team(self):
         """Check if there exist a team <full name>"""
-        # Assume that there are less than 100 teams.
+        # Find number of pages with teams
         list_teams = get(self.url_orgs+"/teams", auth=self.auth, params={'per_page': 100})
-        
-        for team in list_teams.json():
-            if self.name == team['name'].encode('utf-8'):
-                return True
+        header = list_teams.headers['link'].split(',')
+        for link in header:
+            if 'rel="last"' in link:
+                pages = int(link.split(';')[0][-2])
+
+        for page in range(pages):
+            list_teams = get(self.url_orgs+"/teams", auth=self.auth, 
+                              params={'per_page': 100, 'page': page + 1})        
+            for team in list_teams.json():
+                if self.name == team['name'].encode('utf-8'):
+                    return True
 
         return False
 

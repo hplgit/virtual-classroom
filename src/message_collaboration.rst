@@ -1,5 +1,5 @@
 Hi %(name)s!
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this group session you will be working with %(group_names)s! You are part
 of %(team_name)s. You will be correcting the assignments of
