@@ -14,11 +14,10 @@ class Collaboration():
         if max_group_size > len(students.values()):
             #TODO: This case failes
             self.groups = list(students.values())
-            self.auth = self.groups[0].auth
-            self.url_orgs = self.groups[0].url_orgs
-            self.org = self.groups[0].org
+            test_student = self.groups[0]
         
         else:
+            # Set up groups with max number of students
             self.groups = []
             number_of_students = len(students.values())
             rest = number_of_students%max_group_size
@@ -27,20 +26,23 @@ class Collaboration():
             for i in range(number_of_groups):        
                 self.groups.append(list(students.values())[i::number_of_groups])
 
-            self.auth = self.groups[0][0].auth
-            self.url_orgs = self.groups[0][0].url_orgs
-            self.org = self.groups[0][0].org
-            self.send_email = self.groups[0][0].send_email
+            test_student = self.groups[0][0]
 
-        list_teams = get(self.url_orgs+"/teams", auth=self.auth)
-        for team in list_teams.json():
+        # Get some parameters from the student instance
+        self.auth = test_student.auth
+        self.url_orgs = test_student.url_orgs
+        self.org = test_student.org
+        self.send_email = test_student.send_email
+
+        teams = test_student.get_teams()
+        for team in teams:
             if 'Team-' in team['name'].encode('utf-8'):
                 print('There are already teams with collaboration. Delete these by runing'\
                       +' "python start_group.py --e True"')
                 exit(1)
 
         n = 0
-        for team in self.groups:
+        for group in self.groups:
             n = n+1 if len(self.groups)>n+1 else 0
 
             # Create a team with access to an another team's repos
@@ -52,7 +54,7 @@ class Collaboration():
                         "repo_names": repo_names # is this necessary
                        }
             r_team = post(
-                          team[0].url_orgs+"/teams",
+                          self.url_orgs+"/teams",
                           data=dumps(team_key), 
                           auth=self.auth
                          )
@@ -67,7 +69,7 @@ class Collaboration():
                                    % (r_add_repo.status_code, s.repo_name, n))
            
             # Add students to the team
-            for s in team:
+            for s in group:
                 url_add_member = s.url_teams + "/%s/members/%s" \
                            % (r_team.json()['id'], s.username)
                 r_add_member = put(url_add_member, auth=s.auth)

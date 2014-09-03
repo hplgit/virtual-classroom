@@ -7,7 +7,7 @@ from json import dumps
 from sys import exit
 from unicodedata import normalize, category
 
-class Student():
+class Student(Classroom):
     """Holdes all the information about the student.""" 
 
     def __init__(self, name, username, university, course, email, auth, send_email):
@@ -27,6 +27,8 @@ class Student():
         self.url_orgs = 'https://api.github.com/orgs/%s' % (self.org)
         self.url_teams = 'https://api.github.com/teams' 
 
+        super(self.auth, self.url_orgs)
+
         # Check that there is an user with the given username
         if self.is_user():
             # Check if user have a team
@@ -35,26 +37,17 @@ class Student():
 
             # Get repo name
             else:
-                r = get(self.url_orgs + "/teams", auth=auth, params={'per_page': 100})
-                header = r.headers['link'].split(',')
-                for link in header:
-                    if 'rel="last"' in link:
-                        pages = int(link.split(';')[0][-2])
-
-                id_ = False
-                for page in range(pages):
-                    r = get(self.url_orgs + "/teams", auth=auth, 
-                             params={'per_page': 100, 'page':page+1})
-
-                    for team in r.json():
-                        if team['name'].encode('utf-8') == self.name: 
-                            id_ = team['id']
-                            break
-
-                    if id_:
-                        r = get(self.url_teams + "/" + str(id_) + "/repos", auth=auth)
-                        for repo in r.json():
-                            self.repo_name = repo['name'].encode('utf-8')
+                teams = self.get_teams()
+                for team in teams:
+                    if team['name'].encode('utf-8') == self.name: 
+                            self.team_id = team['id']
+                            r = get(self.url_teams + "/" + str(self.id) + "/repos", auth=auth)
+                            for repo in r.json():
+                                # Assumes that the student has not createda new 
+                                # repository containing the name of the course
+                                if course in repo['name'].encode('utf-8') 
+                                    self.repo_name = repo['name'].encode('utf-8')
+                                    break
                             break
  
     def is_user(self):
@@ -114,19 +107,25 @@ class Student():
         r_repo = post(self.url_orgs + "/repos", data=dumps(key_repo), auth=self.auth)
         r_team = post(self.url_orgs + "/teams", data=dumps(key_team), auth=self.auth)
 
-        url_add_member = self.url_teams + "/%s/members/%s" % (r_team.json()['id'], self.username)
-        url_add_repo = self.url_teams + "/%s/repos/%s/%s" % (r_team.json()['id'],                                                                                  self.org, self.repo_name)
-        r_add_repo = put(url_add_repo, auth=self.auth)
-        r_add_member = put(url_add_member, headers={'Content-Length': 0}, auth=self.auth)
-
-        # Check if everthing succeeded  
-        if r_repo.status_code != 201: 
+        # Check success
+        success = True 
+        if r_repo.status_code != 201:
             print("Error: %d - did not manage to add a repository for %s" % \
                   (r_repo.status_code, self.username))
+            success = False
         elif r_team.status_code != 201:
             print("Error: %d - did not manage to add a team for %s" % \
                   (r_team.status_code, self.username))
-        elif r_add_repo.status_code != 204:
+            success = False
+
+        if success:
+            url_add_member = self.url_teams + "/%s/members/%s" % (r_team.json()['id'], self.username)
+            url_add_repo = self.url_teams + "/%s/repos/%s/%s" % (r_team.json()['id'],                                                                                  self.org, self.repo_name)
+            r_add_repo = put(url_add_repo, auth=self.auth)
+            r_add_member = put(url_add_member, headers={'Content-Length': 0}, auth=self.auth)
+
+        # Check if everthing succeeded  
+        if r_add_repo.status_code != 204:
             print("Error: %d - did not manage to add repo to team:%s" % \
                   (r_add_repo.status_code, self.name))
         elif r_add_member.status_code != 204:
@@ -138,36 +137,19 @@ class Student():
 
     def repo_exist(self, repo_name):
         """Check if there exixts a repo with the given name"""
-        list_repos = get(self.url_orgs + "/repos", auth=self.auth, params={'per_page': 100})
-        header = list_repo.headers['link'].split(',')
-        for link in header:
-            if 'rel="last"' in link:
-                pages = int(link.split(';')[0][-2])
-
-        for page in range(pages):
-            list_repos = get(self.url_orgs + "/repos", auth=self.auth, 
-                              params={'per_page': 100, 'page':page+1})
-            for repo in list_repos.json():
-                if repo_name == repo['name'].encode('utf-8'):
-                    return True
+        repos = self.get_repos()
+        for repo in repos:
+            if repo_name == repo['name'].encode('utf-8'):
+                return True
 
         return False
         
     def has_team(self):
         """Check if there exist a team <full name>"""
-        # Find number of pages with teams
-        list_teams = get(self.url_orgs+"/teams", auth=self.auth, params={'per_page': 100})
-        header = list_teams.headers['link'].split(',')
-        for link in header:
-            if 'rel="last"' in link:
-                pages = int(link.split(';')[0][-2])
-
-        for page in range(pages):
-            list_teams = get(self.url_orgs+"/teams", auth=self.auth, 
-                              params={'per_page': 100, 'page': page + 1})        
-            for team in list_teams.json():
-                if self.name == team['name'].encode('utf-8'):
-                    return True
+        teams = self.get_teams()        
+        for team in teams:
+            if self.name == team['name'].encode('utf-8'):
+                return True
 
         return False
 

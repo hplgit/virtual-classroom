@@ -16,6 +16,7 @@ from json import dumps
 from student import Student
 from collaboration import Collaboration
 from send_email import Email
+from classroom import Classroom
 
 # Python3 and 2 compatible
 try: input = raw_input
@@ -136,24 +137,32 @@ def push_attendance(auth, course, university):
 
 def end_group(org):
     """Deletes all teams on the form Team-<number>"""
-    auth = get_password('Github')
+    auth = get_password()
     url_orgs = 'https://api.github.com/orgs/%s/teams' % (org)    
 
-    list_teams = get(url_orgs, auth=auth)
-    success = True
     number_deleted = 0
 
-    for team in list_teams.json():
+    classroom = Classroom(auth, url_orgs)
+    teams = classroom.get_teams()
+
+    number_not_deleted = 0
+    not_deleted = ''
+
+    for team in teams:
         if 'Team-' in team['name']:
             r = delete("https://api.github.com/teams/" + str(team['id']), auth=auth)
             if r.status_code != 204:
-                print('Could not delete team %s' % team['name'])
-                success = False
+                number_not_deleted += 1
+                not_deleted += '\n' + team['name']
             else:
                 number_deleted += 1
 
-    if success:
-        print('Deleted all teams related to the group session (%d teams deleted)' % number_deleted)
+    if number_not_deleted == 0:
+        print('Deleted all teams related to the group session (%d teams deleted)' % \
+                number_deleted)
+    else:
+        print('Delted %s teams, but there were %s teams that where not deleted:%s' % \
+               (number_deleted, number_not_deleted, not_deleted))
 
 
 def main():

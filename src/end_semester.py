@@ -23,9 +23,18 @@ p = getpass('Password:')
 auth = (admin, p)
 url = "https://api.github.com"
 
+# Get parameters
+parameters = {}
+lines = open('default_parameters.txt', 'r').readlines()
+for line in lines:
+    key, value = line.split(':')
+    parameters[key] = value[:-1]
+
+org = "%(university)s-%(course)s" % parameters
+
 # Get list of teams and repos
-list_teams = requests.get(url+"/orgs/UiO-INF5620/teams", auth=auth)
-list_repos = requests.get(url+"/orgs/UiO-INF5620/repos", auth=auth)
+list_teams = requests.get(url+"/orgs/%s/teams" % org, auth=auth)
+list_repos = requests.get(url+"/orgs/%s/repos" % org, auth=auth)
 
 # Find list of teams to delete
 teams_to_delete = []
@@ -42,4 +51,4 @@ for team in list_teams.json():
 # Delete repos
 for repo in list_repos.json():
    if 'INF5620-' in repo['name']:
-       requests.delete(url + "/repos/UiO-INF5620/" + repo['name'], auth=auth)
+       requests.delete(url + "/repos/%s/" % org + repo['name'], auth=auth)
