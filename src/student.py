@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 
-from requests import get, put, post 
+from requests import get, put, post, delete 
 from json import dumps
 from sys import exit
 from unicodedata import normalize, category
@@ -111,8 +111,11 @@ class Student(Classroom):
         # When creating a team the user is added, fix this by removing
         # auth[0] from the team before the student is added
         if r_team.json()['members_count'] != 0 and r_team.status_code == 201:
-            url_rm_auth = self.url_teams + '/' + r_team.json()['id'] + 'members/' + self.auth[0]
+            url_rm_auth = self.url_teams + '/' + str(r_team.json()['id']) + '/members/' + self.auth[0]
             r_remove_auth = delete(url_rm_auth, auth=self.auth)
+            if r_remove_auth.status_code != 204:
+                print("Could not delete user:%s from team:%s, this should" % (self.name, auth[0]) + \
+                        "be done manualy or by a seperate script")
 
         # Check success
         success = True 
@@ -131,16 +134,16 @@ class Student(Classroom):
             r_add_repo = put(url_add_repo, auth=self.auth)
             r_add_member = put(url_add_member, headers={'Content-Length': 0}, auth=self.auth)
 
-        # Check if everthing succeeded  
-        if r_add_repo.status_code != 204:
-            print("Error: %d - did not manage to add repo to team:%s" % \
-                  (r_add_repo.status_code, self.name))
-        elif r_add_member.status_code != 204:
-            print("Error: %d - did not manage to add usr:%s to team:%s" \
-                   % (r_add_member.status_code, self.username, self.name))
-        else:
-            # Send information to the student
-            self.send_email.new_student(self)
+            # Check if everthing succeeded  
+            if r_add_repo.status_code != 204:
+                print("Error: %d - did not manage to add repo to team:%s" % \
+                      (r_add_repo.status_code, self.name))
+            elif r_add_member.status_code != 204:
+                print("Error: %d - did not manage to add usr:%s to team:%s" \
+                       % (r_add_member.status_code, self.username, self.name))
+            else:
+                # Send information to the student
+                self.send_email.new_student(self)
 
     def repo_exist(self, repo_name):
         """Check if there exixts a repo with the given name"""

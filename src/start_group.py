@@ -139,7 +139,7 @@ def push_attendance(auth, course, university):
 def end_group(org):
     """Deletes all teams on the form Team-<number>"""
     auth = get_password()
-    url_orgs = 'https://api.github.com/orgs/%s/teams' % (org)    
+    url_orgs = 'https://api.github.com/orgs/%s' % (org)    
 
     number_deleted = 0
 
@@ -148,7 +148,6 @@ def end_group(org):
 
     number_not_deleted = 0
     not_deleted = ''
-
     for team in teams:
         if 'Team-' in team['name']:
             r = delete("https://api.github.com/teams/" + str(team['id']), auth=auth)
