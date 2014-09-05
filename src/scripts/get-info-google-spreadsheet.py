@@ -45,7 +45,7 @@ wks = gc.open(parameters['course']).sheet1
 
 # Store file in ../Attendance/ 
 filename = os.path.join(os.path.dirname(__file__), '..', 
-                        'Attendance', "%-studens_base.txt" % parameters['course']) 
+                        'Attendance', "%s-students_base.txt" % parameters['course']) 
 if os.path.isfile(filename):
    answ = input("The student_base file exists, are you" + \
                  "sure you want to overwrite this?! (yes/no): ")

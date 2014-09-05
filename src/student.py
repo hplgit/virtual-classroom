@@ -6,6 +6,7 @@ from requests import get, put, post
 from json import dumps
 from sys import exit
 from unicodedata import normalize, category
+from classroom import Classroom
 
 class Student(Classroom):
     """Holdes all the information about the student.""" 
@@ -27,7 +28,7 @@ class Student(Classroom):
         self.url_orgs = 'https://api.github.com/orgs/%s' % (self.org)
         self.url_teams = 'https://api.github.com/teams' 
 
-        super(self.auth, self.url_orgs)
+        Classroom.__init__(self, self.auth, self.url_orgs)
 
         # Check that there is an user with the given username
         if self.is_user():
@@ -41,11 +42,11 @@ class Student(Classroom):
                 for team in teams:
                     if team['name'].encode('utf-8') == self.name: 
                             self.team_id = team['id']
-                            r = get(self.url_teams + "/" + str(self.id) + "/repos", auth=auth)
+                            r = get(self.url_teams + "/" + str(self.team_id) + "/repos", auth=auth)
                             for repo in r.json():
                                 # Assumes that the student has not createda new 
                                 # repository containing the name of the course
-                                if course in repo['name'].encode('utf-8') 
+                                if course in repo['name'].encode('utf-8'): 
                                     self.repo_name = repo['name'].encode('utf-8')
                                     break
                             break
@@ -106,6 +107,12 @@ class Student(Classroom):
         # Add team and repo and add repository and user to team.
         r_repo = post(self.url_orgs + "/repos", data=dumps(key_repo), auth=self.auth)
         r_team = post(self.url_orgs + "/teams", data=dumps(key_team), auth=self.auth)
+
+        # When creating a team the user is added, fix this by removing
+        # auth[0] from the team before the student is added
+        if r_team.json()['members_count'] != 0 and r_team.status_code == 201:
+            url_rm_auth = self.url_teams + '/' + r_team.json()['id'] + 'members/' + self.auth[0]
+            r_remove_auth = delete(url_rm_auth, auth=self.auth)
 
         # Check success
         success = True 

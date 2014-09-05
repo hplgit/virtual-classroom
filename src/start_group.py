@@ -106,7 +106,7 @@ def create_students(students_file, course, university):
     # Create a dict with students
     for line in text:
         pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
-        if pressent == 'X':
+        if pressent.lower() == 'x' and username != "":
             students[name] = Student(name, username, university, course, email, auth, send_email)
 
     return students   
@@ -115,16 +115,17 @@ def push_attendance(auth, course, university):
     """Push the attendance file to the repo for later use"""
     date = datetime.now()
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
+    day = str(date.day) if date.day > 9 else "0" + str(date.day)
 
     # Get content
-    filename = "%s-%d-%s-%d.txt" % (course, date.year, month, date.day)
+    filename = "%s-%s-%s-%s.txt" % (course, date.year, month, day)
     content = b64encode(open("Attendance/%s" % filename, 'r').read())
 
     # Parameters
     key_push = { 'message': 'Attendance %s'  % filename.split('.')[0],
                  'commiter': {
                                'name': 'Username: %s' % auth[0],
-                               'email': 'inf5620@gmail.com'
+                               'email': 'inf5620@gmail.com' #TODO: find a generall email
                              },
                  'content': content
                }
