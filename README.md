@@ -8,7 +8,7 @@ collaboration between students during group sessions.
 Documentation
 -------------
 
-See [wiki](https://github.com/mikaem/virtual-classroom/wiki)
+See [wiki](https://github.com/hplgit/virtual-classroom/wiki)
 
 
 
@@ -20,7 +20,7 @@ and run the program by
 
     python start_group.py
 
-To see options and how it works see [wiki](https://github.com/mikaem/virtual-classroom/wiki)
+To see options and how it works see [wiki](https://github.com/hplgit/virtual-classroom/wiki)
 
 
 Contact
