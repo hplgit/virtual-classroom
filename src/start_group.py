@@ -27,7 +27,8 @@ def read_command_line():
     parser = ArgumentParser()
 
     parameters = {}
-    lines = open('default_parameters.txt', 'r').readlines()
+    default_parameters_path = path.join(path.dirname(__file__), 'default_parameters.txt')
+    lines = open(default_parameters_path, 'r').readlines()
     for line in lines:
         key, value = line.split(':')
         parameters[key] = value[:-1]
@@ -36,11 +37,12 @@ def read_command_line():
     date = datetime.now()
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
     day = str(date.day) if date.day > 9 else "0" + str(date.day)
-    parameters['filepath'] = parameters['filepath'] % (date.year, month, day)
+    parameters['filepath'] = path.join(path.dirname(__file__), 
+                                        parameters['filepath'] % (date.year, month, day))
 
     parser.add_argument('--f', '--file', type=str,
                         default=parameters['filepath'], 
-                        help=""" A file including all students, in this course. Format: \
+                        help=""" A file including all students, in this course. Format:
                         Attendence(X/-) //  Name //  Username // email""", metavar="students_file")
     parser.add_argument('--c', '--course', type=str,
                         default=parameters['course'], help="Name of the course", metavar="course")
@@ -48,30 +50,37 @@ def read_command_line():
                         default=parameters['university'],
                         help="Name of the university, the viritual-classroom should \
                         be called <university>-<course>", metavar="university")
-    parser.add_argument('--m', '--max_students', type=str, default=parameters['max_students'],
+    parser.add_argument('--m', '--max_students', type=int, default=parameters['max_students'],
                         help="Maximum number of students in each group.", metavar="max group size")
-    parser.add_argument('--e', '--end_group', type=bool,
+    parser.add_argument('--e', '--end-group', type=bool,
                         default=False, metavar="end group (bool)", 
                         help='Delete the current teams on the form Team-<number>')
-    parser.add_argument('--i', '--start-semester', type=bool,
+    parser.add_argument('--i', '--start_semester', type=bool,
                         default=False, metavar="initialize group (bool)",
                         help='Create repositories and teams for the students.')
-
+    parser.add_argument('--g', '--get_repos', type=bool, 
+                        default=False, help="Clone all student repos into the" + \
+                                             "filepath ./<course>_all_repos",
+                        metavar="Get all repos (bool)")
+    parser.add_argument('--get_repos_filepath', type=str, default=".", 
+                        help="This argument is only used when --get_repos is used. \
+                              It states the location of where the folder \
+                              <course>_all_repos should be located \
+                              this is expected to be a relative path from where \
+                              you are when you execute this program",
+                        metavar="Get all repos (bool)")
+                     
     args = parser.parse_args()
 
     # Check if file exists    
     if not path.isfile(args.f):
-       msg = "The file: %s does not exist. \nPlease provide a different file path, or" +\
-             " create the file first. Use cp students_base.txt %s YYYY-MM-DD.txt"
+       msg = "The file: %s does not exist. \nPlease provide a different file path, or \
+              create the file first. Use the script 'copy-attendance-file.py'"
        msg = msg % (args.f, args.c)
        print(msg)
        exit(1)
 
-    # Make sure end and start_semester is a bool
-    end = args.e if args.e == False else True
-    start_semester = args.i if args.i == False else True
-
-    return args.f, args.c, args.u, int(args.m), end, start_semester
+    return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath
 
 
 def get_password():
@@ -166,10 +175,18 @@ def end_group(org):
 
 
 def main():
-    students_file, course, university, max_students, end, start_semester = read_command_line()
+    students_file, course, university, max_students, \
+     end, start_semester, get_repos, get_repos_filepath = read_command_line()
+
     if end:
         org = "%s-%s" % (university, course)
         end_group(org)
+
+    elif get_repos:
+        from get_all_repos import collect_repos
+        auth = get_password()
+        collect_repos(auth, university, course, get_repos_filepath)
+
     else:
         students = create_students(students_file, course, university)
         if not start_semester:
