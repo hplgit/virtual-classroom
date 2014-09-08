@@ -1,4 +1,5 @@
 from requests import get, put, post
+from sys import exit
 from json import dumps
 
 class Collaboration():
@@ -9,7 +10,8 @@ class Collaboration():
            reposetories.
         """                 
         if len(students.values()) < 2:
-            assert False, "There are one or less students, no need for collaboration"
+            print("There are one or less students, no need for collaboration")
+            sys.exit(1)
 
         if max_group_size > len(students.values()):
             #TODO: This case failes

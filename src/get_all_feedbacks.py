@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import base64
 from requests import get
 from classroom import Classroom
 
@@ -41,7 +42,7 @@ you answer "REVEIW1" the program will look for "REVEIW1_YES
 and "REVEIW1_NO" (case insensetive) : """).lower()
 
         # The files to look for
-        file_feedback = [feedback_name_base + '_yes', feedback_name_base + '_no']
+        self.file_feedback = [feedback_name_base + '_yes', feedback_name_base + '_no']
        
         # Create path
         original_dir = os.getcwd()
@@ -54,20 +55,20 @@ and "REVEIW1_NO" (case insensetive) : """).lower()
         # Save in self for later use
         self.passed_path = os.path.join(feedback_filepath, mandatory_assignment, 'PASSED')
         self.not_passed_path = os.path.join(feedback_filepath, \
-                                mandatory_assignment, 'NOT PASSED')
+                                mandatory_assignment, 'NOT_PASSED')
 
         # Create folder structure
         try:
             os.makedirs(self.passed_path)
             os.makedirs(self.not_passed_path)
         except Exception as e:
-            print(e)
+            #print(e)
             os.chdir(os.path.join(feedback_filepath, mandatory_assignment))
-            if os.listdir('PASSED') == [] and os.listdir('NOT PASSED') == []:
+            if os.listdir('PASSED') == [] and os.listdir('NOT_PASSED') == []:
                 pass
             else:
-                print("There are already collected feedbacks for %s. Remove these of copy \
-                        them to another directory") 
+                print("There are already collected feedbacks for %s. Remove these or copy \
+                        them to another directory.") 
                 sys.exit(1)
 
         os.chdir(original_dir)
@@ -76,21 +77,22 @@ and "REVEIW1_NO" (case insensetive) : """).lower()
         repos = self.classroom.get_repos()    
         for repo in repos:
             # Assumes that no repo has the same naming convension
-            if course + "-" in repo['name'].encode('utf-8'):
+            if self.course + "-" in repo['name'].encode('utf-8'):
 
                 # Get sha from the last commit
                 url_commits = repo['commits_url'][:-6]
                 sha = get(url_commits, auth=self.auth).json()[0]['sha']
 
                 # Get tree
-                url_trees = repo['trees_url'][:-6]
-                r = get(url_trees + '/' + sha, auth=self.auth)
-                contents, success, status = self.find_file(r.json()['tree'])
+                self.url_trees = repo['trees_url'][:-6]
+                r = get(self.url_trees + '/' + sha, auth=self.auth)
+                success, contents, status = self.find_file(r.json()['tree'])
                 if success:
-                    name = get(repo['teams_url'], auth=self.auth).json()['name']
+                    r = get(repo['teams_url'], auth=self.auth)
+                    name = r.json()[0]['name']
                     personal_info = self.students_base_dict[name] # problems with ascii?
                     header = "/"*50 + "\n// Name: %(name)s \n" + "// Email: %(email)s \n" + \
-                              "// Username: %(username)s \n" + "/"*50 + '\n'
+                              "// Username: %(username)s \n" + "/"*50 + '\n\n'
                     text = header % personal_info + contents
                     filename = name.replace(' ', '_') + '.txt'
                     folder = self.passed_path if status == 'yes' else self.not_passed_path
@@ -111,17 +113,20 @@ and "REVEIW1_NO" (case insensetive) : """).lower()
         return student_dict
 
     def find_file(self, tree):
-        for file in r.json()['tree']:
+        for file in tree:
             # Explor the subdirectories recursivly
             if file['type'] == 'tree':
-                r = get(url_trees + '/' + file['sha'], auth=auth)
+                r = get(self.url_trees + '/' + file['sha'], auth=self.auth)
                 self.find_file(r.json()['tree'])
 
             # Check if the files in the folder match file_feedback
-            if file.split(os.path.sep)[-1].lower() in file_feedback:
-                r = get(file['url'], auth=auth)
-                return True, base64.b64decode(r.json['contents']), \
-                        file.split(os.path.sep)[-1].split('_')[-1]
+            if file['path'].split(os.path.sep)[-1].lower() in self.file_feedback:
+                r = get(file['url'], auth=self.auth)
+                #print(r)
+                #print(r.json())
+                #print(file['url'])    
+                return True, base64.b64decode(r.json()['content']), \
+                        file['path'].split(os.path.sep)[-1].split('_')[-1]
 
         # If file not found
         return False, "", ""
