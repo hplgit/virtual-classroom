@@ -1,4 +1,5 @@
 import os
+from requests import get
 from classroom import Classroom
 
 def collect_repos(auth, university, course, get_repos_filepath):
@@ -12,18 +13,22 @@ def collect_repos(auth, university, course, get_repos_filepath):
 
     org = "%s-%s" % (university, course)
     url_orgs = 'https://api.github.com/orgs/%s' % (org)
+    url_repos = 'https://api.github.com/repositories/'
     classroom = Classroom(auth, url_orgs)
     repos = classroom.get_repos()
-    SSH_base = "git@github.com:%s/" % org
+    #SSH_base = "git@github.com:%s/" % org
 
+    # Create the SSH links
     SSH_links = []
     for repo in repos:
         if course in repo['name'].encode('utf-8'):
-            SSH_links.append(SSH_base + repo['name'].encode('utf-8'))
+            r = get(url_repos + str(repo['id']), auth=auth)
+            SSH_links.append(r.json()['ssh_url'])
 
     # Change to destination folder
     os.chdir(repos_filepath)
     
+    # Clone into the repos
     for SSH_link in SSH_links:
         result = os.system('git clone ' + SSH_link)
         print(result)

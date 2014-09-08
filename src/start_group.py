@@ -52,7 +52,7 @@ def read_command_line():
                         be called <university>-<course>", metavar="university")
     parser.add_argument('--m', '--max_students', type=int, default=parameters['max_students'],
                         help="Maximum number of students in each group.", metavar="max group size")
-    parser.add_argument('--e', '--end-group', type=bool,
+    parser.add_argument('--e', '--end_group', type=bool,
                         default=False, metavar="end group (bool)", 
                         help='Delete the current teams on the form Team-<number>')
     parser.add_argument('--i', '--start_semester', type=bool,
@@ -69,6 +69,18 @@ def read_command_line():
                               this is expected to be a relative path from where \
                               you are when you execute this program",
                         metavar="Get all repos (bool)")
+    parser.add_argument('--F', '--get_feedback', type=bool,
+                        default=False, help="Store all the feedback files into the" + \
+                                             "filepath ./<course>_all_repos. To change" \
+                                             " the location use '--get_feedback_filepath'",
+                        metavar="Get all feedbacks (bool)")
+    parser.add_argument('--get_feedback_filepath', type=str, default="",
+                        help="This argument is only used when --get_feedback is used. \
+                              It states the location of where the folder \
+                              <course>_all_feedbacks should be located \
+                              this is expected to be a relative path from where \
+                              you are when you execute this program",
+                        metavar="Get all feedbacks (bool)")
                      
     args = parser.parse_args()
 
@@ -76,11 +88,12 @@ def read_command_line():
     if not path.isfile(args.f):
        msg = "The file: %s does not exist. \nPlease provide a different file path, or \
               create the file first. Use the script 'copy-attendance-file.py'"
-       msg = msg % (args.f, args.c)
+       msg = msg % args.f
        print(msg)
        exit(1)
 
-    return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath
+    return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath, \
+            args.F, args.get_feedback_filepath
 
 
 def get_password():
@@ -176,7 +189,8 @@ def end_group(org):
 
 def main():
     students_file, course, university, max_students, \
-     end, start_semester, get_repos, get_repos_filepath = read_command_line()
+     end, start_semester, get_repos, get_repos_filepath, get_feedback, \
+      get_feedback_filepath = read_command_line()
 
     if end:
         org = "%s-%s" % (university, course)
@@ -186,6 +200,12 @@ def main():
         from get_all_repos import collect_repos
         auth = get_password()
         collect_repos(auth, university, course, get_repos_filepath)
+
+    elif get_feedback:
+        from get_all_feedbacks import Feedbacks
+        auth = get_password()
+        feedbacks = Feedbacks(auth, university, course, get_feedback_filepath)
+        feedbacks()
 
     else:
         students = create_students(students_file, course, university)

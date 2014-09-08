@@ -41,15 +41,15 @@ class Student(Classroom):
                 teams = self.get_teams()
                 for team in teams:
                     if team['name'].encode('utf-8') == self.name: 
-                            self.team_id = team['id']
-                            r = get(self.url_teams + "/" + str(self.team_id) + "/repos", auth=auth)
-                            for repo in r.json():
-                                # Assumes that the student has not createda new 
-                                # repository containing the name of the course
-                                if course in repo['name'].encode('utf-8'): 
-                                    self.repo_name = repo['name'].encode('utf-8')
-                                    break
-                            break
+                        self.team_id = team['id']
+                        r = get(self.url_teams + "/" + str(self.team_id) + "/repos", auth=auth)
+                        for repo in r.json():
+                            # Assumes that the student has not created a new 
+                            # repository containing the name of the course
+                            if self.course in repo['name'].encode('utf-8'): 
+                                self.repo_name = repo['name'].encode('utf-8')
+                                break
+                        break
  
     def is_user(self):
         """
@@ -72,6 +72,7 @@ class Student(Classroom):
         text = text.replace('ø', 'o')
         text = text.replace('Ø', 'O')
         text = text.replace('æ', 'ae')
+        text = text.replace('é', 'e')
         text = text.replace('Æ', 'AE')
         text = text.replace('å', 'aa') # Can skip if text is unicode
         text = text.replace('Å', 'AA')

@@ -4,11 +4,12 @@ TODO:
 
 - Generate stats: commits, comments, attendence ect.
 - Make collaboration work with groups of one.
-- Change to OAuth
+- Change to OAuth(?)
 - Check if there is an Attendance repository in the classrom, if not create one
 - Make a option for sending emails or not.
 - Need a more robust way of handling special characters in student.py
-- The admin user is added to every new team, this is a bug.
+- Create standard filepaths in default_parameters (for collecting 
+  feedbacks and repos)
 
 Potential speed up:
 - Use s = request.Session() and set s.auth = auth, and then use s.put, s.get and
