@@ -12,7 +12,6 @@ directory and execute
 
 
 .. code-block:: 
-    :language: bash
 
 %(get_repos)s
 

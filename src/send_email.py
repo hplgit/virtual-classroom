@@ -86,7 +86,8 @@ class Email():
         for student in group:
             recipient = student.email
             email_var['name'] = student.name.split(' ')[0]
-            rest_of_group = [s.name for s in group if s.name != student.name]
+            rest_of_group = [s.name + " (%s)" % s.email for s in group \
+                                                    if s.name != student.name]
             email_var['group_names'] = ", ".join(rest_of_group[:-1]) + " and " + \
                                        rest_of_group[-1]
 

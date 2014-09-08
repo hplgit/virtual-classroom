@@ -9,7 +9,6 @@ from classroom import Classroom
 try: input = raw_input
 except NameError: pass
 
-
 class Feedbacks:
 
     def __init__(self, auth, university, course, output_path):
@@ -34,12 +33,17 @@ class Feedbacks:
                                            to where the student base file is located: ' % course)
             self.students_base_dict = self.get_students(open(attendance_path, 'r').readlines())
 
+        # Header for each file
+        self.header = "/"*50 + "\n// Name: %(name)s \n" + "// Email: %(email)s \n" + \
+                    "// Username: %(username)s \n" + "// Repo: %(repo)s \n" + "/"*50 + '\n\n'
 
+        # TODO: these should be accessible through default_parameters
+        # User defined variables
         mandatory_assignment = input('What is this assignment called: ')
-        feedback_name_base = input( \
-"""\nWhat are the base filename of your feedback files called, e.g. if 
-you answer "REVEIW1" the program will look for "REVEIW1_YES
-and "REVEIW1_NO" (case insensetive) : """).lower()
+        feedback_name_base = input('\nWhat are the base filename of your feedback \
+                                    files called, e.g. if you answer "REVEIW1" the \
+                                    program will look for "REVEIW1_YES and "REVEIW1_NO" \
+                                    (case insensetive) : ').lower()
 
         # The files to look for
         self.file_feedback = [feedback_name_base + '_yes', feedback_name_base + '_no']
@@ -54,27 +58,24 @@ and "REVEIW1_NO" (case insensetive) : """).lower()
 
         # Save in self for later use
         self.passed_path = os.path.join(feedback_filepath, mandatory_assignment, 'PASSED')
-        self.not_passed_path = os.path.join(feedback_filepath, \
-                                mandatory_assignment, 'NOT_PASSED')
+        self.not_passed_path = os.path.join(feedback_filepath, mandatory_assignment, 'NOT_PASSED')
+        self.not_done_path = os.path.join(feedback_filepath, mandatory_assignment)
 
         # Create folder structure
         try:
             os.makedirs(self.passed_path)
             os.makedirs(self.not_passed_path)
         except Exception as e:
-            #print(e)
-            os.chdir(os.path.join(feedback_filepath, mandatory_assignment))
-            if os.listdir('PASSED') == [] and os.listdir('NOT_PASSED') == []:
+            if os.listdir(self.passed_path) == [] and os.listdir(self.not_passed_path) == []:
                 pass
             else:
                 print("There are already collected feedbacks for %s. Remove these or copy \
                         them to another directory.") 
                 sys.exit(1)
 
-        os.chdir(original_dir)
-
     def __call__(self):
         repos = self.classroom.get_repos()    
+        not_done = []
         for repo in repos:
             # Assumes that no repo has the same naming convension
             if self.course + "-" in repo['name'].encode('utf-8'):
@@ -87,23 +88,26 @@ and "REVEIW1_NO" (case insensetive) : """).lower()
                 self.url_trees = repo['trees_url'][:-6]
                 r = get(self.url_trees + '/' + sha, auth=self.auth)
                 success, contents, status = self.find_file(r.json()['tree'])
+
+                r = get(repo['teams_url'], auth=self.auth)
+                name = r.json()[0]['name']
+                personal_info = self.students_base_dict[name] # problems with ascii?
+                personal_info['repo'] = repo['name'].encode('utf-8')
+
                 if success:
-                    r = get(repo['teams_url'], auth=self.auth)
-                    name = r.json()[0]['name']
-                    personal_info = self.students_base_dict[name] # problems with ascii?
-                    header = "/"*50 + "\n// Name: %(name)s \n" + "// Email: %(email)s \n" + \
-                              "// Username: %(username)s \n" + "/"*50 + '\n\n'
-                    text = header % personal_info + contents
+                    text = self.header % personal_info + contents
                     filename = name.replace(' ', '_') + '.txt'
                     folder = self.passed_path if status == 'yes' else self.not_passed_path
                     folder = os.path.join(folder, filename)
                     feedback = open(folder, 'w')
                     feedback.write(text)
                     feedback.close()
+
                 else:
-                    pass
-                    # TODO: Check if there exists a folder: Not corrected:
-                    #       if not create one. Write a file like over.
+                    not_done.append(personal_info)
+
+        # Write not_done to a file
+        text = "The repositories"
 
     def get_students(self, text):
         student_dict = {}
@@ -114,7 +118,7 @@ and "REVEIW1_NO" (case insensetive) : """).lower()
 
     def find_file(self, tree):
         for file in tree:
-            # Explor the subdirectories recursivly
+            # Explore the subdirectories recursively
             if file['type'] == 'tree':
                 r = get(self.url_trees + '/' + file['sha'], auth=self.auth)
                 self.find_file(r.json()['tree'])
@@ -122,11 +126,8 @@ and "REVEIW1_NO" (case insensetive) : """).lower()
             # Check if the files in the folder match file_feedback
             if file['path'].split(os.path.sep)[-1].lower() in self.file_feedback:
                 r = get(file['url'], auth=self.auth)
-                #print(r)
-                #print(r.json())
-                #print(file['url'])    
                 return True, base64.b64decode(r.json()['content']), \
-                        file['path'].split(os.path.sep)[-1].split('_')[-1]
+                        file['path'].split(os.path.sep)[-1].split('_')[-1].lower()
 
         # If file not found
         return False, "", ""
