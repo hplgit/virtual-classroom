@@ -5,7 +5,8 @@ TODO:
 - Generate stats: commits, comments, attendence ect.
 - Make collaboration work with groups of one.
 - Change to OAuth(?)
-- Check if there is an Attendance repository in the classrom, if not create one
+- Check if there is an Attendance repository in the classrom, if not create one. Or
+  make a script that pushes todays group list.
 - Make a option for sending emails or not.
 - Need a more robust way of handling special characters in student.py
 - Create standard filepaths in default_parameters (for collecting 

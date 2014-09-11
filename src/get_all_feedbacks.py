@@ -29,8 +29,8 @@ class Feedbacks:
         if os.path.isfile(attendance_path):
             self.students_base_dict = self.get_students(open(attendance_path, 'r').readlines())
         else:
-            attendance_path = input('There is no file %s, pleace provide the filepath \
-                                           to where the student base file is located: ' % course)
+            attendance_path = input('There is no file %s, pleace provide the' % attendance_path \
+                                     + 'filepath to where the student base file is located:')
             self.students_base_dict = self.get_students(open(attendance_path, 'r').readlines())
 
         # Header for each file
@@ -40,10 +40,10 @@ class Feedbacks:
         # TODO: these should be accessible through default_parameters
         # User defined variables
         mandatory_assignment = input('What is this assignment called: ')
-        feedback_name_base = input('\nWhat are the base filename of your feedback \
-                                    files called, e.g. if you answer "REVEIW1" the \
-                                    program will look for "REVEIW1_YES and "REVEIW1_NO" \
-                                    (case insensetive) : ').lower()
+        feedback_name_base = input('\nWhat are the base filename of your feedback ' \
+                                    + 'files called, e.g.\nif you answer "PASSED" the ' \
+                                    + 'program will look for "PASSED_YES \nand "PASSED_NO" ' \
+                                    + '(case insensetive) : ').lower()
 
         # The files to look for
         self.file_feedback = [feedback_name_base + '_yes', feedback_name_base + '_no']
@@ -69,8 +69,8 @@ class Feedbacks:
             if os.listdir(self.passed_path) == [] and os.listdir(self.not_passed_path) == []:
                 pass
             else:
-                print("There are already collected feedbacks for %s. Remove these or copy \
-                        them to another directory.") 
+                print("There are already collected feedbacks for %s." % mandatory_assignment \
+                       + " Remove these or copy them to another directory.") 
                 sys.exit(1)
 
     def __call__(self):
@@ -88,10 +88,9 @@ class Feedbacks:
                 self.url_trees = repo['trees_url'][:-6]
                 r = get(self.url_trees + '/' + sha, auth=self.auth)
                 success, contents, status = self.find_file(r.json()['tree'])
-
                 r = get(repo['teams_url'], auth=self.auth)
-                name = r.json()[0]['name']
-                personal_info = self.students_base_dict[name] # problems with ascii?
+                name = r.json()[0]['name'].encode('utf-8') 
+                personal_info = self.students_base_dict[name]
                 personal_info['repo'] = repo['name'].encode('utf-8')
 
                 if success:
@@ -105,9 +104,9 @@ class Feedbacks:
 
                 else:
                     not_done.append(personal_info)
-
-        # Write not_done to a file
-        text = "The repositories"
+        # TODO: write not_done to a file
+        print(not_done)
+        #text = "The repositories"
 
     def get_students(self, text):
         student_dict = {}
@@ -119,15 +118,18 @@ class Feedbacks:
     def find_file(self, tree):
         for file in tree:
             # Explore the subdirectories recursively
-            if file['type'] == 'tree':
-                r = get(self.url_trees + '/' + file['sha'], auth=self.auth)
-                self.find_file(r.json()['tree'])
+            if file['type'].encode('utf-8') == 'tree':
+                print(file['url'])
+                r = get(file['url'], auth=self.auth)
+                success, contents, status = self.find_file(r.json()['tree'])
+                if success:
+                    return success, contents, status
 
             # Check if the files in the folder match file_feedback
-            if file['path'].split(os.path.sep)[-1].lower() in self.file_feedback:
+            file_name = file['path'].split(os.path.sep)[-1].lower().split('.')[0]
+            if file_name in self.file_feedback:
                 r = get(file['url'], auth=self.auth)
-                return True, base64.b64decode(r.json()['content']), \
-                        file['path'].split(os.path.sep)[-1].split('_')[-1].lower()
+                return True, base64.b64decode(r.json()['content']), file_name.split('_')[-1]
 
         # If file not found
         return False, "", ""

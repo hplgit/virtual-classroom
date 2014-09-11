@@ -13,11 +13,18 @@ directory and execute
 
 .. code-block:: 
 
+    mkdir tmp_dir
+    cd tmp_dir
 %(get_repos)s
 
+If this gives you an error you should try this instead:
+
+.. code-block::
+
+%(get_repos_https)s
 
 With all the repositories on your computer you are ready to start correcting and examining the work.
-In addition to reading the code you should run all programs and check the output. 
+In addition to reading the code, you should run all programs and check the output. 
 Pay special attention to the parts of the program where the method is implemented. 
 When you give feedback you should say something about these four questions:
 
@@ -33,4 +40,12 @@ When you give feedback you should say something about these four questions:
 
 If you can answer yes on four of these five points then the exersice is approved.
 The feedback is given by uploading a file PASSED_YES or PASSED_NO. In this file
-you should write comments on each point.
+you should write comments on each point. When you are done correcting and pushing
+the feedbacks you should delete the repos by writing
+
+.. code-block:: 
+
+    cd ..
+    sudo rm -rf tmp_dir
+
+Good luck!

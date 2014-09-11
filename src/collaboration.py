@@ -61,13 +61,23 @@ class Collaboration():
                           auth=self.auth
                          )
 
+            # When creating a team the user is added, fix this by removing
+            # auth[0] from the team before the studentis is added
+            if r_team.json()['members_count'] != 0 and r_team.status_code == 201:
+                url_rm_auth = self.url_teams + '/' + str(r_team.json()['id']) + \
+                               '/members/' + self.auth[0]
+                r_remove_auth = delete(url_rm_auth, auth=self.auth)
+                if r_remove_auth.status_code != 204:
+                    print("Could not delete user:%s from team:%s, this should"
+                        "be done manualy or by a seperate script" % (self.auth[0], team_name))
+
             # Add repos to the team
             for s in self.groups[n]:
                 url_add_repo = s.url_teams + "/%s/repos/%s/%s" \
                            % (r_team.json()['id'], s.org, s.repo_name)
                 r_add_repo = put(url_add_repo, auth=s.auth)
                 if r_add_repo.status_code != 204:
-                    print("Error: %d - Can't add repo:%s access to Team-%d" \
+                    print("Error: %d - Can't add repo:%s to Team-%d" \
                                    % (r_add_repo.status_code, s.repo_name, n))
            
             # Add students to the team
@@ -76,9 +86,10 @@ class Collaboration():
                            % (r_team.json()['id'], s.username)
                 r_add_member = put(url_add_member, auth=s.auth)
                 if r_add_member.status_code != 204:
-                    print("Can't give user:%s access to Team-%d" \
-                                   % (s.username, n))
-            
+                    print("Error: %d - Can't give user:%s access to Team-%d" \
+                                   % (r_add_member, s.username, n))
+           
+ 
             # Send email
             self.send_email.new_group(self.groups[n-1], team_name, self.groups[n])
             

@@ -45,8 +45,9 @@ class Student(Classroom):
                         r = get(self.url_teams + "/" + str(self.team_id) + "/repos", auth=auth)
                         for repo in r.json():
                             # Assumes that the student has not created a new 
-                            # repository containing the name of the course
-                            if self.course in repo['name'].encode('utf-8'): 
+                            # repository containing the name of the course-<firstname>
+                            base_name = "%s-%s" % (self.course, self.name.split()[0])
+                            if base_name in repo['name'].encode('utf-8'): 
                                 self.repo_name = repo['name'].encode('utf-8')
                                 break
                         break
@@ -73,6 +74,7 @@ class Student(Classroom):
         text = text.replace('Ø', 'O')
         text = text.replace('æ', 'ae')
         text = text.replace('é', 'e')
+        text = text.replace("'", "")
         text = text.replace('Æ', 'AE')
         text = text.replace('å', 'aa') # Can skip if text is unicode
         text = text.replace('Å', 'AA')
