@@ -17,8 +17,8 @@ class Feedbacks:
         self.course = course
         #self.output_path = output_path
 
-        org = "%s-%s" % (university, course)
-        url_orgs = 'https://api.github.com/orgs/%s' % (org)
+        self.org = "%s-%s" % (university, course)
+        url_orgs = 'https://api.github.com/orgs/%s' % (self.org)
 
         # Need help functions from classroom
         self.classroom = Classroom(auth, url_orgs)
@@ -35,7 +35,8 @@ class Feedbacks:
 
         # Header for each file
         self.header = "/"*50 + "\n// Name: %(name)s \n" + "// Email: %(email)s \n" + \
-                    "// Username: %(username)s \n" + "// Repo: %(repo)s \n" + "/"*50 + '\n\n'
+                       "// Username: %(username)s \n" + "// Repo: %(repo)s \n" + \
+                        "// Editors: %(editors)s \n" + "/"*50 + "\n\n"
 
         # TODO: these should be accessible through default_parameters
         # User defined variables
@@ -87,23 +88,35 @@ class Feedbacks:
                 # Get tree
                 self.url_trees = repo['trees_url'][:-6]
                 r = get(self.url_trees + '/' + sha, auth=self.auth)
-                success, contents, status = self.find_file(r.json()['tree'])
+
+                # Get feedback file
+                success, contents, status, path = self.find_file(r.json()['tree'])
+
+                # Get infomation about user and the file
                 r = get(repo['teams_url'], auth=self.auth)
-                name = r.json()[0]['name'].encode('utf-8') 
-                personal_info = self.students_base_dict[name]
+                personal_info = self.students_base_dict[r.json()[0]['name'].encode('utf-8')]
                 personal_info['repo'] = repo['name'].encode('utf-8')
 
+                # Check if there is reason to belive that the user have cheated
+                #if personal_info['name'] in personal_info['editors']:
+                    #pass 
+                    #TODO: Store this feedback in a list of potential cheeters
+
+                # Write feedback with hreader to file
                 if success:
+                    personal_info['editors'] = ", ".join(self.get_editors(path, repo))
                     text = self.header % personal_info + contents
-                    filename = name.replace(' ', '_') + '.txt'
+                    filename = personal_info['name'].replace(' ', '_') + '.txt'
                     folder = self.passed_path if status == 'yes' else self.not_passed_path
                     folder = os.path.join(folder, filename)
                     feedback = open(folder, 'w')
                     feedback.write(text)
                     feedback.close()
 
+                # No feedback
                 else:
                     not_done.append(personal_info)
+
         # TODO: write not_done to a file
         print(not_done)
         #text = "The repositories"
@@ -119,17 +132,26 @@ class Feedbacks:
         for file in tree:
             # Explore the subdirectories recursively
             if file['type'].encode('utf-8') == 'tree':
-                print(file['url'])
                 r = get(file['url'], auth=self.auth)
-                success, contents, status = self.find_file(r.json()['tree'])
+                success, contents, status, path = self.find_file(r.json()['tree'])
                 if success:
-                    return success, contents, status
+                    return success, contents, status, path
 
             # Check if the files in the folder match file_feedback
             file_name = file['path'].split(os.path.sep)[-1].lower().split('.')[0]
             if file_name in self.file_feedback:
                 r = get(file['url'], auth=self.auth)
-                return True, base64.b64decode(r.json()['content']), file_name.split('_')[-1]
+                return True, base64.b64decode(r.json()['content']), file_name.split('_')[-1], \
+                        file['path']
 
         # If file not found
-        return False, "", ""
+        return False, "", "", ""
+
+    def get_editors(self, path, repo):
+        url_commit = 'https://api.github.com/repos/%s/%s/commits' % (self.org, repo['name'])
+        r = get(url_commit, auth=self.auth, params={'path': path})
+        print(r.status_code)
+        editors = [commit['commit']['committer']['name'].encode('utf-8') for commit in r.json()]
+        print(editors)
+        return editors
+
