@@ -46,11 +46,17 @@ class Student(Classroom):
                         for repo in r.json():
                             # Assumes that the student has not created a new 
                             # repository containing the name of the course-<firstname>
-                            base_name = "%s-%s" % (self.course, self.name.split()[0])
+                            base_name = "%s-%s" % (self.course, \
+                                            self.strip_accents(self.name.split(" ")[0]))
+                            #print(base_name)
+                            #print(repo['name'].encode('utf-8'))
+                            #print(base_name in repo['name'].encode('utf-8'))
+                            
                             if base_name in repo['name'].encode('utf-8'): 
                                 self.repo_name = repo['name'].encode('utf-8')
                                 break
                         break
+
  
     def is_user(self):
         """

@@ -40,14 +40,16 @@ class Feedbacks:
 
         # TODO: these should be accessible through default_parameters
         # User defined variables
-        mandatory_assignment = input('What is this assignment called: ')
+        assignment_name = input('What is this assignment called: ')
         feedback_name_base = input('\nWhat are the base filename of your feedback ' \
                                     + 'files called, e.g.\nif you answer "PASSED" the ' \
-                                    + 'program will look for "PASSED_YES \nand "PASSED_NO" ' \
+                                    + 'program will look for "PASSED_%s_YES \nand "PASSED_%s_NO" ' \
+                                    % (assignment_name, assignment_name).upper()
                                     + '(case insensetive) : ').lower()
 
         # The files to look for
-        self.file_feedback = [feedback_name_base + '_yes', feedback_name_base + '_no']
+        self.file_feedback = [feedback_name_base + '_' + assignment_name '_yes', 
+                               feedback_name_base + '_' + assignment_name + '_no']
        
         # Create path
         original_dir = os.getcwd()
@@ -57,10 +59,10 @@ class Feedbacks:
             feedback_filepath = os.path.join(original_dir, output_path, \
                                               "%s_all_feedbacks" % course)
 
-        # Save in self for later use
-        self.passed_path = os.path.join(feedback_filepath, mandatory_assignment, 'PASSED')
-        self.not_passed_path = os.path.join(feedback_filepath, mandatory_assignment, 'NOT_PASSED')
-        self.not_done_path = os.path.join(feedback_filepath, mandatory_assignment)
+        # Path for feedback
+        self.passed_path = os.path.join(feedback_filepath, assignment_name, 'PASSED')
+        self.not_passed_path = os.path.join(feedback_filepath, assignment_name, 'NOT_PASSED')
+        self.not_done_path = os.path.join(feedback_filepath, assignment_name)
 
         # Create folder structure
         try:
@@ -70,7 +72,7 @@ class Feedbacks:
             if os.listdir(self.passed_path) == [] and os.listdir(self.not_passed_path) == []:
                 pass
             else:
-                print("There are already collected feedbacks for %s." % mandatory_assignment \
+                print("There are already collected feedbacks for %s." % assignment_name \
                        + " Remove these or copy them to another directory.") 
                 sys.exit(1)
 
@@ -117,9 +119,15 @@ class Feedbacks:
                 else:
                     not_done.append(personal_info)
 
-        # TODO: write not_done to a file
-        print(not_done)
-        #text = "The repositories"
+        # TODO: Only write those how where pressent at group and didn't get feedback
+        #       now it just writes everyone how has not gotten any feedback.
+        text = "Students that didn't get any feedbacks\n"
+        test += "Name   //  username    //  email   "
+        for student in not_done:
+            text += "%(name)s // %(username)s // %(email)s" % student 
+        not_done_file = open(os.path.join(self.not_done_path, 'No_feedback.txt'), 'w')
+        not_done_file.write(text)
+        not_done_file.close()
 
     def get_students(self, text):
         student_dict = {}
@@ -151,6 +159,7 @@ class Feedbacks:
         url_commit = 'https://api.github.com/repos/%s/%s/commits' % (self.org, repo['name'])
         r = get(url_commit, auth=self.auth, params={'path': path})
         print(r.status_code)
+        # TODO: Change commiter with author?
         editors = [commit['commit']['committer']['name'].encode('utf-8') for commit in r.json()]
         print(editors)
         return editors

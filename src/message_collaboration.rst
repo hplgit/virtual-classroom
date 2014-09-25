@@ -1,51 +1,72 @@
 Hi %(name)s!
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this group session you are a part of %(team_name)s together with %(group_names)s! 
-You will be correcting the assignments of
+You are receiving this e-mail because you are taking the course
+%(course)s and have submitted the first mandatory assignment.
+You are now asked to join a collaboration with two of your fellow
+students. Together you are asked to performed peer-review on three
+other students. (Likewise, another group of three will be
+reviewing your assignment.)
+
+You have been assigned to work with %(group_names)s as part of
+%(team_name)s. Start by contacting your collaborators to organize
+yourself. Email addresses to your collaborators:
+
+%(team_emails)s
+
+Together, the three of you will be correcting the work of the
+following repositories:
 
 %(correcting_names)s
-	
 
-You now have access to push and pull to their repositories. You should make a temporary
-directory and execute
+You now have access to push and pull to these repositories. You
+should make a temporary directory and execute
 
+.. code-block:: bash
 
-.. code-block:: 
-
-    mkdir tmp_dir
-    cd tmp_dir
 %(get_repos)s
 
-If this gives you an error you should try this instead:
+Rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block::
+Deadline for review is one week. In other words, this assignment
+must be completed within Friday, September 26 at 23:59.
 
-%(get_repos_https)s
+Each collaborating group decides how review is organized. Meeting
+each other in person is encouraged, but is not mandatory.
 
-With all the repositories on your computer you are ready to start correcting and examining the work.
-In addition to reading the code, you should run all programs and check the output. 
-Pay special attention to the parts of the program where the method is implemented. 
-When you give feedback you should say something about these four questions:
+The reviewers shall answer/consider the following questions:
 
-* Is the program easy to read and understand? 
-    * Descriptive variable names?
-    * Sufficient amount of comments?
-* Does the program solve the problem?
-* Is it easy to understand how to run the program?
-* Is the implementation verified?
-* Is the report well written?
-    * Clear language and logic
-    * Few typos
+For a program:
 
-If you can answer yes on four of these five points then the exersice is approved.
-The feedback is given by uploading a file PASSED_YES or PASSED_NO. In this file
-you should write comments on each point. When you are done correcting and pushing
-the feedbacks you should delete the repos by writing
+    1. Are the files easy to locate? That is, does the directory has a logical name? Are individual files given names according to the exercise?
+    2. Is the program easy to read? More specifically,
+        2.1. Are variables given self-explanatory names or names in accordance of the mathematical description?
+        2.2. Are enough comments in the code?
+        2.3. Is the code well formatted (use of whitespace etc.)?
+        2.4. Is the code well organized in terms of functions or classes? (Also consider overuse of functions and classes in simpler problems!)
+    3. Does the program answer the various points in the exercise?
+    4. Does the program work?
+    5. Are there any (automatic) verifications of the code?
+    6. Are you able to run the code?
 
-.. code-block:: 
+For a report:
 
-    cd ..
-    sudo rm -rf tmp_dir
+    1. Is the report easy to locate?
+    2. Is the report well formatted (title, author, sections, paragraphs, right spacings, low amount of typos, nice layout, introduction, conclusions, etc.)?
+    3. Is the text logic and easy to follow? Is there sufficient explanation of what is done?
+    4. Are the results correct?
+    5. Are there any verifications of the results?
 
-Good luck!
+
+To pass review, 4 out of 5/6 of the questions must have the answer yes.
+
+A review is completed by pushing a file to each of the reviewed
+repositories. The name of the file should either be: `PASSED1_YES`
+or `PASSED1_NO`.  The names represent a pass and a fail
+respectively. The name has to be exact, since they will be read
+automagically.  The file should contain feedback of the review.  If
+an assignment is failed, detailed description on how to pass review
+must be included.
+
+Second round of evaluation will not be performed by the students.

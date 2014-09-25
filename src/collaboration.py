@@ -1,6 +1,10 @@
-from requests import get, put, post
+from requests import get, put, post, delete
 from sys import exit
 from json import dumps
+
+# Python3 and 2 compatible
+try: input = raw_input
+except NameError: pass
 
 class Collaboration():
     """Holds all the information about the groups during a group session"""
@@ -12,6 +16,8 @@ class Collaboration():
         if len(students.values()) < 2:
             print("There are one or less students, no need for collaboration")
             sys.exit(1)
+        
+        #self.assignment_name = input('What is the name of the assignment: ')
 
         if max_group_size > len(students.values()):
             #TODO: This case failes
@@ -34,6 +40,7 @@ class Collaboration():
         self.auth = test_student.auth
         self.url_orgs = test_student.url_orgs
         self.org = test_student.org
+        self.url_teams = test_student.url_teams
         self.send_email = test_student.send_email
 
         teams = test_student.get_teams()
@@ -91,7 +98,12 @@ class Collaboration():
            
  
             # Send email
-            self.send_email.new_group(self.groups[n-1], team_name, self.groups[n])
+            self.send_email.new_group(self.groups[n-1], team_name, self.groups[n])#, self.project)
             
     def get_repo_names(self, team):
-        return ["github/%s/%s-%s" % (s.org, s.course, s.repo_name) for s in team]
+        repo_names = []
+        for s in team:
+            #print(s.org)
+            #print(s.name)
+            repo_names.append("github/%s/%s-%s" % (s.org, s.course, s.repo_name))
+        return repo_names

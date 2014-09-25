@@ -85,12 +85,14 @@ class Email():
         email_var['get_repos_https'] = get_repos_https
         email_var['correcting_names'] = correcting_names
         email_var['team_name'] = team_name
+        email_var['course'] = group[0].course
 
         for student in group:
             recipient = student.email
             email_var['name'] = student.name.split(' ')[0]
-            rest_of_group = [s.name + " (%s)" % s.email for s in group \
-                                                    if s.name != student.name]
+            rest_of_group = [s.name for s in group if s.name != student.name]
+            email_var['team_emails'] = "".join([" "*4 + "* " + s.email + '\n' for s in \
+                                            group if s.name != student.name])
             email_var['group_names'] = ", ".join(rest_of_group[:-1]) + " and " + \
                                        rest_of_group[-1]
 
