@@ -113,7 +113,7 @@ class Student(Classroom):
                     "permission": "admin"
                    }
 
-        # Add team and repo and add repository and user to team.
+        # Add team and repo
         r_repo = post(self.url_orgs + "/repos", data=dumps(key_repo), auth=self.auth)
         r_team = post(self.url_orgs + "/teams", data=dumps(key_team), auth=self.auth)
 
@@ -137,8 +137,10 @@ class Student(Classroom):
                   (r_team.status_code, self.username))
             success = False
 
+        # Add repository to team and invite user to team
         if success:
-            url_add_member = self.url_teams + "/%s/members/%s" % (r_team.json()['id'], self.username)
+            url_add_member = self.url_teams + "/%s/memberships/%s" \
+                              % (r_team.json()['id'], self.username)
             url_add_repo = self.url_teams + "/%s/repos/%s/%s" % (r_team.json()['id'],                                                                                  self.org, self.repo_name)
             r_add_repo = put(url_add_repo, auth=self.auth)
             r_add_member = put(url_add_member, headers={'Content-Length': 0}, auth=self.auth)
@@ -147,7 +149,7 @@ class Student(Classroom):
             if r_add_repo.status_code != 204:
                 print("Error: %d - did not manage to add repo to team:%s" % \
                       (r_add_repo.status_code, self.name))
-            elif r_add_member.status_code != 204:
+            elif r_add_member.status_code != 200:
                 print("Error: %d - did not manage to add usr:%s to team:%s" \
                        % (r_add_member.status_code, self.username, self.name))
             else:

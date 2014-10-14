@@ -49,6 +49,7 @@ class Email():
         email_var['year'] = datetime.now().year
         email_var['name'] = student.name.split(' ')[0]
         email_var['course'] = student.course
+        email_var['university'] = student.university
         email_var['repo_name'] = student.repo_name
         email_var['repo_adress'] = 'git@github.com:/%s/%s.git' % \
                                         (student.org, student.repo_name)

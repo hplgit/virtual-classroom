@@ -2,6 +2,7 @@ import re
 import os
 import sys
 import base64
+import codecs
 from requests import get
 from classroom import Classroom
 
@@ -27,7 +28,8 @@ class Feedbacks:
         attendance_path = os.path.join(os.path.dirname(__file__), \
                                         'Attendance', '%s-students_base.txt' % course)
         if os.path.isfile(attendance_path):
-            self.students_base_dict = self.get_students(open(attendance_path, 'r').readlines())
+            self.students_base_dict = self.get_students(codecs.open(attendance_path, 'r',
+                                                        encoding='utf-8').readlines())
         else:
             attendance_path = input('There is no file %s, pleace provide the' % attendance_path \
                                      + 'filepath to where the student base file is located:')
@@ -37,19 +39,18 @@ class Feedbacks:
         self.header = "/"*50 + "\n// Name: %(name)s \n" + "// Email: %(email)s \n" + \
                        "// Username: %(username)s \n" + "// Repo: %(repo)s \n" + \
                         "// Editors: %(editors)s \n" + "/"*50 + "\n\n"
+        self.header = self.header.encode('utf-8')
 
         # TODO: these should be accessible through default_parameters
         # User defined variables
         assignment_name = input('What is this assignment called: ')
         feedback_name_base = input('\nWhat are the base filename of your feedback ' \
                                     + 'files called, e.g.\nif you answer "PASSED" the ' \
-                                    + 'program will look for "PASSED_%s_YES \nand "PASSED_%s_NO" ' \
-                                    % (assignment_name, assignment_name).upper()
+                                    + 'program will look for "PASSED_YES \nand "PASSED_NO" ' \
                                     + '(case insensetive) : ').lower()
 
         # The files to look for
-        self.file_feedback = [feedback_name_base + '_' + assignment_name '_yes', 
-                               feedback_name_base + '_' + assignment_name + '_no']
+        self.file_feedback = [feedback_name_base + '_yes', feedback_name_base + '_no']
        
         # Create path
         original_dir = os.getcwd()
@@ -77,8 +78,10 @@ class Feedbacks:
                 sys.exit(1)
 
     def __call__(self):
+        print("\nLooking for feedbacks, this may take some time ...\n")
         repos = self.classroom.get_repos()    
         not_done = []
+
         for repo in repos:
             # Assumes that no repo has the same naming convension
             if self.course + "-" in repo['name'].encode('utf-8'):
@@ -92,26 +95,37 @@ class Feedbacks:
                 r = get(self.url_trees + '/' + sha, auth=self.auth)
 
                 # Get feedback file
-                success, contents, status, path = self.find_file(r.json()['tree'])
+                success, contents, status, path, extension = self.find_file(r.json()['tree'])
 
                 # Get infomation about user and the file
                 r = get(repo['teams_url'], auth=self.auth)
                 personal_info = self.students_base_dict[r.json()[0]['name'].encode('utf-8')]
                 personal_info['repo'] = repo['name'].encode('utf-8')
-
-                # Check if there is reason to belive that the user have cheated
-                #if personal_info['name'] in personal_info['editors']:
-                    #pass 
-                    #TODO: Store this feedback in a list of potential cheeters
-
-                # Write feedback with hreader to file
+                #print(repo['teams_url'])
                 if success:
+                    # Check if there is reason to belive that the user have cheated
                     personal_info['editors'] = ", ".join(self.get_editors(path, repo))
-                    text = self.header % personal_info + contents
-                    filename = personal_info['name'].replace(' ', '_') + '.txt'
+                    #print(personal_info['name'])
+                    #print(personal_info['editors'])
+                    #if (personal_info['name'].encode('utf-8') or personal_info['username']) \
+                        #in personal_info['editors']:
+                        #print(personal_info['name'])
+                        #TODO: Store this feedback in a list of potential cheaters
+
+                    # Write feedback with header to file
+                    try:
+                        text = self.header % personal_info
+                        text += contents.decode('utf-8')
+                    except Exception as e:
+                        print(personal_info)
+                        print(contents)
+                        print("Could not get the contents of %(name)s feedback file. Error:" \
+                                 % personal_info)
+                        print(e)
+                    filename = personal_info['name'].replace(' ', '_') + '.' + extension
                     folder = self.passed_path if status == 'yes' else self.not_passed_path
                     folder = os.path.join(folder, filename)
-                    feedback = open(folder, 'w')
+                    feedback = codecs.open(folder, 'w', encoding='utf-8')
                     feedback.write(text)
                     feedback.close()
 
@@ -122,18 +136,24 @@ class Feedbacks:
         # TODO: Only write those how where pressent at group and didn't get feedback
         #       now it just writes everyone how has not gotten any feedback.
         text = "Students that didn't get any feedbacks\n"
-        test += "Name   //  username    //  email   "
+        text += "Name   //  username    //  email\n"
         for student in not_done:
-            text += "%(name)s // %(username)s // %(email)s" % student 
-        not_done_file = open(os.path.join(self.not_done_path, 'No_feedback.txt'), 'w')
+            text += "%(name)s // %(username)s // %(email)s\n" % student 
+        not_done_file = codecs.open(os.path.join(self.not_done_path, 'No_feedback.txt'), 'w',
+                                     encoding='utf-8')
         not_done_file.write(text)
         not_done_file.close()
+
+        number_of_feedbacks = len(repos) - len(not_done)
+        print("\nFetched feedback from %s students and %s have not gotten any feedback" % \
+                (number_of_feedbacks, len(not_done)))
 
     def get_students(self, text):
         student_dict = {}
         for line in text[1:]:
             pressent, name, username, email = re.split(r"\s*\/\/\s*", line.replace('\n', ''))
-            student_dict[name] = {'name': name, 'username': username, 'email': email}
+            student_dict[name.encode('utf-8')] = {'name': name, 
+                                                   'username': username, 'email': email}
         return student_dict
 
     def find_file(self, tree):
@@ -141,26 +161,29 @@ class Feedbacks:
             # Explore the subdirectories recursively
             if file['type'].encode('utf-8') == 'tree':
                 r = get(file['url'], auth=self.auth)
-                success, contents, status, path = self.find_file(r.json()['tree'])
+                success, contents, status, path, extension = self.find_file(r.json()['tree'])
                 if success:
-                    return success, contents, status, path
+                    return success, contents, status, path, extension
 
             # Check if the files in the folder match file_feedback
-            file_name = file['path'].split(os.path.sep)[-1].lower().split('.')[0]
-            if file_name in self.file_feedback:
+            if file['path'].split(os.path.sep)[-1].split('.')[0].lower() in self.file_feedback:
+                # Get filename and extension
+                if '.' in  file['path'].split(os.path.sep)[-1]:
+                    file_name, extension = file['path'].split(os.path.sep)[-1].lower().split('.')
+                else:
+                    file_name = file['path'].split(os.path.sep)[-1].lower()
+                    extension = 'txt'
+
                 r = get(file['url'], auth=self.auth)
-                return True, base64.b64decode(r.json()['content']), file_name.split('_')[-1], \
-                        file['path']
+                return True, base64.b64decode(r.json()['content']), \
+                        file_name.split('_')[-1], file['path'], extension
 
         # If file not found
-        return False, "", "", ""
+        return False, "", "", "", ""
 
     def get_editors(self, path, repo):
         url_commit = 'https://api.github.com/repos/%s/%s/commits' % (self.org, repo['name'])
         r = get(url_commit, auth=self.auth, params={'path': path})
-        print(r.status_code)
         # TODO: Change commiter with author?
-        editors = [commit['commit']['committer']['name'].encode('utf-8') for commit in r.json()]
-        print(editors)
+        editors = [commit['commit']['author']['name'].encode('utf-8') for commit in r.json()]
         return editors
-

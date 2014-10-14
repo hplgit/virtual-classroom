@@ -30,7 +30,7 @@ Rules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Deadline for review is one week. In other words, this assignment
-must be completed within Friday, September 26 at 23:59.
+must be completed within Tuesday, October 21 at 23:59.
 
 Each collaborating group decides how review is organized. Meeting
 each other in person is encouraged, but is not mandatory.
@@ -62,8 +62,8 @@ For a report:
 To pass review, 4 out of 5/6 of the questions must have the answer yes.
 
 A review is completed by pushing a file to each of the reviewed
-repositories. The name of the file should either be: `PASSED1_YES`
-or `PASSED1_NO`.  The names represent a pass and a fail
+repositories. The name of the file should either be: `PASSED_MANDATORY_YES`
+or `PASSED_MANDATORY_NO`.  The names represent a pass and a fail
 respectively. The name has to be exact, since they will be read
 automagically.  The file should contain feedback of the review.  If
 an assignment is failed, detailed description on how to pass review

@@ -5,7 +5,12 @@
 from sys import exit
 from re import split
 from os import path
-from requests import put, get, delete
+try:
+    from requests import put, get, delete
+except ImportError:
+    print("This program depends on the module request, install to run" +\
+           " program!\n\n sudo pip install requests")
+    exit(1)
 from argparse import ArgumentParser
 from base64 import b64encode
 from getpass import getpass
@@ -85,9 +90,9 @@ def read_command_line():
     args = parser.parse_args()
 
     # Check if file exists    
-    if not path.isfile(args.f):
-       msg = "The file: %s does not exist. \nPlease provide a different file path, or \
-              create the file first. Use the script 'copy-attendance-file.py'"
+    if not path.isfile(args.f) and not args.e:
+       msg = "The file: %s does not exist. \nPlease provide a different file path, or" + \
+              "create the file first. Use the script 'copy-attendance-file.py'"
        msg = msg % args.f
        print(msg)
        exit(1)

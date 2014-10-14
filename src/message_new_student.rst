@@ -9,6 +9,8 @@ of the files. You work with the repo through the Git version control system. The
 workflow may seem a bit cumbersome at first sight, but this is how professionals work 
 with software and technical documents all around the world in %(year)s.
 
+**Important**: Open your primary email on GitHub and confirm that you want to join
+%(university)s-%(course)s. You have to do this to get access to your new repo.
 
 There is a lot of information about git on the web, but below we give the quick need-to-know 
 steps for the course. First you need to install git. This can be done by the command:
