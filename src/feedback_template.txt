@@ -1,0 +1,45 @@
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\
+\\Name of correctors: Mohammed, Nisirin and Naima
+\\Name of project: X mandatory assignment
+\\Date: DD.MM.YYYY
+\\Passed: YES/NO
+\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+Report (if any)
+===============
+- Comment on how the report is written
+- Is there anything that could have been better?
+- Is there something that was particular nice?
+- Does the report coincide with the implementation?
+- Is it well enough explained how the results are obtained?
+
+
+Testing
+=======
+- Does the test work?
+- Does it test all cases?
+- Is it possible to run tests with py.test or nosetests?
+
+
+Programming (this should be split into on for each exercise)
+==============================================================
+- Is it easy to read the program?
+    - Is there a 4 space indent?
+    - Are the lines to long?
+    - Are there enough comments?
+    - Are there docstrings?
+    - Are there space after comma?
+    - etc
+- Is there some unnecessary hard way of doing the program?
+- Do you have an suggestion for an easier implementation?
+
+
+General
+=======
+- Are there an list over how to run each program?
+- Are all the questions answered?
+- If the assignment is not passed, what have to be done to get
+  is approved?
