@@ -11,10 +11,10 @@
 Report (if any)
 ===============
 - Comment on how the report is written
-- Is there anything that could have been better?
-- Is there something that was particular nice?
-- Does the report coincide with the implementation?
-- Is it well enough explained how the results are obtained?
+- What could have been better? (Unless the report was perfect)
+- Was anything particularly nice? If so, explain what you liked the most. 
+- Does the report coincide with the implementation? If not, please point out the parts that mismatch. 
+- By reading the report are you able to understand how the results are obtained?
 
 
 Testing
@@ -39,7 +39,7 @@ Programming (this should be split into on for each exercise)
 
 General
 =======
-- Are there an list over how to run each program?
+- Is there a list over how to run each program?
 - Are all the questions answered?
 - If the assignment is not passed, what have to be done to get
   is approved?
