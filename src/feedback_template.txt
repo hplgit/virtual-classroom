@@ -1,45 +1,117 @@
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \\
-\\Name of correctors: Mohammed, Nisirin and Naima
-\\Name of project: X mandatory assignment
+\\Name of correctors: Nguoi La, Chan Siu Ming, Svea Svensson
+\\Name of project: ...
 \\Date: DD.MM.YYYY
 \\Passed: YES/NO
 \\
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
 Report (if any)
 ===============
-- Comment on how the report is written
-- What could have been better? (Unless the report was perfect)
-- Was anything particularly nice? If so, explain what you liked the most. 
-- Does the report coincide with the implementation? If not, please point out the parts that mismatch. 
-- By reading the report are you able to understand how the results are obtained?
+
+- Rank the overall quality of the report
+
+Excellent/ok/not sufficient
+
+
+- Is the report easy to read?
+
+
+- Give examples on parts that are difficult to understand (if any)
+
+
+- Find one strength of the report
+
+
+- Fine one weakness of the report
+
+
+- Is the mathematics done correctly?
+
+
+- Does the report coincide with the implementation? If not, please point out the parts that mismatch.
+
+
+- Is it clear how the results were obtained?
+
+- List the mathematical parts that are not answered.
 
 
 Testing
 =======
-- Does the test work?
-- Does it test all cases?
+
+- Rank the overall quality of the tests
+
+Excellent/ok/not sufficient
+
+- Do all tests work?
+
+
+- Are all tests implemented?
+
+
 - Is it possible to run tests with py.test or nosetests?
 
 
-Programming (this should be split into on for each exercise)
+
+Programming (this should be split into one for each exercise)
 ==============================================================
-- Is it easy to read the program?
-    - Is there a 4 space indent?
-    - Are the lines to long?
-    - Are there enough comments?
-    - Are there docstrings?
-    - Are there space after comma?
-    - etc
-- Is there some unnecessary hard way of doing the program?
-- Do you have an suggestion for an easier implementation?
+
+- Rank the overall quality of the programming
+
+Excellent/ok/not sufficient
+
+
+Is it easy to read the program? More specifically,
+
+- Is there a 4 space indentation?
+
+
+- Are there too long lines?
+
+
+- Are there enough comments?
+
+
+- Are the variable names sensible or in correspondance with the
+  mathematical notation?
+
+
+- Are there docstrings?
+
+
+- Is whitespace used correctly, like space after comma, etc.?
+
+- Are there some odd ways of doing things in the program? That is,
+  do you have an suggestion for a simpler implementation?
+
+
+- Can you find unnecessarily inefficient parts of the program?
+
+
+- Are there parts of the program that are hard to understand?
+
+
+- Do you find overuse of classes or not sufficient use of functions (or
+  classes)?
+
+
+- List the programming parts that are not answered.
 
 
 General
 =======
+
+- Rank the overall quality of the project
+
+
 - Is there a list over how to run each program?
+
+
 - Are all the questions answered?
+
+
 - If the assignment is not passed, what have to be done to get
-  is approved?
+  it approved?
