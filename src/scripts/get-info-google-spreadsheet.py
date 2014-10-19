@@ -19,7 +19,8 @@ import getpass
 try:
     import gspread
 except ImportError:
-    print("You need to have gspread to use this script.")
+    print("You need to have gspread to use this script. To install execute:" + \
+           "'sudo pip install gspread'")
     sys.exit(1)
 
 # Python3 and 2 compatible
