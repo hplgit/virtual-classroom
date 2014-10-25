@@ -66,4 +66,6 @@ for row in wks.get_all_values()[1:]:
 
 student_base.write(string.encode('utf-8'))
 
+print('Output written on %s.' % filename)
+
 #TODO: Push the new file to a repository
