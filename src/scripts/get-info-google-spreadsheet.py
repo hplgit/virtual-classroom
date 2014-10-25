@@ -28,7 +28,8 @@ except NameError: pass
 
 # Get password and username
 email = input("For Google\nEmail: ")
-password = getpass.getpass("Password:")
+password = getpass.getpass("If you have 2-step verification activated,"\
+    + " create an app password.\nPassword:")
 
 # Get parameters
 parameters_path = os.path.join(os.path.dirname(__file__), '..', 'default_parameters.txt')
