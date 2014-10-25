@@ -28,3 +28,5 @@ if not os.path.exists(attendance_folder):
 attendance_new_path = attendance_folder + attendance_file
 student_base = attendance_folder + '%s-students_base.txt' % parameters['course']
 os.system('cp ' + student_base + ' ' + attendance_new_path)
+
+print('Copied student base to file.\n  %s' % attendance_new_path)
