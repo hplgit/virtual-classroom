@@ -50,7 +50,7 @@ attendance_location = os.path.join(os.path.dirname(__file__), '..',
 if not os.path.exists(attendance_location):
   os.makedirs(attendance_location)
 
-filename = os.path.join(attendance_location, "%s-students_base.txt" % parameters['course']) 
+filename = os.path.join(attendance_location, "%s-students_base.txt" % parameters['course'])
 
 if os.path.isfile(filename):
    answ = input("The student_base file exists, are you" + \
