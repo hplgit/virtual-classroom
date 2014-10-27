@@ -94,7 +94,7 @@ class Collaboration():
                 r_add_member = put(url_add_member, auth=s.auth)
                 if r_add_member.status_code != 204:
                     print("Error: %d - Can't give user:%s access to Team-%d" \
-                                   % (r_add_member, s.username, n))
+                                   % (r_add_member.status_code, s.username, n))
            
  
             # Send email

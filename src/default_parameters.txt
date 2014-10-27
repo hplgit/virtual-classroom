@@ -1,4 +1,4 @@
 university:UiO
-course:INF3331
+course:INF5620
 max_students:3
-filepath:Attendance/INF3331-%s-%s-%s.txt
+filepath:Attendance/INF5620-%s-%s-%s.txt

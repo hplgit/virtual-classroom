@@ -90,7 +90,7 @@ def read_command_line():
     args = parser.parse_args()
 
     # Check if file exists    
-    if not path.isfile(args.f) and not args.e:
+    if not path.isfile(args.f) and not args.e and not args.F:
        msg = "The file: %s does not exist. \nPlease provide a different file path, or" + \
               "create the file first. Use the script 'copy-attendance-file.py'"
        msg = msg % args.f
