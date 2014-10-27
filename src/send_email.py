@@ -85,6 +85,13 @@ class Email():
         text = file.read()
         file.close()
         return text
+
+    def logout(self):
+        """
+        Logs out of currently open e-mail server connection. Only call
+        when sending is finished.
+        """
+        self.server_connection.logout()
     
     def rst_to_html(self, text):
         """Convert the .rst file to html code"""
