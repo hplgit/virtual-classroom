@@ -2,9 +2,12 @@ from __future__ import print_function
 from getpass import getpass
 from smtplib import SMTP, SMTP_SSL
 from datetime import datetime
+from email.encoders import encode_base64
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
 from sys import exit
+from os import path
 
 try:
   from docutils import core
@@ -169,6 +172,14 @@ class Email():
             msg['From'] = self.username
             body_text = MIMEText(text, 'html', 'utf-8')
             msg.attach(body_text)
+
+            # Attach template for feedback
+            if path.isfile(args.f):
+                fileMsg = MIMEBase('application','octet-stream')
+                fileMsg.set_payload(open('./feedback_template.txt', 'rb').read())
+                encode_base64(fileMsg)
+                fileMsg.add_header('Content-Disposition','attachment;filename=Feedback_template.txt')
+                msg.attach(fileMsg)
 
             self.send(msg, recipient)
 

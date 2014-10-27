@@ -98,10 +98,20 @@ class Feedbacks:
                 success, contents, status, path, extension = self.find_file(r.json()['tree'])
 
                 # Get infomation about user and the file
+                # Need some extra tests since multiple teams can have
+                # access to the same repo.
                 r = get(repo['teams_url'], auth=self.auth)
-                personal_info = self.students_base_dict[r.json()[0]['name'].encode('utf-8')]
-                personal_info['repo'] = repo['name'].encode('utf-8')
-                #print(repo['teams_url'])
+                for i in range(len(r.json())):
+                    try:
+                        personal_info = self.students_base_dict[r.json()[i]['name'].encode('utf-8')]
+                        personal_info['repo'] = repo['name'].encode('utf-8')
+                        break
+                    except Exception as e:
+                        if i == len(r.json()) - 1:
+                            print("There are no owners (team) of this repo " \
+                                  +  "matching student base. " +
+                                  r.json()[i]['name'])
+
                 if success:
                     # Check if there is reason to belive that the user have cheated
                     personal_info['editors'] = ", ".join(self.get_editors(path, repo))
@@ -116,12 +126,19 @@ class Feedbacks:
                     try:
                         text = self.header % personal_info
                         text += contents.decode('utf-8')
+                    except UnicodeDecodeError as e:
+                        if 'ascii' in e:
+                            for key, value in personal_info.iteritems():
+                                print value
+                                personal_info[key] = value.decode('utf-8')
+                            text = self.header % personal_info
+                        elif 'utf-8' in e:
+                            text += contents.decode('latin1')
                     except Exception as e:
-                        print(personal_info)
-                        print(contents)
                         print("Could not get the contents of %(name)s feedback file. Error:" \
                                  % personal_info)
                         print(e)
+                    
                     filename = personal_info['name'].replace(' ', '_') + '.' + extension
                     folder = self.passed_path if status == 'yes' else self.not_passed_path
                     folder = os.path.join(folder, filename)
@@ -185,5 +202,5 @@ class Feedbacks:
         url_commit = 'https://api.github.com/repos/%s/%s/commits' % (self.org, repo['name'])
         r = get(url_commit, auth=self.auth, params={'path': path})
         # TODO: Change commiter with author?
-        editors = [commit['commit']['author']['name'].encode('utf-8') for commit in r.json()]
+        editors = [commit['commit']['author']['name'] for commit in r.json()]
         return editors
