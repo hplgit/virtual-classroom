@@ -1,7 +1,6 @@
 from __future__ import print_function
 from getpass import getpass
 from smtplib import SMTP
-from docutils import core
 from datetime import datetime
 from email.encoders import encode_base64
 from email.mime.multipart import MIMEMultipart
@@ -9,6 +8,12 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from sys import exit
 import path
+
+try:
+  from docutils import core
+except ImportError:
+  print('docutils is required, exiting.\n\n sudo pip install docutils')
+  exit(1)
 
 # Python3 and 2 compatible
 try: input = raw_input
