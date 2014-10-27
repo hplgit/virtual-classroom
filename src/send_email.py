@@ -169,7 +169,7 @@ class Email():
             msg = MIMEMultipart()
             msg['Subject']  = 'New group'
             msg['To'] = recipient
-            msg['From'] = self.username
+            msg['From'] = self.server_connection.email
             body_text = MIMEText(text, 'html', 'utf-8')
             msg.attach(body_text)
 
@@ -185,7 +185,8 @@ class Email():
 
     def send(self, msg, recipients):
         """Send email"""
-        failed_deliveries = self.server_connection.server.sendmail(self.username, recipients, msg.as_string())
+        failed_deliveries = \
+                self.server_connection.server.sendmail(self.server_connection.email, recipients, msg.as_string())
         if failed_deliveries:
             print('Could not reach these addresses:', failed_deliveries)
         else:
