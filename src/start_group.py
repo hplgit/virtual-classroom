@@ -20,7 +20,7 @@ from json import dumps
 # Local import
 from student import Student
 from collaboration import Collaboration
-from send_email import Email
+from send_email import Email, SMTPGoogle, SMTPUiO
 from classroom import Classroom
 
 # Python3 and 2 compatible
@@ -37,7 +37,7 @@ def read_command_line():
     for line in lines:
         key, value = line.split(':')
         parameters[key] = value[:-1]
-        
+
     # File with attendance
     date = datetime.now()
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
@@ -86,10 +86,12 @@ def read_command_line():
                               this is expected to be a relative path from where \
                               you are when you execute this program",
                         metavar="Get all feedbacks (bool)")
-                     
+    parser.add_argument('--smtp', type=str, choices=['uio','google'], default='uio',
+                        help='Choose which smtp server emails are to be sent from.')
+
     args = parser.parse_args()
 
-    # Check if file exists    
+    # Check if file exists
     if not path.isfile(args.f) and not args.e:
        msg = "The file: %s does not exist. \nPlease provide a different file path, or" + \
               "create the file first. Use the script 'copy-attendance-file.py'"
@@ -98,7 +100,7 @@ def read_command_line():
        exit(1)
 
     return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath, \
-            args.F, args.get_feedback_filepath
+            args.F, args.get_feedback_filepath, args.smtp
 
 
 def get_password():
@@ -111,24 +113,21 @@ def get_password():
     r = get('https://api.github.com', auth=(admin, p))
     if r.status_code != 200:
         print('Username or password is wrong (GitHub), please try again!')
-        exit(1)    
+        exit(1)
 
     return (admin, p)
 
 
-def create_students(students_file, course, university):
+def create_students(students_file, course, university, send_email):
     """Creates a dicts of students with their full name as a key."""
     students = {}
     text = open(students_file).readlines()
 
     # Get username and password for admin to classroom
     auth = get_password() 
-  
+
     # Push the file with present
     #push_attendance(auth, course, university)
-
-    # Initialize email
-    send_email = Email()
 
     # Create a dict with students
     for line in text:
@@ -136,7 +135,7 @@ def create_students(students_file, course, university):
         if pressent.lower() == 'x' and username != "":
             students[name] = Student(name, username, university, course, email, auth, send_email)
 
-    return students   
+    return students
 
 def push_attendance(auth, course, university):
     """Push the attendance file to the repo for later use"""
@@ -161,7 +160,6 @@ def push_attendance(auth, course, university):
 
     # Push file
     r = put(url, data=dumps(key_push), auth=auth) 
-   
 
 def end_group(org):
     """Deletes all teams on the form Team-<number>"""
@@ -195,7 +193,7 @@ def end_group(org):
 def main():
     students_file, course, university, max_students, \
      end, start_semester, get_repos, get_repos_filepath, get_feedback, \
-      get_feedback_filepath = read_command_line()
+      get_feedback_filepath, smtp = read_command_line()
 
     if end:
         org = "%s-%s" % (university, course)
@@ -213,10 +211,19 @@ def main():
         feedbacks()
 
     else:
-        students = create_students(students_file, course, university)
-        if not start_semester:
-            Collaboration(students, max_students)
+        # Set up e-mail server
+        if smtp == 'google':
+          server = SMTPGoogle()
+        elif smtp == 'uio':
+          server = SMTPUiO()
+        send_email = Email(server)
 
+        students = create_students(students_file, course, university, send_email)
+        if not start_semester:
+            Collaboration(students, max_students, send_email)
+
+        # Logout e-mail server
+        send_email.logout()
 
 if __name__ == '__main__':
     main()

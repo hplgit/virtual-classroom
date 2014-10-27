@@ -1,6 +1,6 @@
 from __future__ import print_function
 from getpass import getpass
-from smtplib import SMTP
+from smtplib import SMTP, SMTP_SSL
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -16,20 +16,68 @@ except ImportError:
 try: input = raw_input
 except NameError: pass
 
+class EmailServer(object):
+  """
+  Class holds a connection to an email server to avoid closing and opening
+  connections for each mail.
+  """
+  def __init__(self, smtp_server, port):
+    self.smtp_server, self.port = smtp_server, port
+
+    """Get username and password from user"""
+    self.username = input("\nFor %s\nUsername: " % smtp_server)
+    self.password = getpass("Password:")
+
+    self.login()
+
+  def login(self):
+    raise NotImplementedError("Only use subclasses of EmailServer.")
+
+  def logout(self):
+    """
+    Closes connection to the smtp server.
+    """
+    self.server.close()
+
+class SMTPGoogle(EmailServer):
+  """
+  Contains a google smtp server connection.
+  """
+  def __init__(self):
+    super(SMTPGoogle, self).__init__('smtp.gmail.com',587)
+    self.email = self.username
+
+  def login(self):
+    try:
+      self.server = SMTP(self.smtp_server, self.port)
+      self.server.starttls()
+      self.server.login(self.username, self.password)
+    except:
+      print('Username or password is wrong for %s, please try again!'\
+          % smtp_server)
+      exit(1)
+
+class SMTPUiO(EmailServer):
+  """
+  Class holds a connection to a UiO SMTP server.
+  """
+  def __init__(self):
+    smtp_address = 'smtp.uio.no'
+    super(SMTPUiO, self).__init__(smtp_address, 465)
+    self.email = input('Email address (%s): ' % smtp_address)
+
+  def login(self):
+    try:
+      self.server = SMTP_SSL(self.smtp_server, self.port)
+      self.server.login(self.username, self.password)
+    except:
+      print('Username or password is wrong for %s, please try again!'\
+          % self.smtp_server)
+      exit(1)
+
 class Email():
-    def __init__(self):
-        "Get username and password from user and tests if it is correct"""
-        self.username = input("\nFor Gmail\nEmail address: ")
-        self.password = getpass("Password:")
-        #TODO: It it possible to not quit the server in order to skip login each time?
-        try:
-            server = SMTP('smtp.gmail.com:587')
-            server.starttls()
-            server.login(self.username, self.password)
-            server.quit()
-        except:
-            print('Username or password is wrong (Gmail), please try again!')
-            exit(1)
+    def __init__(self, server_connection):
+        self.server_connection = server_connection
 
     def get_text(self, filename):
         """Read the given file"""
@@ -119,13 +167,33 @@ class Email():
 
     def send(self, msg, recipients):
         """Send email"""
-        # Send email
-        server = SMTP('smtp.gmail.com:587')
-        server.starttls()
-        server.login(self.username, self.password)
-        failed_deliveries = server.sendmail(self.username, recipients, msg.as_string())
+        failed_deliveries = self.server_connection.server.sendmail(self.username, recipients, msg.as_string())
         if failed_deliveries:
             print('Could not reach these addresses:', failed_deliveries)
         else:
             print('Email successfully sent to %s' % recipients)
-        server.quit()
+
+def test_uio_email():
+  """
+  Takes an email address from the commandline and sends a test message there
+  using the UiO smtp server connection class.
+  """
+  uio = SMTPUiO()
+
+  test_recipient = input('Email to send testmail to: ')
+  body = 'This is an email testing the github virtual classroom scripts.'
+  subject = 'Virtual-classroom test email'
+
+  msg = MIMEText(body, 'plain')
+  msg['Subject'] = subject
+  msg['From'] = uio.email
+  msg['To'] = test_recipient
+
+  try:
+    uio.server.sendmail(uio.email, test_recipient, msg.as_string())
+    print('Mail sent to %s.' % test_recipient)
+  finally:
+    uio.logout()
+
+if __name__ == '__main__':
+  test_uio_email()
