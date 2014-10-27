@@ -37,7 +37,7 @@ class EmailServer(object):
     """
     Closes connection to the smtp server.
     """
-    self.server.close()
+    self.server.quit()
 
 class SMTPGoogle(EmailServer):
   """
