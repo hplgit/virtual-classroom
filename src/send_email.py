@@ -126,7 +126,7 @@ class Email():
         msg = MIMEMultipart()
         msg['Subject']  = 'New repository'
         msg['To'] = recipient
-        msg['From'] = self.username
+        msg['From'] = self.server_connection.email
         body_text = MIMEText(text, 'html', 'utf-8')
         msg.attach(body_text)
 
