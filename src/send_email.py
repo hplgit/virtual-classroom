@@ -179,28 +179,3 @@ class Email():
             print('Could not reach these addresses:', failed_deliveries)
         else:
             print('Email successfully sent to %s' % recipients)
-
-def test_uio_email():
-  """
-  Takes an email address from the commandline and sends a test message there
-  using the UiO smtp server connection class.
-  """
-  uio = SMTPUiO()
-
-  test_recipient = input('Email to send testmail to: ')
-  body = 'This is an email testing the github virtual classroom scripts.'
-  subject = 'Virtual-classroom test email'
-
-  msg = MIMEText(body, 'plain')
-  msg['Subject'] = subject
-  msg['From'] = uio.email
-  msg['To'] = test_recipient
-
-  try:
-    uio.server.sendmail(uio.email, test_recipient, msg.as_string())
-    print('Mail sent to %s.' % test_recipient)
-  finally:
-    uio.logout()
-
-if __name__ == '__main__':
-  test_uio_email()
