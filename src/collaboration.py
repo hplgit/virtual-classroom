@@ -9,14 +9,15 @@ except NameError: pass
 class Collaboration():
     """Holds all the information about the groups during a group session"""
 
-    def __init__(self, students, max_group_size):
+    def __init__(self, students, max_group_size, send_email):
         """Divide the students in to groups and give them access to another groups
            reposetories.
         """                 
         if len(students.values()) < 2:
             print("There are one or less students, no need for collaboration")
             sys.exit(1)
-        
+
+        self.send_email = send_email
         #self.assignment_name = input('What is the name of the assignment: ')
 
         if max_group_size > len(students.values()):
@@ -41,7 +42,6 @@ class Collaboration():
         self.url_orgs = test_student.url_orgs
         self.org = test_student.org
         self.url_teams = test_student.url_teams
-        self.send_email = test_student.send_email
 
         teams = test_student.get_teams()
         for team in teams:
