@@ -1,7 +1,5 @@
 TODO:
 
-(D) is development, is just an idea.
-
 - Generate stats: commits, comments, attendence ect.
 - Make collaboration work with groups of one.
 - Change to OAuth(?)
@@ -15,4 +13,3 @@ TODO:
 Potential speed up:
 - Use s = request.Session() and set s.auth = auth, and then use s.put, s.get and
   so on, is this faster?
-- Keep the server open in Email and close when done.
