@@ -19,6 +19,7 @@ except ImportError:
 try: input = raw_input
 except NameError: pass
 
+
 class EmailServer(object):
   """
   Class holds a connection to an email server to avoid closing and opening
@@ -42,12 +43,13 @@ class EmailServer(object):
     """
     self.server.quit()
 
+
 class SMTPGoogle(EmailServer):
   """
   Contains a google smtp server connection.
   """
   def __init__(self):
-    super(SMTPGoogle, self).__init__('smtp.gmail.com',587)
+    super(SMTPGoogle, self).__init__('smtp.gmail.com', 587)
     self.email = self.username
 
   def login(self):
@@ -59,6 +61,7 @@ class SMTPGoogle(EmailServer):
       print('Username or password is wrong for %s, please try again!'\
           % smtp_server)
       exit(1)
+
 
 class SMTPUiO(EmailServer):
   """
@@ -77,6 +80,7 @@ class SMTPUiO(EmailServer):
       print('Username or password is wrong for %s, please try again!'\
           % self.smtp_server)
       exit(1)
+
 
 class Email():
     def __init__(self, server_connection):
