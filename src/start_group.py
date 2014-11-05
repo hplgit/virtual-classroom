@@ -86,7 +86,8 @@ def read_command_line():
                               this is expected to be a relative path from where \
                               you are when you execute this program",
                         metavar="Get all feedbacks (bool)")
-    parser.add_argument('--smtp', type=str, choices=['uio','google'], default='uio',
+    parser.add_argument('--smtp', type=str, choices=['uio','google'],
+                        default=parameters['smtp'],
                         help='Choose which smtp server emails are to be sent from.')
 
     args = parser.parse_args()
@@ -213,9 +214,9 @@ def main():
     else:
         # Set up e-mail server
         if smtp == 'google':
-          server = SMTPGoogle()
+            server = SMTPGoogle()
         elif smtp == 'uio':
-          server = SMTPUiO()
+            server = SMTPUiO()
         send_email = Email(server)
 
         students = create_students(students_file, course, university, send_email)

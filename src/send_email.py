@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from sys import exit
-from os import path
+from os import path, basedir
 
 try:
   from docutils import core
@@ -178,11 +178,15 @@ class Email():
             msg.attach(body_text)
 
             # Attach template for feedback
-            if path.isfile(args.f):
+            # TODO: Make it possible to change the name and location
+            #       of the attachment.
+            path_dir = path.join(path.dirname(__file__), "feedback_template.txt")
+            if path.isfile("feedback_template.txt"):
                 fileMsg = MIMEBase('application','octet-stream')
                 fileMsg.set_payload(open('./feedback_template.txt', 'rb').read())
                 encode_base64(fileMsg)
-                fileMsg.add_header('Content-Disposition','attachment;filename=Feedback_template.txt')
+                fileMsg.add_header('Content-Disposition', 
+                                    'attachment;filename=Feedback_template.txt')
                 msg.attach(fileMsg)
 
             self.send(msg, recipient)
@@ -190,7 +194,8 @@ class Email():
     def send(self, msg, recipients):
         """Send email"""
         failed_deliveries = \
-                self.server_connection.server.sendmail(self.server_connection.email, recipients, msg.as_string())
+                self.server_connection.server.sendmail(self.server_connection.email, 
+                                                       recipients, msg.as_string())
         if failed_deliveries:
             print('Could not reach these addresses:', failed_deliveries)
         else:

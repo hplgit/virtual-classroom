@@ -1,11 +1,8 @@
 Hi %(name)s!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is a group for correcting the wave project with extended deadline.
-If that is not correct, pleace let me know.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You are receiving this e-mail because you are taking the course
-%(course)s and have submitted the first mandatory assignment.
+%(course)s and have submitted the fourth mandatory assignement.
 You are now asked to join a collaboration with two of your fellow
 students. Together you are asked to performed peer-review on three
 other students. (Likewise, another group of three will be
@@ -30,16 +27,14 @@ should make a temporary directory and execute
 %(get_repos)s
 
 Rules
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
 
 Deadline for review is today.
 
-A template for the feedback file is attached.
+A template for the feedback file is attached and have to be used!
 
 A review is completed by pushing a file to each of the reviewed
-repositories. The name of the file should either be: `PASSED2__YES`
-or `PASSED2_NO`.  The names represent a pass and a fail
+repositories. The name of the file should either be: `PASSED3_YES`
+or `PASSED3_NO`.  The names represent a pass and a fail
 respectively. The name has to be exact, since they will be read
 automagically.
-
-Second round of evaluation will not be performed by the students.
