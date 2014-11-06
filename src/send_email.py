@@ -136,22 +136,22 @@ class Email():
 
         self.send(msg, recipient)
 
-    def new_group(self, group, team_name, correcting):
+    def new_group(self, team_name, group):
         """Compose an email for the event that some collaboration has started."""
         # Variables for the email
         email_var = {}
         get_repos = ""
-        correcting_names = ""
-        for student in correcting:
-            correcting_names += " "*4 + "* %s\n" % student.name
-            get_repos += ' '*4 + 'git clone git@github.com:%s/%s\n' % \
-                                       (student.org, student.repo_name)
-            get_repos_https = ' '*4 + 'git clone https://github.com/%s/%s\n' % \
-                                        (student.org, student.repo_name)
+        #correcting_names = ""
+        #for student in correcting:
+        #    correcting_names += " "*4 + "* %s\n" % student.name
+        #    get_repos += ' '*4 + 'git clone git@github.com:%s/%s\n' % \
+        #                               (student.org, student.repo_name)
+        #    get_repos_https = ' '*4 + 'git clone https://github.com/%s/%s\n' % \
+        #                                (student.org, student.repo_name)
 
-        email_var['get_repos'] = get_repos
-        email_var['get_repos_https'] = get_repos_https
-        email_var['correcting_names'] = correcting_names
+        #email_var['get_repos'] = get_repos
+        #email_var['get_repos_https'] = get_repos_https
+        #email_var['correcting_names'] = correcting_names
         email_var['team_name'] = team_name
         email_var['course'] = group[0].course
 

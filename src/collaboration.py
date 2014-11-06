@@ -27,13 +27,59 @@ class Collaboration():
         
         else:
             # Set up groups with max number of students
-            self.groups = []
             number_of_students = len(students.values())
             rest = number_of_students%max_group_size
             integer_div = number_of_students//max_group_size
             number_of_groups = integer_div if rest == 0 else integer_div + 1
-            for i in range(number_of_groups):        
-                self.groups.append(list(students.values())[i::number_of_groups])
+
+            rank_1 = []
+            rank_2 = []
+            rank_3 = []
+
+            # get a list of students seperated on rank
+            for s in students.itervalues():
+                if s.rank == 1:
+                    rank_1.append(s)
+                elif s.rank == 2:
+                    rank_2.append(s)
+                elif s.rank == 3:
+                    rank_3.append(s)
+
+            # Container for groups
+            self.groups = [[] for i in range(number_of_groups)]
+
+            print(rank_1, rank_2, rank_3)
+            # One from each category
+            stopped1 = 0
+            stopped2 = 0
+            stopped3 = 0
+            while stopped1 + stopped2 + stopped3 < 3:
+                for i in range(number_of_groups):
+                    if i < len(rank_1):
+                        self.groups[i].append(rank_1[i])
+                    elif stopped1 == 0:
+                        stopped1 = 1
+
+                    if i < len(rank_2):
+                        self.groups[i].append(rank_2[i])
+                    elif stopped2 == 0:
+                        stopped2 = 1
+
+                    if i < len(rank_3):
+                        self.groups[i].append(rank_3[i])
+                    elif stopped3 == 0:
+                        stopped3 = 1
+
+            print self.groups
+            i = 0
+            for group in self.groups:
+                print "Group: ", i
+                print "Members: ",
+                for s in group:
+                    print "%s (%s)," % (s.name, s.rank),
+                print('')
+                i += 1
+            exit(1)
 
             test_student = self.groups[0][0]
 
@@ -52,7 +98,7 @@ class Collaboration():
 
         n = 0
         for group in self.groups:
-            n = n+1 if len(self.groups)>n+1 else 0
+            #n = n+1 if len(self.groups)>n+1 else 0
 
             # Create a team with access to an another team's repos
             repo_names = self.get_repo_names(self.groups[n])
@@ -98,8 +144,11 @@ class Collaboration():
            
  
             # Send email
-            self.send_email.new_group(self.groups[n-1], team_name, self.groups[n])#, self.project)
+            self.send_email.new_group(team_name, self.groups[n])#, self.project)
             
+            # Update counter
+            n += 1
+
     def get_repo_names(self, team):
         repo_names = []
         for s in team:

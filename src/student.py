@@ -11,11 +11,18 @@ from classroom import Classroom
 class Student(Classroom):
     """Holdes all the information about the student.""" 
 
-    def __init__(self, name, username, university, course, email, auth, send_email):
+    def __init__(self, name, username, university, course,
+                 email, auth, send_email, rank):
         """When initialized it testes if the information is correct and if the
            student has been initialized before. If not it calles create_repository()
         """
         self.name = name
+        try:
+            self.rank = int(rank)
+        except:
+            print("%s has wrong format on his/her rank," % self.name + \
+                  "it has to be an integer. It is now set to 2.")
+            self.rank = 2
         self.email = email
         self.username = username
         self.course = course
@@ -48,9 +55,6 @@ class Student(Classroom):
                             # repository containing the name of the course-<firstname>
                             base_name = "%s-%s" % (self.course, \
                                             self.strip_accents(self.name.split(" ")[0]))
-                            #print(base_name)
-                            #print(repo['name'].encode('utf-8'))
-                            #print(base_name in repo['name'].encode('utf-8'))
                             
                             if base_name in repo['name'].encode('utf-8'): 
                                 self.repo_name = repo['name'].encode('utf-8')
@@ -61,9 +65,8 @@ class Student(Classroom):
     def is_user(self):
         """
            Check if the given username is a user on GitHub. 
-           If it is not a user the program will exit with a worning
+           If it is not a user the program will exit with a warning
         """
-
         ref = get('https://api.github.com/users/%s' % self.username, auth=self.auth)
         msg = "User: %s does not exist on GitHub and a repository will not be created." \
                % self.username

@@ -127,14 +127,15 @@ def create_students(students_file, course, university, send_email):
     # Get username and password for admin to classroom
     auth = get_password() 
 
-    # Push the file with present
+    # Push the file with attendance
     #push_attendance(auth, course, university)
 
     # Create a dict with students
     for line in text:
-        pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
+        pressent, name, username, email, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
         if pressent.lower() == 'x' and username != "":
-            students[name] = Student(name, username, university, course, email, auth, send_email)
+            students[name] = Student(name, username, university, course, 
+                                     email, auth, send_email, rank)
 
     return students
 
