@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from sys import exit
-from os import path, basedir
+from os import path
 
 try:
   from docutils import core

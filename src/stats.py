@@ -21,9 +21,9 @@ for line in lines[1:]:
 passed = "INF5620_all_feedbacks/Oblig%d/PASSED"
 
 # Requires that you have fetched the feedbacks
-for i in range(1,4):
+for i in range(1,5):
     path_passed = passed % i
-    print listdir(path_passed)
+    #print listdir(path_passed)
     for file in listdir(path_passed):
         file_name = file.split('.')[0].replace('_', ' ')
         try:
@@ -38,33 +38,40 @@ for i in range(1,4):
 #    tmp_str = " // ".join(values)
 #    file.write(tmp_str)
 #file.close()
-print students
+
+#print students
 exceptions = ['Arnfinn Aamodt', 'Matthew Terje Aadne', 'Jens Kristoffer Reitan Markussen']
 skip = False
 
 smtp = SMTPGoogle()
 email = Email(smtp)
 
-text_zero = email.get_text('message_missing_all_classes.rst')
-text_one = email.get_text('message_missing_two_class.rst')
-text_two = email.get_text('message_missing_one_classes.rst')
+#text_zero = email.get_text('message_missing_all_classes.rst')
+text_missing_one = email.get_text('message_missing_one_class.rst')
+text_passed = email.get_text('message_missing_none.rst')
 
 for parameters in students.itervalues():
     if parameters['name'] in exceptions: 
         skip = True
 
     if parameters['pressent'] == 0 and not skip:
-        text_tmp = text_zero % parameters
+        print "None: ", parameters['name'], "NO EMAIL"
+        #text_tmp = text_zero % parameters
 
     if parameters['pressent'] == 1 and not skip:
-        text_tmp = text_one % parameters
-        print "One pressent: ", parameters['name']
+        #text_tmp = text_one % parameters
+        print "One pressent: ", parameters['name'], "NO EMAIL"
 
     if parameters['pressent'] == 2 and not skip:
-        text_tmp = text_two % parameters
-        print "Two pressent: ", parameters['name']
+        text_tmp = text_missing_one % parameters
+        #print "Two pressent: ", parameters['name']
 
-    if parameters['pressent'] < 3 and not skip:
+    if parameters['pressent'] >= 3 and not skip:
+        text_tmp = text_passed % parameters
+        #print "Three or more: ", parameters['name']
+
+    if parameters['pressent'] in [2, 3, 4] and not skip:
+        #print parameters['name']
         text_tmp = email.rst_to_html(text_tmp).encode('utf-8')
         msg = MIMEMultipart()
         msg['Subject'] = 'Mandatory group sessions'
