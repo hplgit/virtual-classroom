@@ -48,29 +48,32 @@ class Collaboration():
             # Container for groups
             self.groups = [[] for i in range(number_of_groups)]
 
-            print(rank_1, rank_2, rank_3)
             # One from each category
             stopped1 = 0
             stopped2 = 0
             stopped3 = 0
+            nloops = 0
             while stopped1 + stopped2 + stopped3 < 3:
-                for i in range(number_of_groups):
+                nloops += 1
+                print("Do a loop")
+                for i in range(number_of_groups*(nloops-1),
+                               number_of_groups*nloops):
+                    j = number_of_groups*(nloops-1)
                     if i < len(rank_1):
-                        self.groups[i].append(rank_1[i])
+                        self.groups[i-j].append(rank_1[i])
                     elif stopped1 == 0:
                         stopped1 = 1
 
                     if i < len(rank_2):
-                        self.groups[i].append(rank_2[i])
+                        self.groups[i-j].append(rank_2[i])
                     elif stopped2 == 0:
                         stopped2 = 1
 
                     if i < len(rank_3):
-                        self.groups[i].append(rank_3[i])
+                        self.groups[i-j].append(rank_3[i])
                     elif stopped3 == 0:
                         stopped3 = 1
 
-            print self.groups
             i = 0
             for group in self.groups:
                 print "Group: ", i
