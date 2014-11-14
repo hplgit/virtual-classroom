@@ -74,16 +74,6 @@ class Collaboration():
                     elif stopped3 == 0:
                         stopped3 = 1
 
-            i = 0
-            for group in self.groups:
-                print "Group: ", i
-                print "Members: ",
-                for s in group:
-                    print "%s (%s)," % (s.name, s.rank),
-                print('')
-                i += 1
-            exit(1)
-
             test_student = self.groups[0][0]
 
         # Get some parameters from the student instance
