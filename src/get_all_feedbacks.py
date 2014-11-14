@@ -111,6 +111,7 @@ class Feedbacks:
                             print("There are no owners (team) of this repo " \
                                   +  "matching student base. " +
                                   r.json()[i]['name'])
+                            personal_info['name'] = repo['name']
 
                 if success:
                     # Check if there is reason to belive that the user have cheated
@@ -138,7 +139,7 @@ class Feedbacks:
                         print("Could not get the contents of %(name)s feedback file. Error:" \
                                  % personal_info)
                         print(e)
-                    
+
                     filename = personal_info['name'].replace(' ', '_') + '.' + extension
                     folder = self.passed_path if status == 'yes' else self.not_passed_path
                     folder = os.path.join(folder, filename)
