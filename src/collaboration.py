@@ -55,7 +55,6 @@ class Collaboration():
             nloops = 0
             while stopped1 + stopped2 + stopped3 < 3:
                 nloops += 1
-                print("Do a loop")
                 for i in range(number_of_groups*(nloops-1),
                                number_of_groups*nloops):
                     j = number_of_groups*(nloops-1)
