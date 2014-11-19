@@ -133,8 +133,13 @@ class Collaboration():
                 if r_add_member.status_code != 204:
                     print("Error: %d - Can't give user:%s access to Team-%d" \
                                    % (r_add_member.status_code, s.username, n))
-           
- 
+            
+            # Add solution repo
+            r_add_fasit = put(s.url_teams + "/%s/repos/%s/Solutions" %
+                                r_team.json()['id'], s.org, auth=s.auth)
+            if r_add_fasit.status_code != 204:
+                print("Error: %d - Can't add solutions repo to teams")
+            
             # Send email
             self.send_email.new_group(team_name, self.groups[n])#, self.project)
             

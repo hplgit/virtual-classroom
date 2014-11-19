@@ -19,6 +19,7 @@ should make a temporary directory and execute
 .. code-block:: bash
 
 %(get_repos)s
+    git clone git@github.com/UiO-INF5620/Solutions
 
 Rules
 ~~~~~
