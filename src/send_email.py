@@ -149,6 +149,7 @@ class Email():
             get_repos_https = ' '*4 + 'git clone https://github.com/%s/%s\n' % \
                                         (student.org, student.repo_name)
 
+        #get_repos += ' '*4 + "git clone git@github.com:UiO-INF5620/Solutions\n"
         email_var['get_repos'] = get_repos
         email_var['get_repos_https'] = get_repos_https
         #email_var['correcting_names'] = correcting_names

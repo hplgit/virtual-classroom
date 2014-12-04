@@ -19,17 +19,15 @@ should make a temporary directory and execute
 .. code-block:: bash
 
 %(get_repos)s
-    git clone git@github.com/UiO-INF5620/Solutions
 
 Rules
 ~~~~~
 
 Deadline for review is today.
-
 A template for the feedback file is attached and have to be used!
 
 A review is completed by pushing a file to each of the reviewed
-repositories. The name of the file should either be: `PASSED4_YES`
-or `PASSED4_NO`.  The names represent a pass and a fail
+repositories. The name of the file should either be: `PASSED5_YES`
+or `PASSED5_NO`.  The names represent a pass and a fail
 respectively. The name has to be exact, since they will be read
 automagically.

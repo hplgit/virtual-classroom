@@ -168,7 +168,7 @@ class Feedbacks:
     def get_students(self, text):
         student_dict = {}
         for line in text[1:]:
-            pressent, name, username, email = re.split(r"\s*\/\/\s*", line.replace('\n', ''))
+            pressent, name, username, email, rank = re.split(r"\s*\/\/\s*", line.replace('\n', ''))
             student_dict[name.encode('utf-8')] = {'name': name, 
                                                    'username': username, 'email': email}
         return student_dict

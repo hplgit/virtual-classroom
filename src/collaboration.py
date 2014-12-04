@@ -136,7 +136,7 @@ class Collaboration():
             
             # Add solution repo
             r_add_fasit = put(s.url_teams + "/%s/repos/%s/Solutions" %
-                                r_team.json()['id'], s.org, auth=s.auth)
+                                (r_team.json()['id'], s.org), auth=s.auth)
             if r_add_fasit.status_code != 204:
                 print("Error: %d - Can't add solutions repo to teams")
             

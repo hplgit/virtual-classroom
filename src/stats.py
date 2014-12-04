@@ -15,13 +15,13 @@ default_parameters_path = path.join(path.dirname(__file__),
 lines = open(default_parameters_path, 'r').readlines()
 
 for line in lines[1:]:
-    pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
+    pressent, name, username, email, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
     students[name] = {'pressent':0, 'email': email, 'name': name,
                         'username':username}
 passed = "INF5620_all_feedbacks/Oblig%d/PASSED"
 
 # Requires that you have fetched the feedbacks
-for i in range(1,5):
+for i in range(1,6):
     path_passed = passed % i
     #print listdir(path_passed)
     for file in listdir(path_passed):
@@ -64,7 +64,7 @@ for parameters in students.itervalues():
 
     if parameters['pressent'] == 2 and not skip:
         text_tmp = text_missing_one % parameters
-        #print "Two pressent: ", parameters['name']
+        print "Two pressent: ", parameters['name']
 
     if parameters['pressent'] >= 3 and not skip:
         text_tmp = text_passed % parameters
@@ -78,8 +78,8 @@ for parameters in students.itervalues():
         msg['To'] = parameters['email']
         msg['From'] = smtp.email
         body_text = MIMEText(text_tmp, 'html', 'utf-8')
-        msg.attach(body_text)
-        email.send(msg, parameters['email'])
+        #msg.attach(body_text)
+        #email.send(msg, parameters['email'])
 
     skip = False
 
