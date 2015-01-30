@@ -93,6 +93,9 @@ def read_command_line():
                         help="How to divide in to groups, with or without a \
                         classification of the students from 1 to 3, where 1 is \
                         a top student.", metavar="rank")
+    parser.add_argument('--email', type=bool, default=rank,
+                        help="Send email or not", metavar="email")
+
 
     args = parser.parse_args()
 
@@ -105,7 +108,8 @@ def read_command_line():
        exit(1)
 
     return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath, \
-            args.F, args.get_feedback_filepath, args.smtp, args.rank
+            args.F, args.get_feedback_filepath, args.smtp, args.rank,
+            args.email
 
 
 def get_password():
@@ -143,6 +147,7 @@ def create_students(students_file, course, university, send_email):
 
     return students
 
+
 def push_attendance(auth, course, university):
     """Push the attendance file to the repo for later use"""
     date = datetime.now()
@@ -166,6 +171,7 @@ def push_attendance(auth, course, university):
 
     # Push file
     r = put(url, data=dumps(key_push), auth=auth) 
+
 
 def end_group(org):
     """Deletes all teams on the form Team-<number>"""
@@ -199,7 +205,7 @@ def end_group(org):
 def main():
     students_file, course, university, max_students, \
      end, start_semester, get_repos, get_repos_filepath, get_feedback, \
-      get_feedback_filepath, smtp, rank = read_command_line()
+      get_feedback_filepath, smtp, rank, email = read_command_line()
 
     if end:
         org = "%s-%s" % (university, course)
@@ -217,19 +223,23 @@ def main():
         feedbacks()
 
     else:
-        # Set up e-mail server
-        if smtp == 'google':
-            server = SMTPGoogle()
-        elif smtp == 'uio':
-            server = SMTPUiO()
-        send_email = Email(server)
+        if email:
+            # Set up e-mail server
+            if smtp == 'google':
+                server = SMTPGoogle()
+            elif smtp == 'uio':
+                server = SMTPUiO()
+            send_email = Email(server)
+        else:
+            send_email = None
 
         students = create_students(students_file, course, university, send_email)
         if not start_semester:
             Collaboration(students, max_students, send_email, rank)
 
         # Logout e-mail server
-        send_email.logout()
+        if email:
+            send_email.logout()
 
 if __name__ == '__main__':
     main()

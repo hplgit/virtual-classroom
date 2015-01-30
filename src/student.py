@@ -20,10 +20,15 @@ class Student(Classroom):
         self.name = name
         try:
             self.rank = int(rank)
+            if rank > 3 or rank < 1:
+                print("%s has a rank out of bound(%s) is has to be," % self.name, self.rank + \
+                       "from 1 to 3. It is now set to 2.")
+                self.rank = 2
         except:
             print("%s has wrong format on his/her rank," % self.name + \
                   "it has to be an integer. It is now set to 2.")
             self.rank = 2
+
         self.email = email
         self.username = username
         self.course = course
@@ -157,8 +162,9 @@ class Student(Classroom):
                 print("Error: %d - did not manage to add usr:%s to team:%s" \
                        % (r_add_member.status_code, self.username, self.name))
             else:
-                # Send information to the student
-                self.send_email.new_student(self)
+                if self.send_email is not None:
+                    # Send information to the student
+                    self.send_email.new_student(self)
 
     def repo_exist(self, repo_name):
         """Check if there exixts a repo with the given name"""

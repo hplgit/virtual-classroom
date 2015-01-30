@@ -147,7 +147,8 @@ class Collaboration():
             # TODO: Create google form here
 
             # Send email
-            self.send_email.new_group(team_name, self.groups[n])#, self.project)
+            if send_email is not None:
+                self.send_email.new_group(team_name, self.groups[n])#, self.project)
             
             # Update counter
             n += 1
