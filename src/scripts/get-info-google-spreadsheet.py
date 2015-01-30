@@ -40,14 +40,13 @@ for line in lines:
     key, value = line.split(':')
     parameters[key] = value[:-1]
 
-
 # Log on to disk
 gc = gspread.login(email, password)
 wks = gc.open(parameters['course']).sheet1
 
 # Store file in ../Attendance/ 
 attendance_location = os.path.join(os.path.dirname(__file__), '..',
-    'Attendance')
+                                    parameters["filepath"].split(os.path.sep)[:-1])
 # Create ../Attendance/ if it does not exist
 if not os.path.exists(attendance_location):
   os.makedirs(attendance_location)
@@ -57,7 +56,7 @@ filename = os.path.join(attendance_location, "%s-students_base.txt" % parameters
 if os.path.isfile(filename):
    answ = input("The student_base file exists, are you" + \
                  "sure you want to overwrite this?! (yes/no): ")
-   if "no" == answ.lower():
+   if "yes" != answ.lower():
        exit(1)
 
 student_base = open(filename, 'w')

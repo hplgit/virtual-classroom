@@ -89,6 +89,13 @@ def read_command_line():
     parser.add_argument('--smtp', type=str, choices=['uio','google'],
                         default=parameters['smtp'],
                         help='Choose which smtp server emails are to be sent from.')
+    parser.add_argument('--rank', type=bool, default=rank, 
+                        help="How to divide in to groups, with or without a \
+                        classification of the students from 1 to 3, where 1 is \
+                        a top student.", metavar="rank")
+    parser.add_argument('--email', type=bool, default=rank,
+                        help="Send email or not", metavar="email")
+
 
     args = parser.parse_args()
 
@@ -101,7 +108,8 @@ def read_command_line():
        exit(1)
 
     return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath, \
-            args.F, args.get_feedback_filepath, args.smtp
+            args.F, args.get_feedback_filepath, args.smtp, args.rank,
+            args.email
 
 
 def get_password():
@@ -119,7 +127,7 @@ def get_password():
     return (admin, p)
 
 
-def create_students(students_file, course, university, send_email):
+def create_students(students_file, course, university, send_email, rank):
     """Creates a dicts of students with their full name as a key."""
     students = {}
     text = open(students_file).readlines()
@@ -127,16 +135,22 @@ def create_students(students_file, course, university, send_email):
     # Get username and password for admin to classroom
     auth = get_password() 
 
-    # Push the file with present
+    # Push the file with attendance
     #push_attendance(auth, course, university)
 
     # Create a dict with students
     for line in text:
-        pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
+        try:
+            pressent, name, username, email, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
+        except:
+            pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
+            rank = 1
         if pressent.lower() == 'x' and username != "":
-            students[name] = Student(name, username, university, course, email, auth, send_email)
+            students[name] = Student(name, username, university, course, 
+                                     email, auth, send_email, rank)
 
     return students
+
 
 def push_attendance(auth, course, university):
     """Push the attendance file to the repo for later use"""
@@ -161,6 +175,7 @@ def push_attendance(auth, course, university):
 
     # Push file
     r = put(url, data=dumps(key_push), auth=auth) 
+
 
 def end_group(org):
     """Deletes all teams on the form Team-<number>"""
@@ -194,7 +209,7 @@ def end_group(org):
 def main():
     students_file, course, university, max_students, \
      end, start_semester, get_repos, get_repos_filepath, get_feedback, \
-      get_feedback_filepath, smtp = read_command_line()
+      get_feedback_filepath, smtp, rank, email = read_command_line()
 
     if end:
         org = "%s-%s" % (university, course)
@@ -212,19 +227,23 @@ def main():
         feedbacks()
 
     else:
-        # Set up e-mail server
-        if smtp == 'google':
-            server = SMTPGoogle()
-        elif smtp == 'uio':
-            server = SMTPUiO()
-        send_email = Email(server)
+        if email:
+            # Set up e-mail server
+            if smtp == 'google':
+                server = SMTPGoogle()
+            elif smtp == 'uio':
+                server = SMTPUiO()
+            send_email = Email(server)
+        else:
+            send_email = None
 
-        students = create_students(students_file, course, university, send_email)
+        students = create_students(students_file, course, university, send_email, rank)
         if not start_semester:
-            Collaboration(students, max_students, send_email)
+            Collaboration(students, max_students, send_email, rank)
 
         # Logout e-mail server
-        send_email.logout()
+        if email:
+            send_email.logout()
 
 if __name__ == '__main__':
     main()

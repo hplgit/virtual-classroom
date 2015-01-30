@@ -20,7 +20,7 @@ try: input = raw_input
 except NameError: pass
 
 
-class EmailServer(object):
+class EmailServer():
   """
   Class holds a connection to an email server to avoid closing and opening
   connections for each mail.
@@ -28,7 +28,7 @@ class EmailServer(object):
   def __init__(self, smtp_server, port):
     self.smtp_server, self.port = smtp_server, port
 
-    """Get username and password from user"""
+    # Get username and password from user
     self.username = input("\nFor %s\nUsername: " % smtp_server)
     self.password = getpass("Password:")
 
@@ -93,13 +93,6 @@ class Email():
         file.close()
         return text
 
-    def logout(self):
-        """
-        Logs out of currently open e-mail server connection. Only call
-        when sending is finished.
-        """
-        self.server_connection.logout()
-    
     def rst_to_html(self, text):
         """Convert the .rst file to html code"""
         parts = core.publish_parts(source=text, writer_name='html')
@@ -136,19 +129,20 @@ class Email():
 
         self.send(msg, recipient)
 
-    def new_group(self, group, team_name, correcting):
+    def new_group(self, team_name, group):
         """Compose an email for the event that some collaboration has started."""
         # Variables for the email
         email_var = {}
         get_repos = ""
         correcting_names = ""
-        for student in correcting:
+        for student in group:
             correcting_names += " "*4 + "* %s\n" % student.name
             get_repos += ' '*4 + 'git clone git@github.com:%s/%s\n' % \
                                        (student.org, student.repo_name)
             get_repos_https = ' '*4 + 'git clone https://github.com/%s/%s\n' % \
                                         (student.org, student.repo_name)
 
+        get_repos += ' '*4 + "git clone git@github.com:UiO-INF5620/Solutions\n"
         email_var['get_repos'] = get_repos
         email_var['get_repos_https'] = get_repos_https
         email_var['correcting_names'] = correcting_names
