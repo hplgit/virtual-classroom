@@ -91,7 +91,6 @@ class Collaboration():
                       +' "python start_group.py --e True"')
                 exit(1)
 
-        access = "push" if google_form else "pull"
         n = 0
         for group in self.groups:
             #n = n+1 if len(self.groups)>n+1 else 0
@@ -101,7 +100,7 @@ class Collaboration():
             team_name = "Team-%s" % (n)
             team_key = {
                         "name": team_name,
-                        "permission": access,     # or pull? 
+                        "permission": "push",     # or pull? 
                         "repo_names": repo_names  # is this necessary?
                        }
             r_team = post(
