@@ -127,7 +127,7 @@ def get_password():
     return (admin, p)
 
 
-def create_students(students_file, course, university, send_email):
+def create_students(students_file, course, university, send_email, rank):
     """Creates a dicts of students with their full name as a key."""
     students = {}
     text = open(students_file).readlines()
@@ -140,7 +140,11 @@ def create_students(students_file, course, university, send_email):
 
     # Create a dict with students
     for line in text:
-        pressent, name, username, email, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
+        try:
+            pressent, name, username, email, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
+        except:
+            pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
+            rank = 1
         if pressent.lower() == 'x' and username != "":
             students[name] = Student(name, username, university, course, 
                                      email, auth, send_email, rank)
@@ -233,7 +237,7 @@ def main():
         else:
             send_email = None
 
-        students = create_students(students_file, course, university, send_email)
+        students = create_students(students_file, course, university, send_email, rank)
         if not start_semester:
             Collaboration(students, max_students, send_email, rank)
 

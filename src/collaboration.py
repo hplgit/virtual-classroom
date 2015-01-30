@@ -9,7 +9,7 @@ except NameError: pass
 class Collaboration():
     """Holds all the information about the groups during a group session"""
 
-    def __init__(self, students, max_group_size, send_email, rank=True):
+    def __init__(self, students, max_group_size, send_email, rank):
         """Divide the students in to groups and give them access to another groups
            reposetories."""                 
         if len(students.values()) < 2:
@@ -22,7 +22,7 @@ class Collaboration():
             #TODO: This case failes
             self.groups = list(students.values())
             test_student = self.groups[0]
-        
+
         else:
             # Set up groups with max number of students
             number_of_students = len(students.values())
@@ -65,7 +65,7 @@ class Collaboration():
                             self.groups[i-j].append(rank_1[i])
                         elif stopped1 == 0:
                             stopped1 = 1
-    
+
                         if i < len(rank_2):
                             self.groups[i-j].append(rank_2[i])
                         elif stopped2 == 0:
