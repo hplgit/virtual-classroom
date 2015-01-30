@@ -3,3 +3,4 @@ course:INF5620
 max_students:4
 filepath:Attendance/INF5620-%s-%s-%s.txt
 smtp:google
+rank:True

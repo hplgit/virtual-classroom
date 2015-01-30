@@ -9,16 +9,14 @@ except NameError: pass
 class Collaboration():
     """Holds all the information about the groups during a group session"""
 
-    def __init__(self, students, max_group_size, send_email):
+    def __init__(self, students, max_group_size, send_email, rank=True):
         """Divide the students in to groups and give them access to another groups
-           reposetories.
-        """                 
+           reposetories."""                 
         if len(students.values()) < 2:
             print("There are one or less students, no need for collaboration")
             sys.exit(1)
 
         self.send_email = send_email
-        #self.assignment_name = input('What is the name of the assignment: ')
 
         if max_group_size > len(students.values()):
             #TODO: This case failes
@@ -32,46 +30,51 @@ class Collaboration():
             integer_div = number_of_students//max_group_size
             number_of_groups = integer_div if rest == 0 else integer_div + 1
 
-            rank_1 = []
-            rank_2 = []
-            rank_3 = []
+            if not rank:
+                for i in range(number_of_groups):
+                    self.groups.append(list(students.values())[i::number_of_groups])
 
-            # get a list of students seperated on rank
-            for s in students.itervalues():
-                if s.rank == 1:
-                    rank_1.append(s)
-                elif s.rank == 2:
-                    rank_2.append(s)
-                elif s.rank == 3:
-                    rank_3.append(s)
+            else:
+                rank_1 = []
+                rank_2 = []
+                rank_3 = []
 
-            # Container for groups
-            self.groups = [[] for i in range(number_of_groups)]
+                # get a list of students seperated on rank
+                for s in students.itervalues():
+                    if s.rank == 1:
+                        rank_1.append(s)
+                    elif s.rank == 2:
+                        rank_2.append(s)
+                    elif s.rank == 3:
+                        rank_3.append(s)
 
-            # One from each category
-            stopped1 = 0
-            stopped2 = 0
-            stopped3 = 0
-            nloops = 0
-            while stopped1 + stopped2 + stopped3 < 3:
-                nloops += 1
-                for i in range(number_of_groups*(nloops-1),
-                               number_of_groups*nloops):
-                    j = number_of_groups*(nloops-1)
-                    if i < len(rank_1):
-                        self.groups[i-j].append(rank_1[i])
-                    elif stopped1 == 0:
-                        stopped1 = 1
+                # Container for groups
+                self.groups = [[] for i in range(number_of_groups)]
 
-                    if i < len(rank_2):
-                        self.groups[i-j].append(rank_2[i])
-                    elif stopped2 == 0:
-                        stopped2 = 1
+                # One from each category
+                stopped1 = 0
+                stopped2 = 0
+                stopped3 = 0
+                nloops = 0
+                while stopped1 + stopped2 + stopped3 < 3:
+                    nloops += 1
+                    for i in range(number_of_groups*(nloops-1),
+                                number_of_groups*nloops):
+                        j = number_of_groups*(nloops-1)
+                        if i < len(rank_1):
+                            self.groups[i-j].append(rank_1[i])
+                        elif stopped1 == 0:
+                            stopped1 = 1
+    
+                        if i < len(rank_2):
+                            self.groups[i-j].append(rank_2[i])
+                        elif stopped2 == 0:
+                            stopped2 = 1
 
-                    if i < len(rank_3):
-                        self.groups[i-j].append(rank_3[i])
-                    elif stopped3 == 0:
-                        stopped3 = 1
+                        if i < len(rank_3):
+                            self.groups[i-j].append(rank_3[i])
+                        elif stopped3 == 0:
+                            stopped3 = 1
 
             test_student = self.groups[0][0]
 
@@ -88,6 +91,7 @@ class Collaboration():
                       +' "python start_group.py --e True"')
                 exit(1)
 
+        access = "push" if google_form else "pull"
         n = 0
         for group in self.groups:
             #n = n+1 if len(self.groups)>n+1 else 0
@@ -97,8 +101,8 @@ class Collaboration():
             team_name = "Team-%s" % (n)
             team_key = {
                         "name": team_name,
-                        "permission": "push", #or pull? 
-                        "repo_names": repo_names # is this necessary
+                        "permission": access,     # or pull? 
+                        "repo_names": repo_names  # is this necessary?
                        }
             r_team = post(
                           self.url_orgs+"/teams",
@@ -107,7 +111,7 @@ class Collaboration():
                          )
 
             # When creating a team the user is added, fix this by removing
-            # auth[0] from the team before the studentis is added
+            # auth[0] from the team before the students are added
             if r_team.json()['members_count'] != 0 and r_team.status_code == 201:
                 url_rm_auth = self.url_teams + '/' + str(r_team.json()['id']) + \
                                '/members/' + self.auth[0]
@@ -140,6 +144,8 @@ class Collaboration():
             if r_add_fasit.status_code != 204:
                 print("Error: %d - Can't add solutions repo to teams")
             
+            # TODO: Create google form here
+
             # Send email
             self.send_email.new_group(team_name, self.groups[n])#, self.project)
             

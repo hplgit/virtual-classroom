@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# For support for python 2 and 3
 from __future__ import print_function
 
 from requests import get, put, post, delete 
@@ -178,4 +179,5 @@ class Student(Classroom):
         return False
 
     def get_stats(self):
+        """Not implemented"""
         pass

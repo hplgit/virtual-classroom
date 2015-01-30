@@ -89,6 +89,10 @@ def read_command_line():
     parser.add_argument('--smtp', type=str, choices=['uio','google'],
                         default=parameters['smtp'],
                         help='Choose which smtp server emails are to be sent from.')
+    parser.add_argument('--rank', type=bool, default=rank, 
+                        help="How to divide in to groups, with or without a \
+                        classification of the students from 1 to 3, where 1 is \
+                        a top student.", metavar="rank")
 
     args = parser.parse_args()
 
@@ -101,7 +105,7 @@ def read_command_line():
        exit(1)
 
     return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath, \
-            args.F, args.get_feedback_filepath, args.smtp
+            args.F, args.get_feedback_filepath, args.smtp, args.rank
 
 
 def get_password():
@@ -195,7 +199,7 @@ def end_group(org):
 def main():
     students_file, course, university, max_students, \
      end, start_semester, get_repos, get_repos_filepath, get_feedback, \
-      get_feedback_filepath, smtp = read_command_line()
+      get_feedback_filepath, smtp, rank = read_command_line()
 
     if end:
         org = "%s-%s" % (university, course)
@@ -222,7 +226,7 @@ def main():
 
         students = create_students(students_file, course, university, send_email)
         if not start_semester:
-            Collaboration(students, max_students, send_email)
+            Collaboration(students, max_students, send_email, rank)
 
         # Logout e-mail server
         send_email.logout()
