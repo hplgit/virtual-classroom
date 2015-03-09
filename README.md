@@ -23,7 +23,7 @@ and run the main program by
 
     python start_group.py
 
-To see options and how it works, see the [wiki](https://github.com/hplgit/virtual-classroom/wiki).
+To learn about the options and how it works, see the [wiki](https://github.com/hplgit/virtual-classroom/wiki).
 
 
 Contact
