@@ -1,26 +1,29 @@
 virtual-classroom
 =================
 
-Scripts for automating GitHub classrooms. In particular meant for courses with 
-collaboration between students during group sessions.
+Scripts for automating GitHub classrooms:
+
+ * Creating private repositories for every student in a course.
+ * Dividing students into groups for exercise assessement.
+ * Opening up private repos temporarily for assessment groups.
 
 
 Documentation
 -------------
 
-See [wiki](https://github.com/hplgit/virtual-classroom/wiki)
+See the [wiki](https://github.com/hplgit/virtual-classroom/wiki).
 
 
 
 Installation
 ------------
 
-To use virtual-classroom, there is no need for installation. You simply clone this repository
-and run the program by
+Just clone this repository
+and run the main program by
 
     python start_group.py
 
-To see options and how it works see [wiki](https://github.com/hplgit/virtual-classroom/wiki)
+To see options and how it works, see the [wiki](https://github.com/hplgit/virtual-classroom/wiki).
 
 
 Contact
@@ -41,5 +44,10 @@ Authors
 virtual-classrom is developed by
 
   * Aslak Bergersen
+
+under the supervision of
+
+  * Hans Petter Langtangen
+
 
 
