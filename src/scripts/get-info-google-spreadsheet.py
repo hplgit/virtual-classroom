@@ -58,7 +58,8 @@ gc = gspread.authorize(credentials)
 try:
     wks = gc.open(parameters['course']).sheet1
 except gspread.SpreadsheetNotFound:
-    print "Share your spreadsheet with {} and try again.".format(json_key['client_email'])
+    print "Spreadsheet document not found. Maybe it does not exist?"
+    print "Otherwise, make sure that you shared the spreadsheet with {} and try again.".format(json_key['client_email'])
     sys.exit(1)
 
 # Store file in ../Attendance/
