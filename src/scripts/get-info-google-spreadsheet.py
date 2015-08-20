@@ -5,16 +5,17 @@ Collecting information from a google spreadsheet. This spreasheet takes
 information from a google form. This is meant for the students to fill
 out such that it is easier for you to get all the information you need.
 
-The expected form of the spreadsheet is 
+The expected form of the spreadsheet is
 Timestamp | Full name | Username on GitHub | Email address
 
 When you create your google form you should have your questions in this
 order.
 """
 
-import sys 
-import os 
+import sys
+import os
 import getpass
+import json
 
 try:
     import gspread
@@ -23,14 +24,22 @@ except ImportError:
            "'sudo pip install gspread'")
     sys.exit(1)
 
+try:
+    from oauth2client.client import SignedJwtAssertionCredentials
+except ImportError:
+    print("You need to have oauth2client to use this script. To install execute:" + \
+           "'sudo pip install oauth2client'")
+    sys.exit(1)
+
 # Python3 and 2 compatible
 try: input = raw_input
 except NameError: pass
 
 # Get password and username
-email = input("For Google\nEmail: ")
-password = getpass.getpass("If you have 2-step verification activated,"\
-    + " create an app password.\nPassword:")
+json_file = input("Path to Google credentials JSON file (see"\
+                  " http://gspread.readthedocs.org/en/latest/oauth2.html): ")
+json_key = json.load(open(json_file))
+
 
 # Get parameters
 parameters_path = os.path.join(os.path.dirname(__file__), '..', 'default_parameters.txt')
@@ -40,12 +49,16 @@ for line in lines:
     key, value = line.split(':')
     parameters[key] = value[:-1]
 
-
 # Log on to disk
-gc = gspread.login(email, password)
+scope = ['https://spreadsheets.google.com/feeds']
+credentials = SignedJwtAssertionCredentials(json_key['client_email'],
+        json_key['private_key'], scope)
+
+
+gc = gspread.authorize(credentials)
 wks = gc.open(parameters['course']).sheet1
 
-# Store file in ../Attendance/ 
+# Store file in ../Attendance/
 attendance_location = os.path.join(os.path.dirname(__file__), '..',
     'Attendance')
 # Create ../Attendance/ if it does not exist
@@ -62,7 +75,7 @@ if os.path.isfile(filename):
 
 student_base = open(filename, 'w')
 
-string = 'Attendance // ' + ' // '.join(wks.get_all_values()[0][1:]) + '\n' 
+string = 'Attendance // ' + ' // '.join(wks.get_all_values()[0][1:]) + '\n'
 for row in wks.get_all_values()[1:]:
     string += '- // ' + ' // '.join(row[1:]) + '\n' # Remove timestamp from each row
 
