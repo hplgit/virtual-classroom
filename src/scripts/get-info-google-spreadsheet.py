@@ -40,7 +40,6 @@ json_file = input("Path to Google credentials JSON file (see"\
                   " http://gspread.readthedocs.org/en/latest/oauth2.html): ")
 json_key = json.load(open(json_file))
 
-
 # Get parameters
 parameters_path = os.path.join(os.path.dirname(__file__), '..', 'default_parameters.txt')
 lines = open(parameters_path, 'r').readlines()
@@ -56,7 +55,11 @@ credentials = SignedJwtAssertionCredentials(json_key['client_email'],
 
 
 gc = gspread.authorize(credentials)
-wks = gc.open(parameters['course']).sheet1
+try:
+    wks = gc.open(parameters['course']).sheet1
+except gspread.SpreadsheetNotFound:
+    print "Share your spreadsheet with {} and try again.".format(json_key['client_email'])
+    sys.exit(1)
 
 # Store file in ../Attendance/
 attendance_location = os.path.join(os.path.dirname(__file__), '..',
