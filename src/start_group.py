@@ -89,11 +89,11 @@ def read_command_line():
     parser.add_argument('--smtp', type=str, choices=['uio','google'],
                         default=parameters['smtp'],
                         help='Choose which smtp server emails are to be sent from.')
-    parser.add_argument('--rank', type=bool, default=rank, 
+    parser.add_argument('--rank', type=bool, default=False, 
                         help="How to divide in to groups, with or without a \
                         classification of the students from 1 to 3, where 1 is \
                         a top student.", metavar="rank")
-    parser.add_argument('--email', type=bool, default=rank,
+    parser.add_argument('--email', type=bool, default=True,
                         help="Send email or not", metavar="email")
 
 
@@ -108,7 +108,7 @@ def read_command_line():
        exit(1)
 
     return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath, \
-            args.F, args.get_feedback_filepath, args.smtp, args.rank,
+            args.F, args.get_feedback_filepath, args.smtp, args.rank, \
             args.email
 
 
