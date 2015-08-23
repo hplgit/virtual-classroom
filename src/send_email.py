@@ -20,7 +20,7 @@ try: input = raw_input
 except NameError: pass
 
 
-class EmailServer():
+class EmailServer(object):
   """
   Class holds a connection to an email server to avoid closing and opening
   connections for each mail.
@@ -59,7 +59,7 @@ class SMTPGoogle(EmailServer):
       self.server.login(self.username, self.password)
     except:
       print('Username or password is wrong for %s, please try again!'\
-          % smtp_server)
+          % self.username)
       exit(1)
 
 
