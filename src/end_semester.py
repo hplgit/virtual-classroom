@@ -7,6 +7,7 @@ import re
 import sys
 from os import path
 from getpass import getpass
+from classroom import Classroom
 
 # Python3 and 2 compatible
 try: input = raw_input
@@ -34,18 +35,13 @@ p = getpass('Password:')
 auth = (admin, p)
 url = "https://api.github.com"
 
-# Get parameters
-parameters = {}
-lines = open('default_parameters.txt', 'r').readlines()
-for line in lines:
-    key, value = line.split(':')
-    parameters[key] = value[:-1]
-
 org = "%(university)s-%(course)s" % parameters
 
 # Get list of teams and repos
-list_teams = requests.get(url+"/orgs/%s/teams" % org, auth=auth)
-list_repos = requests.get(url+"/orgs/%s/repos" % org, auth=auth)
+url_orgs = 'https://api.github.com/orgs/%s' % (org)
+classroom = Classroom(auth, url_orgs)
+list_teams = classroom.get_teams()
+list_repos = classroom.get_repos()
 
 # Find list of teams to delete
 teams_to_delete = []
@@ -55,11 +51,15 @@ for line in text:
     teams_to_delete.append(line[1])
 
 # Delete teams
-for team in list_teams.json():
+for team in list_teams:
    if team['name'].encode('utf-8') in teams_to_delete:
-       requests.delete(url + "/teams/" + str(team['id']), auth=auth)
+       print "Deleting ", team["name"]
+       r = requests.delete(url + "/teams/" + str(team['id']), auth=auth)
+       print r.status_code
 
 # Delete repos
-for repo in list_repos.json():
+for repo in list_repos:
    if course in repo['name']:
-       requests.delete(url + "/repos/%s/" % org + repo['name'], auth=auth)
+       print "Deleting course ", org + repo['name']
+       r = requests.delete(url + "/repos/%s/" % org + repo['name'], auth=auth)
+       print r.status_code
