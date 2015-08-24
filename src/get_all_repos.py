@@ -7,7 +7,7 @@ def collect_repos(auth, university, course, get_repos_filepath):
     call_dir = os.getcwd()
     repos_filepath = os.path.join(call_dir, get_repos_filepath, "%s_all_repos" % course)
     if not os.path.isdir(repos_filepath):
-        os.mkdir(repos_filepath)
+        os.makedirs(repos_filepath)
     #else:
         # TODO: check if there are student repos here allready
 
@@ -27,7 +27,7 @@ def collect_repos(auth, university, course, get_repos_filepath):
 
     # Change to destination folder
     os.chdir(repos_filepath)
-    
+
     # Clone into the repos
     for SSH_link in SSH_links:
         result = os.system('git clone ' + SSH_link)
