@@ -3,14 +3,14 @@
 # For support for python 2 and 3
 from __future__ import print_function
 
-from requests import get, put, post, delete 
+from requests import get, put, post, delete
 from json import dumps
 from sys import exit
 from unicodedata import normalize, category
 from classroom import Classroom
 
 class Student(Classroom):
-    """Holdes all the information about the student.""" 
+    """Holdes all the information about the student."""
 
     def __init__(self, name, username, university, course,
                  email, auth, send_email, rank):
@@ -39,7 +39,7 @@ class Student(Classroom):
         # Create useful strings
         self.org = "%s-%s" % (university, course)
         self.url_orgs = 'https://api.github.com/orgs/%s' % (self.org)
-        self.url_teams = 'https://api.github.com/teams' 
+        self.url_teams = 'https://api.github.com/teams'
 
         Classroom.__init__(self, self.auth, self.url_orgs)
 
@@ -53,30 +53,30 @@ class Student(Classroom):
             else:
                 teams = self.get_teams()
                 for team in teams:
-                    if team['name'].encode('utf-8') == self.name: 
+                    if team['name'].encode('utf-8') == self.name:
                         self.team_id = team['id']
                         r = get(self.url_teams + "/" + str(self.team_id) + "/repos", auth=auth)
                         for repo in r.json():
-                            # Assumes that the student has not created a new 
+                            # Assumes that the student has not created a new
                             # repository containing the name of the course-<firstname>
                             base_name = "%s-%s" % (self.course, \
                                             self.strip_accents(self.name.split(" ")[0]))
-                            
-                            if base_name in repo['name'].encode('utf-8'): 
+
+                            if base_name in repo['name'].encode('utf-8'):
                                 self.repo_name = repo['name'].encode('utf-8')
                                 break
                         break
 
- 
+
     def is_user(self):
         """
-           Check if the given username is a user on GitHub. 
+           Check if the given username is a user on GitHub.
            If it is not a user the program will exit with a warning
         """
         ref = get('https://api.github.com/users/%s' % self.username, auth=self.auth)
         msg = "User: %s does not exist on GitHub and a repository will not be created." \
                % self.username
-        if ref.status_code != 200: 
+        if ref.status_code != 200:
             print(msg)
             return False
         return True
@@ -100,16 +100,16 @@ class Student(Classroom):
 
     def create_repository(self):
         """Creates a repository '<course>-<first name>' and a team '<full name>'."""
-        
+
         # Find repo name
         # Convert special characters
         first_name = self.strip_accents(self.name.split(" ")[0])
         self.repo_name = "%s-%s" % (self.course, first_name)
         i = 0
-        while self.repo_exist(self.repo_name): 
+        while self.repo_exist(self.repo_name):
             self.repo_name += self.strip_accents(self.name.split(" ")[1+i])
             i += 1
-        
+
         # Arguments to new team and repo
         key_repo = {
                     "name": self.repo_name,
@@ -136,7 +136,7 @@ class Student(Classroom):
                         "be done manualy or by a seperate script")
 
         # Check success
-        success = True 
+        success = True
         if r_repo.status_code != 201:
             print("Error: %d - did not manage to add a repository for %s" % \
                   (r_repo.status_code, self.username))
@@ -154,7 +154,7 @@ class Student(Classroom):
             r_add_repo = put(url_add_repo, auth=self.auth)
             r_add_member = put(url_add_member, headers={'Content-Length': 0}, auth=self.auth)
 
-            # Check if everthing succeeded  
+            # Check if everthing succeeded
             if r_add_repo.status_code != 204:
                 print("Error: %d - did not manage to add repo to team:%s" % \
                       (r_add_repo.status_code, self.name))
@@ -174,10 +174,10 @@ class Student(Classroom):
                 return True
 
         return False
-        
+
     def has_team(self):
         """Check if there exist a team <full name>"""
-        teams = self.get_teams()        
+        teams = self.get_teams()
         for team in teams:
             if self.name == team['name'].encode('utf-8'):
                 return True
