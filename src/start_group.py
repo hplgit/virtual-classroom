@@ -42,11 +42,11 @@ def read_command_line():
     date = datetime.now()
     month = str(date.month) if date.month > 9 else "0" + str(date.month)
     day = str(date.day) if date.day > 9 else "0" + str(date.day)
-    parameters['filepath'] = path.join(path.dirname(__file__), 
+    parameters['filepath'] = path.join(path.dirname(__file__),
                                         parameters['filepath'] % (date.year, month, day))
 
     parser.add_argument('--f', '--file', type=str,
-                        default=parameters['filepath'], 
+                        default=parameters['filepath'],
                         help=""" A file including all students, in this course. Format:
                         Attendence(X/-) //  Name //  Username // email""", metavar="students_file")
     parser.add_argument('--c', '--course', type=str,
@@ -58,16 +58,16 @@ def read_command_line():
     parser.add_argument('--m', '--max_students', type=int, default=parameters['max_students'],
                         help="Maximum number of students in each group.", metavar="max group size")
     parser.add_argument('--e', '--end_group', type=bool,
-                        default=False, metavar="end group (bool)", 
+                        default=False, metavar="end group (bool)",
                         help='Delete the current teams on the form Team-<number>')
     parser.add_argument('--i', '--start_semester', type=bool,
                         default=False, metavar="initialize group (bool)",
                         help='Create repositories and teams for the students.')
-    parser.add_argument('--g', '--get_repos', type=bool, 
+    parser.add_argument('--g', '--get_repos', type=bool,
                         default=False, help="Clone all student repos into the" + \
                                              "filepath ./<course>_all_repos",
                         metavar="Get all repos (bool)")
-    parser.add_argument('--get_repos_filepath', type=str, default=".", 
+    parser.add_argument('--get_repos_filepath', type=str, default=".",
                         help="This argument is only used when --get_repos is used. \
                               It states the location of where the folder \
                               <course>_all_repos should be located \
@@ -89,7 +89,7 @@ def read_command_line():
     parser.add_argument('--smtp', type=str, choices=['uio','google'],
                         default=parameters['smtp'],
                         help='Choose which smtp server emails are to be sent from.')
-    parser.add_argument('--rank', type=bool, default=False, 
+    parser.add_argument('--rank', type=bool, default=False,
                         help="How to divide in to groups, with or without a \
                         classification of the students from 1 to 3, where 1 is \
                         a top student.", metavar="rank")
@@ -99,7 +99,7 @@ def read_command_line():
 
     args = parser.parse_args()
 
-    # Check if file exists    
+    # Check if file exists
     if not path.isfile(args.f) and not args.e and not args.F:
        msg = "The file: %s does not exist. \nPlease provide a different file path, or" + \
               "create the file first. Use the script 'copy-attendance-file.py'"
@@ -133,7 +133,7 @@ def create_students(students_file, course, university, send_email, rank):
     text = open(students_file).readlines()
 
     # Get username and password for admin to classroom
-    auth = get_password() 
+    auth = get_password()
 
     # Push the file with attendance
     #push_attendance(auth, course, university)
@@ -141,12 +141,12 @@ def create_students(students_file, course, university, send_email, rank):
     # Create a dict with students
     for line in text:
         try:
-            pressent, name, username, email, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
+            pressent, name, username, email, subcourse, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
         except:
-            pressent, name, username, email = split(r"\s*\/\/\s*", line.replace('\n', ''))
+            pressent, name, username, email, subcourse = split(r"\s*\/\/\s*", line.replace('\n', ''))
             rank = 1
         if pressent.lower() == 'x' and username != "":
-            students[name] = Student(name, username, university, course, 
+            students[name] = Student(name, username, university, course,
                                      email, auth, send_email, rank)
 
     return students
@@ -174,13 +174,13 @@ def push_attendance(auth, course, university):
            (university, course, filename)
 
     # Push file
-    r = put(url, data=dumps(key_push), auth=auth) 
+    r = put(url, data=dumps(key_push), auth=auth)
 
 
 def end_group(org):
     """Deletes all teams on the form Team-<number>"""
     auth = get_password()
-    url_orgs = 'https://api.github.com/orgs/%s' % (org)    
+    url_orgs = 'https://api.github.com/orgs/%s' % (org)
 
     number_deleted = 0
 

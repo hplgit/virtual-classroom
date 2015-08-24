@@ -30,7 +30,7 @@ def collect_repos(auth, university, course, get_repos_filepath):
 
     # Change to destination folder
     os.chdir(repos_filepath)
-    
+
     # Clone into the repos
     for SSH_link in SSH_links:
         result = os.system('git clone ' + SSH_link)

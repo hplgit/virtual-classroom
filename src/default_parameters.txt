@@ -1,6 +1,6 @@
 university:UiO
-course:INF5620
-max_students:4
-filepath:Attendance/INF5620-%s-%s-%s.txt
+course:INF3331
+max_students:3
+filepath:Attendance/INF3331-%s-%s-%s.txt
 smtp:google
 rank:True
