@@ -64,7 +64,7 @@ except gspread.SpreadsheetNotFound:
 
 # Store file in ../Attendance/
 attendance_location = os.path.join(os.path.dirname(__file__), '..',
-                                    parameters["filepath"].split(os.path.sep)[:-1])
+                                   *parameters["filepath"].split(os.path.sep)[:-1])
 # Create ../Attendance/ if it does not exist
 if not os.path.exists(attendance_location):
   os.makedirs(attendance_location)
