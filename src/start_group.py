@@ -243,7 +243,10 @@ def main():
 
         # Logout e-mail server
         if email:
-            send_email.logout()
+            try:
+                send_email.logout()
+            except:
+                pass
 
 if __name__ == '__main__':
     main()
