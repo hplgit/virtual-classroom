@@ -26,7 +26,7 @@ class Student(Classroom):
                 self.rank = 2
         except:
             print("%s has wrong format on his/her rank," % self.name + \
-                  "it has to be an integer. It is now set to 2.")
+                  " it has to be an integer. It is now set to 2.")
             self.rank = 2
 
         self.email = email
