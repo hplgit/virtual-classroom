@@ -5,6 +5,7 @@ be invoked unless you are absolutly certain."""
 import requests
 import re
 import sys
+from os import path
 from getpass import getpass
 
 # Python3 and 2 compatible
@@ -48,7 +49,7 @@ list_repos = requests.get(url+"/orgs/%s/repos" % org, auth=auth)
 
 # Find list of teams to delete
 teams_to_delete = []
-text = open('Attendance/students_base.txt', 'r')
+text = open(path.join(path.dirname(__file__), "Attendance", course + "students_base.txt"), 'r')
 for line in text:
     line = re.split(r'\s*\/\/\s*', line)
     teams_to_delete.append(line[1])
