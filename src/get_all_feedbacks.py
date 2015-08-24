@@ -115,15 +115,13 @@ class Feedbacks:
 
                 if success:
                     # Check if there is reason to belive that the user have cheated
-                    personal_info['editors'] = ", ".join(self.get_editors(path, repo))
-                    #print(personal_info['name'])
-                    #print(personal_info['editors'])
-                    #if (personal_info['name'].encode('utf-8') or personal_info['username']) \
-                        #in personal_info['editors']:
-                        #print(personal_info['name'])
-                        #TODO: Store this feedback in a list of potential cheaters
+                    personal_info['editors'] = ", ".join(self.get_correctorss(path, repo))
+                    
+                    #TODO: Store this feedback in a list of potential cheaters
 
                     # Write feedback with header to file
+                    # Work around for files with different
+                    # formats, could be fixed with google forms.
                     try:
                         text = self.header % personal_info
                         text += contents.decode('utf-8')
@@ -169,7 +167,7 @@ class Feedbacks:
     def get_students(self, text):
         student_dict = {}
         for line in text[1:]:
-            pressent, name, username, email = re.split(r"\s*\/\/\s*", line.replace('\n', ''))
+            pressent, name, username, email, rank = re.split(r"\s*\/\/\s*", line.replace('\n', ''))
             student_dict[name.encode('utf-8')] = {'name': name, 
                                                    'username': username, 'email': email}
         return student_dict
@@ -199,7 +197,7 @@ class Feedbacks:
         # If file not found
         return False, "", "", "", ""
 
-    def get_editors(self, path, repo):
+    def get_correctors(self, path, repo):
         url_commit = 'https://api.github.com/repos/%s/%s/commits' % (self.org, repo['name'])
         r = get(url_commit, auth=self.auth, params={'path': path})
         # TODO: Change commiter with author?

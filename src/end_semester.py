@@ -16,6 +16,16 @@ answ = input('Are you sure you want to run this script? All teams and repos will
 if answ.lower() != 'yes':
     sys.exit(1)
 
+# Get course
+parameters = {}
+default_parameters_path = path.join(path.dirname(__file__), 'default_parameters.txt')
+lines = open(default_parameters_path, 'r').readlines()
+for line in lines:
+    key, value = line.split(':')
+    parameters[key] = value[:-1]
+course = parameters["course"] + "-"
+
+
 # Get username and password for admin to classroom
 admin = input('Username: ')
 p = getpass('Password:')
@@ -50,5 +60,5 @@ for team in list_teams.json():
 
 # Delete repos
 for repo in list_repos.json():
-   if 'INF5620-' in repo['name']:
+   if course in repo['name']:
        requests.delete(url + "/repos/%s/" % org + repo['name'], auth=auth)
