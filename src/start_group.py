@@ -140,6 +140,7 @@ def create_students(students_file, course, university, send_email, rank):
 
     # Create a dict with students
     for line in text:
+        print "Handle student {0}".format(line.strip())
         try:
             pressent, name, username, email, subcourse, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
         except:
