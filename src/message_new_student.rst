@@ -18,11 +18,13 @@ access to your new repo.
 
 There is a lot of information about git on the web, but below we give
 the quick need-to-know steps for the course. First you need to install
-git. This can be done by the command:
+git. On Ubuntu, this can be done by the command:
 
 .. code-block::
 
 	sudo apt-get install git
+
+On MacOSX follow the instructions on https://git-scm.com/downloads.
 
 The next step is to clone the repository you have been given access
 to. You simply write
