@@ -96,6 +96,17 @@ class Collaboration():
                     max_team_number = max(max_team_number,
                             int(team['name'].split('-')[1]))
 
+        # Check that all students have repository names. Otherwise
+        # print warning and abort
+        for students in self.groups:
+            for student in  students:
+                try:
+                    student.repo_name
+                except:
+                    print "Uups. student {} has no repostory. You need to fix that.".format(student.email)
+                    import sys; sys.exit(1)
+
+
         for n, group in enumerate(self.groups):
 
             # Get evualation group (next group in the list)
