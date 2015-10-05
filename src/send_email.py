@@ -118,8 +118,8 @@ class Email():
         text = self.get_text('message_new_student.rst')
         text = text % email_var
         text = self.rst_to_html(text).encode('utf-8') # ae, o, aa support
-   
-        # Compose email       
+
+        # Compose email
         msg = MIMEMultipart()
         msg['Subject']  = 'New repository'
         msg['To'] = recipient
@@ -129,41 +129,46 @@ class Email():
 
         self.send(msg, recipient)
 
-    def new_group(self, team_name, group):
+    def new_group(self, team_name, review_group, eval_group):
         """Compose an email for the event that some collaboration has started."""
         # Variables for the email
         email_var = {}
         get_repos = ""
         correcting_names = ""
-        for student in group:
+        for student in eval_group:
             correcting_names += " "*4 + "* %s\n" % student.name
             get_repos += ' '*4 + 'git clone git@github.com:%s/%s\n' % \
                                        (student.org, student.repo_name)
             get_repos_https = ' '*4 + 'git clone https://github.com/%s/%s\n' % \
                                         (student.org, student.repo_name)
+            print(student.name)
+            print(student.repo_name)
 
-        get_repos += ' '*4 + "git clone git@github.com:UiO-INF5620/Solutions\n"
+        #get_repos += ' '*4 + "git clone git@github.com:UiO-INF5620/Solutions\n"
         email_var['get_repos'] = get_repos
         email_var['get_repos_https'] = get_repos_https
         email_var['correcting_names'] = correcting_names
         email_var['team_name'] = team_name
-        email_var['course'] = group[0].course
+        email_var['course'] = review_group[0].course
 
-        for student in group:
+        for student in review_group:
             recipient = student.email
             email_var['name'] = student.name.split(' ')[0]
-            rest_of_group = [s.name for s in group if s.name != student.name]
+            rest_of_group = [s.name for s in review_group if s.name != student.name]
             email_var['team_emails'] = "".join([" "*4 + "* " + s.email + '\n' for s in \
-                                            group if s.name != student.name])
-            email_var['group_names'] = ", ".join(rest_of_group[:-1]) + " and " + \
-                                       rest_of_group[-1]
+                                            review_group if s.name != student.name])
+            if len(rest_of_group) > 0:
+                email_var['group_names'] = ", ".join(rest_of_group[:-1]) + " and " + \
+                                           rest_of_group[-1]
+            else:
+                email_var['group_names'] = ""
 
             # Compose message
             text = self.get_text('message_collaboration.rst')
             text = text % email_var
             text = self.rst_to_html(text).encode('utf-8') # ae, o, aa support
 
-            # Compose email       
+            # Compose email
             msg = MIMEMultipart()
             msg['Subject']  = 'New group'
             msg['To'] = recipient
@@ -174,13 +179,13 @@ class Email():
             # Attach template for feedback
             # TODO: Make it possible to change the name and location
             #       of the attachment.
-            path_dir = path.join(path.dirname(__file__), "feedback_template.txt")
-            if path.isfile("feedback_template.txt"):
+            path_dir = path.join(path.dirname(__file__), "feedback_template.tex")
+            if path.isfile("feedback_template.tex"):
                 fileMsg = MIMEBase('application','octet-stream')
-                fileMsg.set_payload(open('./feedback_template.txt', 'rb').read())
+                fileMsg.set_payload(open('./feedback_template.tex', 'rb').read())
                 encode_base64(fileMsg)
-                fileMsg.add_header('Content-Disposition', 
-                                    'attachment;filename=Feedback_template.txt')
+                fileMsg.add_header('Content-Disposition',
+                                    'attachment;filename=Feedback_template.tex')
                 msg.attach(fileMsg)
 
             self.send(msg, recipient)
@@ -188,7 +193,7 @@ class Email():
     def send(self, msg, recipients):
         """Send email"""
         failed_deliveries = \
-                self.server_connection.server.sendmail(self.server_connection.email, 
+                self.server_connection.server.sendmail(self.server_connection.email,
                                                        recipients, msg.as_string())
         if failed_deliveries:
             print('Could not reach these addresses:', failed_deliveries)

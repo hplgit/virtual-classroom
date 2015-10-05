@@ -11,7 +11,7 @@ class Collaboration():
 
     def __init__(self, students, max_group_size, send_email, rank):
         """Divide the students in to groups and give them access to another groups
-           reposetories."""                 
+           reposetories."""
         if len(students.values()) < 2:
             print("There are one or less students, no need for collaboration")
             sys.exit(1)
@@ -31,6 +31,7 @@ class Collaboration():
             number_of_groups = integer_div if rest == 0 else integer_div + 1
 
             if not rank:
+                self.groups = []
                 for i in range(number_of_groups):
                     self.groups.append(list(students.values())[i::number_of_groups])
 
@@ -84,28 +85,33 @@ class Collaboration():
         self.org = test_student.org
         self.url_teams = test_student.url_teams
 
-        teams = test_student.get_teams()
+        teams = test_student.get_teams()  # get all teams in the UiO organisation
+        max_team_number = 0
         for team in teams:
             if 'Team-' in team['name'].encode('utf-8'):
-                print('There are already teams with collaboration. Delete these by runing'\
-                      +' "python start_group.py --e True"')
-                exit(1)
+                if max_team_number == 0:
+                    print('Warning: There are already teams with collaboration. Delete these by runing'\
+                          +' "python start_group.py --e True"')
 
-        n = 0
-        for group in self.groups:
-            #n = n+1 if len(self.groups)>n+1 else 0
+                    max_team_number = max(max_team_number,
+                            int(team['name'].split('-')[1]))
+
+        for n, group in enumerate(self.groups):
+
+            # Get evualation group (next group in the list)
+            eval_group = self.groups[(n+1)%len(self.groups)]
 
             # Create a team with access to an another team's repos
-            repo_names = self.get_repo_names(self.groups[n])
-            team_name = "Team-%s" % (n)
+            repo_names = self.get_repo_names(eval_group)
+            team_name = "Team-%s" % (n + max_team_number + 1)
             team_key = {
                         "name": team_name,
-                        "permission": "push",     # or pull? 
+                        "permission": "push",     # or pull?
                         "repo_names": repo_names  # is this necessary?
                        }
             r_team = post(
                           self.url_orgs+"/teams",
-                          data=dumps(team_key), 
+                          data=dumps(team_key),
                           auth=self.auth
                          )
 
@@ -120,14 +126,14 @@ class Collaboration():
                         "be done manualy or by a seperate script" % (self.auth[0], team_name))
 
             # Add repos to the team
-            for s in self.groups[n]:
+            for s in eval_group:
                 url_add_repo = s.url_teams + "/%s/repos/%s/%s" \
                            % (r_team.json()['id'], s.org, s.repo_name)
                 r_add_repo = put(url_add_repo, auth=s.auth)
                 if r_add_repo.status_code != 204:
                     print("Error: %d - Can't add repo:%s to Team-%d" \
                                    % (r_add_repo.status_code, s.repo_name, n))
-           
+
             # Add students to the team
             for s in group:
                 url_add_member = s.url_teams + "/%s/members/%s" \
@@ -136,21 +142,18 @@ class Collaboration():
                 if r_add_member.status_code != 204:
                     print("Error: %d - Can't give user:%s access to Team-%d" \
                                    % (r_add_member.status_code, s.username, n))
-            
+
             # Add solution repo
             r_add_fasit = put(s.url_teams + "/%s/repos/%s/Solutions" %
                                 (r_team.json()['id'], s.org), auth=s.auth)
             if r_add_fasit.status_code != 204:
                 print("Error: %d - Can't add solutions repo to teams")
-            
+
             # TODO: Create google form here
 
             # Send email
             if send_email is not None:
-                self.send_email.new_group(team_name, self.groups[n])#, self.project)
-            
-            # Update counter
-            n += 1
+                self.send_email.new_group(team_name, group, eval_group)#, self.project)
 
     def get_repo_names(self, team):
         repo_names = []

@@ -2,7 +2,7 @@ Hi %(name)s!
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You are receiving this e-mail because you are taking the course
-%(course)s and have submitted the fifth mandatory assignement.
+%(course)s and have submitted the fourth mandatory assignement.
 You are now asked to join a collaboration with three of your fellow
 students. Together you are asked to performed peer-review on
 eachother.
