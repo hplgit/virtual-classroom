@@ -179,14 +179,14 @@ class Email():
             # Attach template for feedback
             # TODO: Make it possible to change the name and location
             #       of the attachment.
-            path_dir = path.join(path.dirname(__file__), "feedback_template.tex")
-            if path.isfile("feedback_template.tex"):
-                fileMsg = MIMEBase('application','octet-stream')
-                fileMsg.set_payload(open('./feedback_template.tex', 'rb').read())
-                encode_base64(fileMsg)
-                fileMsg.add_header('Content-Disposition',
-                                    'attachment;filename=Feedback_template.tex')
-                msg.attach(fileMsg)
+            #path_dir = path.join(path.dirname(__file__), "feedback_template.tex")
+            #if path.isfile("feedback_template.tex"):
+            #    fileMsg = MIMEBase('application','octet-stream')
+            #    fileMsg.set_payload(open('./feedback_template.tex', 'rb').read())
+            #    encode_base64(fileMsg)
+            #    fileMsg.add_header('Content-Disposition',
+            #                        'attachment;filename=Feedback_template.tex')
+            #    msg.attach(fileMsg)
 
             self.send(msg, recipient)
 
