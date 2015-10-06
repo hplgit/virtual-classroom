@@ -93,8 +93,8 @@ class Collaboration():
                     print('Warning: There are already teams with collaboration. Delete these by runing'\
                           +' "python start_group.py --e True"')
 
-                    max_team_number = max(max_team_number,
-                            int(team['name'].split('-')[1]))
+                max_team_number = max(max_team_number,
+                        int(team['name'].split('-')[1]))
 
         # Check that all students have repository names. Otherwise
         # print warning and abort
@@ -128,13 +128,16 @@ class Collaboration():
 
             # When creating a team the user is added, fix this by removing
             # auth[0] from the team before the students are added
-            if r_team.json()['members_count'] != 0 and r_team.status_code == 201:
-                url_rm_auth = self.url_teams + '/' + str(r_team.json()['id']) + \
-                               '/members/' + self.auth[0]
-                r_remove_auth = delete(url_rm_auth, auth=self.auth)
-                if r_remove_auth.status_code != 204:
-                    print("Could not delete user:%s from team:%s, this should"
-                        "be done manualy or by a seperate script" % (self.auth[0], team_name))
+            try:
+                if r_team.json()['members_count'] != 0 and r_team.status_code == 201:
+                    url_rm_auth = self.url_teams + '/' + str(r_team.json()['id']) + \
+                                   '/members/' + self.auth[0]
+                    r_remove_auth = delete(url_rm_auth, auth=self.auth)
+                    if r_remove_auth.status_code != 204:
+                        print("Could not delete user:%s from team:%s, this should"
+                            "be done manualy or by a seperate script" % (self.auth[0], team_name))
+            except:
+                from IPython import embed; embed()
 
             # Add repos to the team
             for s in eval_group:
