@@ -103,7 +103,7 @@ class Collaboration():
                 try:
                     student.repo_name
                 except:
-                    print "Uups. student {} has no repostory. You need to fix that.".format(student.email)
+                    print "Uups. student {} has no repository. You need to fix that.".format(student.email)
                     import sys; sys.exit(1)
 
 
@@ -146,7 +146,7 @@ class Collaboration():
                 r_add_repo = put(url_add_repo, auth=s.auth)
                 if r_add_repo.status_code != 204:
                     print("Error: %d - Can't add repo:%s to Team-%d" \
-                                   % (r_add_repo.status_code, s.repo_name, n))
+                                   % (str(r_add_repo.status_code), s.repo_name, n))
 
             # Add students to the team
             for s in group:
@@ -161,7 +161,8 @@ class Collaboration():
             r_add_fasit = put(s.url_teams + "/%s/repos/%s/Solutions" %
                                 (r_team.json()['id'], s.org), auth=s.auth)
             if r_add_fasit.status_code != 204:
-                print("Error: %d - Can't add solutions repo to teams")
+                print("Error: %d - Can't add solutions repo to teams" %
+                        r_add_fasit.status_code)
 
             # TODO: Create google form here
 

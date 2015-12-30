@@ -16,17 +16,17 @@ class Classroom:
     def _get(self, url):
         # Find numer of pages
         r = get(url, auth=self.auth, params={'per_page':100, 'page':1})
-   
-        if 'link' not in r.headers.keys():
+
+        if 'Link' not in r.headers.keys():
             return r.json()
-        
+
         else:
-            header = r.headers['link'].split(',')
+            header = r.headers['Link'].split(',')
             for link in header:
                 if 'rel="last"' in link:
                     pages = int(link.split(';')[0][-2])
 
-            # Get each page   
+            # Get each page
             teams = r.json()
             for page in range(pages-1):
                 r = get(url, auth=self.auth, params={'per_page':100, 'page':page+2})
