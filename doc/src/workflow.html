@@ -24,6 +24,15 @@ Automatically generated HTML file from DocOnce source
    max-height: 400px;
    overflow-x: hidden;
 }
+
+/* Adds an invisible element before each target to offset for the navigation
+   bar */
+.anchor::before {
+  content:"";
+  display:block;
+  height:50px; /* fixed header height*/
+  margin:-50px 0 0; /* negative fixed header height */
+}
 </style>
 
 
@@ -109,7 +118,7 @@ end of tocinfo -->
 <p>
 </div> <!-- end jumbotron -->
 
-<h1 id="___sec0">The workflow in a virtual GitHub classroom </h1>
+<h1 id="___sec0" class="anchor">The workflow in a virtual GitHub classroom </h1>
 
 <ul>
  <li> All students have <em>one</em> personal, private repo with all their
@@ -141,7 +150,7 @@ pulled, and a script can visit the relevant files in each repo,
 pop up an editor for writing feedback, add this file, commit, and
 push everything back.
 
-<h2 id="___sec1">Use in INF5620 </h2>
+<h2 id="___sec1" class="anchor">Use in INF5620 </h2>
 
 <ul>
  <li> Students show up for a 2h project lab.</li>
@@ -174,7 +183,7 @@ Pros and cons:
    will be higher</li>
 </ul>
 
-<h1 id="___sec2">Functionality to be developed </h1>
+<h1 id="___sec2" class="anchor">Functionality to be developed </h1>
 
 <ul>
  <li> File format with list of all students. Convention for marking who
@@ -200,7 +209,7 @@ the API (e.g., <a href="http://michaelliao.github.io/githubpy/" target="_self">g
 </div>
 
 
-<h3 id="___sec3">Resources </h3>
+<h3 id="___sec3" class="anchor">Resources </h3>
 
 <ul>
  <li> Intro: <a href="http://developer.github.com/guides/getting-started/" target="_self"><tt>http://developer.github.com/guides/getting-started/</tt></a></li>
@@ -208,7 +217,7 @@ the API (e.g., <a href="http://michaelliao.github.io/githubpy/" target="_self">g
  <li> <a href="http://goodcode.io/wp-content/uploads/2012/06/OAuth-edited.pdf" target="_self">All about OAuth authorization from Python</a></li>
 </ul>
 
-<h3 id="___sec4">GitHub and education </h3>
+<h3 id="___sec4" class="anchor">GitHub and education </h3>
 
 <ul>
  <li> <a href="https://github.com/blog/1775-github-goes-to-school" target="_self">GitHub goes to school</a>, see also <a href="https://education.github.com/" target="_self"><tt>https://education.github.com/</tt></a></li>
