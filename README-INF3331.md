@@ -17,8 +17,20 @@ python start_group.py --get_repos True --get_repos_filepath assignment2_solution
 4. python start_group.py --e True
 
 
+# End of semester
 
+Backup all repositories. For example:
 
-# At the end of the semester
+```bash
+python start_group.py --university=UiO --course=INF3331 --get_repos=True --get_repos_filepath=../repos_2015
+```
 
+At the end of the semester, delete all course repositories and all teams:
 
+```bash
+python end_semester.py
+```
+
+Finally, delete all members (not owners) of UiO-INF3331:
+1. Go to https://github.com/orgs/UiO-INF3331/people?utf8=%E2%9C%93&query=role%3Amember%20
+2. Delete all members
