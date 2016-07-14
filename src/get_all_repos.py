@@ -20,11 +20,14 @@ def collect_repos(auth, university, course, get_repos_filepath):
     url_orgs = 'https://api.github.com/orgs/%s' % (org)
     url_repos = 'https://api.github.com/repositories/'
     classroom = Classroom(auth, url_orgs)
+    print "Getting list of repositories..."
     repos = classroom.get_repos()
+    print "Found {} repositories.".format(len(repos))
 
     # Create the SSH links
     SSH_links = []
-    for repo in repos:
+    for i, repo in enumerate(repos):
+        print "Getting repository links: {}%".format((100*i)/len(repos))
         if course in repo['name'].encode('utf-8'):
             r = get(url_repos + str(repo['id']), auth=auth)
             SSH_links.append(r.json()['ssh_url'])
@@ -33,9 +36,10 @@ def collect_repos(auth, university, course, get_repos_filepath):
     os.chdir(repos_filepath)
 
     # Clone into the repos
-    for SSH_link in SSH_links:
+    for i, SSH_link in enumerate(SSH_links):
+        print "Cloning repositories {}%".format((100*i)/len(SSH_links))
         result = os.system('git clone ' + SSH_link)
-        #print(result)
+        print "done."
 
     # Change back to call dir
     os.chdir(call_dir)
