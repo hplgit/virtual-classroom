@@ -1,7 +1,7 @@
 from requests import get
 
 class Classroom:
-    """Contains help functions to get an overveiw of the viritual classroom"""
+    """Contains help functions to get an overveiw of the virtual classroom"""
 
     def __init__(self, auth, url_orgs):
         self.auth = auth

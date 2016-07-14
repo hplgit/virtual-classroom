@@ -4,6 +4,7 @@ from requests import get
 from classroom import Classroom
 
 def collect_repos(auth, university, course, get_repos_filepath):
+    """ Clone (download) all repositories of a course """
 
     call_dir = os.getcwd()
     repos_filepath = os.path.join(call_dir, get_repos_filepath, "%s_all_repos" % course)
