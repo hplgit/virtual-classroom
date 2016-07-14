@@ -15,3 +15,10 @@ python start_group.py --get_repos True --get_repos_filepath assignment2_solution
 
 # After review, end the review group with
 4. python start_group.py --e True
+
+
+
+
+# At the end of the semester
+
+
