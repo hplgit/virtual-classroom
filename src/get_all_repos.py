@@ -11,7 +11,7 @@ def collect_repos(auth, university, course, get_repos_filepath):
         os.makedirs(repos_filepath)
     else:
         if os.listdir(repos_filepath) != []:
-            print "There are already repos in this folder, pleace \
+            print "There are already repos in this folder, please \
                     remove them before cloning new into this folder"
             sys.exit(0)
 
