@@ -42,24 +42,34 @@ url_orgs = 'https://api.github.com/orgs/%s' % (org)
 classroom = Classroom(auth, url_orgs)
 list_teams = classroom.get_teams()
 list_repos = classroom.get_repos()
+list_members = classroom.get_members()
 
-# Find list of teams to delete
+# Find list of teams and members to delete
 teams_to_delete = []
+members_to_delete = []
 text = open(path.join(path.dirname(__file__), "Attendance", course + "students_base.txt"), 'r')
 for line in text:
     line = re.split(r'\s*\/\/\s*', line)
     teams_to_delete.append(line[1])
+    members_to_delete.append(line[2])
+
+# Delete members
+for member in list_members:
+    if member['login'].encode('utf-8') in members_to_delete and member["type"] == "User":
+        print "Deleting ", member["login"],
+        r = requests.delete(url + "/members/" + str(member['login']), auth=auth)
+        print r.status_code
 
 # Delete teams
 for team in list_teams:
    if team['name'].encode('utf-8') in teams_to_delete:
-       print "Deleting ", team["name"]
+       print "Deleting ", team["name"],
        r = requests.delete(url + "/teams/" + str(team['id']), auth=auth)
        print r.status_code
 
 # Delete repos
 for repo in list_repos:
    if course in repo['name']:
-       print "Deleting course ", org + repo['name']
+       print "Deleting repository ", org + repo['name'],
        r = requests.delete(url + "/repos/%s/" % org + repo['name'], auth=auth)
        print r.status_code

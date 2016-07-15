@@ -13,6 +13,9 @@ class Classroom:
     def get_repos(self):
         return self._get(self.url_orgs + "/repos")
 
+    def get_members(self):
+        return self._get(self.url_ord + "/members")
+
     def _get(self, url):
         # Find numer of pages
         r = get(url, auth=self.auth, params={'per_page':100, 'page':1})
