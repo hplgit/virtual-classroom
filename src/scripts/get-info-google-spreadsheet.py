@@ -47,16 +47,20 @@ for line in lines:
     key, value = line.split(':')
     parameters[key] = value[:-1]
 
+spreadsheet_name = "Sign up form for INF3331/INF43331 (2016) (Responses)"
+# or use
+# spreadsheet_name = parameters["course"]
+
 # Log on to disk
 scope = ['https://spreadsheets.google.com/feeds']
 credentials = ServiceAccountCredentials.from_json_keyfile_name(json_file, scope)
 
 gc = gspread.authorize(credentials)
 try:
-    wks = gc.open(parameters['course']).sheet1
+    wks = gc.open(spreadsheet_name).sheet1
 except gspread.SpreadsheetNotFound:
     json_key = json.load(open(json_file))
-    print "The spreadsheet document {} not found. Maybe it does not exist?".format(parameters['course'])
+    print "The spreadsheet document '{}' not found. Maybe it does not exist?".format(spreadsheet_name)
     print "Otherwise, make sure that you shared the spreadsheet with {} and try again.".format(json_key['client_email'])
     sys.exit(1)
 
@@ -70,7 +74,7 @@ if not os.path.exists(attendance_location):
 filename = os.path.join(attendance_location, "%s-students_base.txt" % parameters['course'])
 
 if os.path.isfile(filename):
-   answ = input("The student_base file exists, are you" + \
+   answ = input("The student_base file exists, are you " + \
                  "sure you want to overwrite this?! (yes/no): ")
    if "yes" != answ.lower():
        exit(1)
