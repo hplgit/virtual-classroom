@@ -55,7 +55,8 @@ for line in text:
 
 # Delete members
 for member in list_members:
-    if member['login'].encode('utf-8') in members_to_delete and member["type"] == "User":
+    #if member['login'].encode('utf-8') in members_to_delete
+    if member["type"] == "User":
         print "Deleting ", member["login"],
         r = requests.delete(url + "/members/" + str(member['login']), auth=auth)
         print r.status_code
