@@ -25,7 +25,7 @@ except ImportError:
     sys.exit(1)
 
 try:
-    from oauth2client.client import SignedJwtAssertionCredentials
+    from oauth2client.service_account import ServiceAccountCredentials
 except ImportError:
     print("You need to have oauth2client to use this script. To install execute:" + \
            "'sudo pip install oauth2client'")
@@ -38,7 +38,6 @@ except NameError: pass
 # Get password and username
 json_file = input("Path to Google credentials JSON file (see"\
                   " http://gspread.readthedocs.org/en/latest/oauth2.html): ")
-json_key = json.load(open(json_file))
 
 # Get parameters
 parameters_path = os.path.join(os.path.dirname(__file__), '..', 'default_parameters.txt')
@@ -50,14 +49,13 @@ for line in lines:
 
 # Log on to disk
 scope = ['https://spreadsheets.google.com/feeds']
-credentials = SignedJwtAssertionCredentials(json_key['client_email'],
-        json_key['private_key'], scope)
-
+credentials = ServiceAccountCredentials.from_json_keyfile_name(json_file, scope)
 
 gc = gspread.authorize(credentials)
 try:
     wks = gc.open(parameters['course']).sheet1
 except gspread.SpreadsheetNotFound:
+    json_key = json.load(open(json_file))
     print "The spreadsheet document {} not found. Maybe it does not exist?".format(parameters['course'])
     print "Otherwise, make sure that you shared the spreadsheet with {} and try again.".format(json_key['client_email'])
     sys.exit(1)
