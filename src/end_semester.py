@@ -14,7 +14,7 @@ try: input = raw_input
 except NameError: pass
 
 # Ask user for verification
-answ = input('Are you sure you want to run this script? All teams and repos will be deleted. (yes/no) ')
+answ = input('Are you sure you want to run this script? All members (but not owners), teams and repos will be deleted. (yes/no) ')
 if answ.lower() != 'yes':
     sys.exit(1)
 
@@ -42,24 +42,25 @@ url_orgs = 'https://api.github.com/orgs/%s' % (org)
 classroom = Classroom(auth, url_orgs)
 list_teams = classroom.get_teams()
 list_repos = classroom.get_repos()
-list_members = classroom.get_members()
+
+# Only delete members, not owners
+list_members = classroom.get_members(role='member')
 
 # Find list of teams and members to delete
 teams_to_delete = []
 members_to_delete = []
-text = open(path.join(path.dirname(__file__), "Attendance", course + "students_base.txt"), 'r')
-for line in text:
-    line = re.split(r'\s*\/\/\s*', line)
-    teams_to_delete.append(line[1])
-    members_to_delete.append(line[2])
+#text = open(path.join(path.dirname(__file__), "Attendance", course + "students_base.txt"), 'r')
+#for line in text:
+#    line = re.split(r'\s*\/\/\s*', line)
+#    teams_to_delete.append(line[1])
+#    members_to_delete.append(line[2])
 
 # Delete members
 for member in list_members:
     #if member['login'].encode('utf-8') in members_to_delete
-    if member["type"] == "User":
-        print "Deleting ", member["login"],
-        r = requests.delete(url + "/members/" + str(member['login']), auth=auth)
-        print r.status_code
+    print "Deleting ", member["login"],
+    r = requests.delete(url_orgs + "/members/" + str(member['login']), auth=auth)
+    print r.status_code
 
 # Delete teams
 for team in list_teams:

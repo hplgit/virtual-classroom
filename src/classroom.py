@@ -13,12 +13,17 @@ class Classroom:
     def get_repos(self):
         return self._get(self.url_orgs + "/repos")
 
-    def get_members(self):
-        return self._get(self.url_ord + "/members")
+    def get_members(self, role='all'):
+        return self._get(self.url_orgs + "/members", params={'role': role})
 
-    def _get(self, url):
+    def _get(self, url, params=None):
+
+        p = {'per_page':100, 'page':1}
+        if params is not None:
+            p.update(params)
+
         # Find numer of pages
-        r = get(url, auth=self.auth, params={'per_page':100, 'page':1})
+        r = get(url, auth=self.auth, params=p)
 
         if 'Link' not in r.headers.keys():
             return r.json()
@@ -32,7 +37,8 @@ class Classroom:
             # Get each page
             teams = r.json()
             for page in range(pages-1):
-                r = get(url, auth=self.auth, params={'per_page':100, 'page':page+2})
+                p['page'] = page+2
+                r = get(url, auth=self.auth, params=p)
                 teams += r.json()
 
             return teams
