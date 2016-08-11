@@ -21,7 +21,7 @@ Correcting solutions
 
 1. Download all repositories with
 
-   `python start_group.py --get_repos True --get_repos_filepath assignment2_solutions --f Attendance/INF3331-students_base.txt`
+   `./start_group.py --get_repos True --get_repos_filepath assignment2_solutions --f Attendance/INF3331-students_base.txt`
    
 
 Steps to start new peer-review group
@@ -41,11 +41,11 @@ End of semester
 1. Backup all repositories. For example:
 
 ```bash
-python start_group.py --university=UiO --course=INF3331 --get_repos=True --get_repos_filepath=../repos_2015
+./start_group.py --university=UiO --course=INF3331 --get_repos=True --get_repos_filepath=../repos_2015
 ```
 
 2. Delete all course repositories, teams and members (not owners) with:
 
 ```bash
-python end_semester.py
+./end_semester.py
 ```
