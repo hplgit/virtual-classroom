@@ -7,10 +7,7 @@ Start of semester
 1. Ask students to fill out the Google Form https://docs.google.com/a/simula.no/forms/d/1JGSMC-9sRcuCanLF7MavHlGWVxuOjX-bwcIoyoM4yPE/edit
 2. Make sure the response Google Spreadsheet has the ordering: *Timestamp, UiO-Username, Username on Github, Email Address, Course, Full name*
 3. Download the student list with `cd virtual-classroom/src/scripts && ./get-info-google-spreadsheet.py`
-4. Create a github repository and team for each student with `cd virtual-classroom/src && ./`
-
-# Start new group
-python start_group.py --i True
+4. Create a github repository and team for each student with `cd virtual-classroom/src && ./start_group.py --i True`
 
 # Download all repos
 python start_group.py --get_repos True --get_repos_filepath assignment2_solutions --f Attendance/INF3331-students_base.txt
