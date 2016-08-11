@@ -11,15 +11,20 @@ class Collaboration():
 
     def __init__(self, students, max_group_size, send_email, rank):
         """Divide the students in to groups and give them access to another groups
-           reposetories."""
+           repositories."""
+
         if len(students.values()) < 2:
             print("There are one or less students, no need for collaboration")
-            sys.exit(1)
+            exit(1)
 
         self.send_email = send_email
 
+        if len(students.values()) < 2*max_group_size:
+            print "The group is too small for a peer review. Consider reducing the max group size."
+            exit(1)
+
         if max_group_size > len(students.values()):
-            #TODO: This case failes
+            #TODO: This case fails
             self.groups = list(students.values())
             test_student = self.groups[0]
 
@@ -32,8 +37,12 @@ class Collaboration():
 
             if not rank:
                 self.groups = []
+                to_be_reviewed_groups = []
+                shifted_students = students.values()[max_group_size:] + students.values()[:max_group_size]
+
                 for i in range(number_of_groups):
                     self.groups.append(list(students.values())[i::number_of_groups])
+                    to_be_reviewed_groups.append(list(shifted_students)[i::number_of_groups])
 
             else:
                 rank_1 = []
@@ -110,7 +119,8 @@ class Collaboration():
         for n, group in enumerate(self.groups):
 
             # Get evualation group (next group in the list)
-            eval_group = self.groups[(n+1)%len(self.groups)]
+            #eval_group = self.groups[(n+1)%len(self.groups)]
+            eval_group = to_be_reviewed_groups[n]
 
             # Create a team with access to an another team's repos
             repo_names = self.get_repo_names(eval_group)
@@ -158,11 +168,11 @@ class Collaboration():
                                    % (r_add_member.status_code, s.username, n))
 
             # Add solution repo
-            r_add_fasit = put(s.url_teams + "/%s/repos/%s/Solutions" %
-                                (r_team.json()['id'], s.org), auth=s.auth)
-            if r_add_fasit.status_code != 204:
-                print("Error: %d - Can't add solutions repo to teams" %
-                        r_add_fasit.status_code)
+            #r_add_fasit = put(s.url_teams + "/%s/repos/%s/Solutions" %
+            #                    (r_team.json()['id'], s.org), auth=s.auth)
+            #if r_add_fasit.status_code != 204:
+            #    print("Error: %d - Can't add solutions repo to teams" %
+            #            r_add_fasit.status_code)
 
             # TODO: Create google form here
 
