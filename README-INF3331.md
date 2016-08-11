@@ -16,10 +16,11 @@ Start of semester
    
    *Note*: This command will *not* overwrite existing repositories. This means that you can execute this command again if new students join the course.
 
-Correcting solutions
---------------------
-
-1. Download all repositories with
+Assignments
+-----------
+1. Each student has a repository with the name INF3331-XXX where `XXX` is the UiO-username. The solutions should be pushed into this repository.
+2. If the assignment is a peer-reviewed assignemnt, see next section.
+3. At the assignment deadline, download all repositories with
 
    `./start_group.py --get_repos True --get_repos_filepath assignment2_solutions --f Attendance/INF3331-students_base.txt`
    
