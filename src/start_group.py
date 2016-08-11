@@ -141,13 +141,14 @@ def create_students(students_file, course, university, send_email, rank):
 
     # Create a dict with students
     for line in text:
-        print "Handle student {0}".format(line.strip())
         try:
-            pressent, name, username, email, subcourse, rank = split(r"\s*\/\/\s*", line.replace('\n', ''))
-        except:
-            pressent, name, username, email, subcourse = split(r"\s*\/\/\s*", line.replace('\n', ''))
+            present, name, username, email, subcourse, _ = split(r"\s*\/\/\s*", line.replace('\n', ''))
             rank = 1
-        if pressent.lower() == 'x' and username != "":
+        except:
+            present, name, username, email, subcourse = split(r"\s*\/\/\s*", line.replace('\n', ''))
+            rank = 1
+        if present.lower() == 'x' and username != "":
+            print "Handle student {0}".format(name)
             students[name] = Student(name, username, university, course,
                                      email, auth, send_email, rank)
 
@@ -207,7 +208,7 @@ def end_group(org):
         print('Deleted all teams related to the group session (%d teams deleted)' % \
                 number_deleted)
     else:
-        print('Delted %s teams, but there were %s teams that where not deleted:%s' % \
+        print('Deleted %s teams, but there were %s teams that where not deleted:%s' % \
                (number_deleted, number_not_deleted, not_deleted))
 
 
