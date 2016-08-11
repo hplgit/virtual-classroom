@@ -19,7 +19,7 @@ Start of semester
 Assignments
 -----------
 1. Each student has a repository with the name INF3331-*XYZ* where *XYZ* is the UiO-username. The solutions should be pushed into this repository.
-2. If the assignment is a peer-reviewed assignment, see next section.
+2. If the assignment is a peer-reviewed assignment, see next section. Otherwise, proceed with the next step.
 3. At the assignment deadline, all repositories can be downloaded with:
 
    `./start_group.py --get_repos True --get_repos_filepath assignment2_solutions --f Attendance/INF3331-students_base.txt`
