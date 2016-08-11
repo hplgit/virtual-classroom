@@ -18,7 +18,7 @@ Start of semester
 
 Assignments
 -----------
-1. Each student has a repository with the name INF3331-XXX where `XXX` is the UiO-username. The solutions should be pushed into this repository.
+1. Each student has a repository with the name INF3331-*XYZ* where *XYZ* is the UiO-username. The solutions should be pushed into this repository.
 2. If the assignment is a peer-reviewed assignemnt, see next section.
 3. At the assignment deadline, download all repositories with
 
