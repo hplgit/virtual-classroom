@@ -8,7 +8,9 @@ Start of semester
 2. Make sure the response Google Spreadsheet has the ordering: *Timestamp, UiO-Username, Username on Github, Email Address, Course, Full name*
 3. Download the student list with `cd virtual-classroom/src/scripts && ./get-info-google-spreadsheet.py`
 4. Mark all participating students with an `x` in `Attendance/INF3331-students_base.txt`
-4. Create a github repository and team for each student with `cd virtual-classroom/src && ./start_group.py --i True --no-email --f Attendance/INF3331-students_base.txt`
+4. Create a github repository and team for each student with 
+
+   `cd virtual-classroom/src && ./start_group.py --i True --no-email --f Attendance/INF3331-students_base.txt`
 
    (If you choose `--email`, make sure to update the file `message_new_student.rst` beforehand).
    
