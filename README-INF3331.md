@@ -19,22 +19,21 @@ Start of semester
 Assignments
 -----------
 1. Each student has a repository with the name INF3331-*XYZ* where *XYZ* is the UiO-username. The solutions should be pushed into this repository.
-2. If the assignment is a peer-reviewed assignemnt, see next section.
-3. At the assignment deadline, download all repositories with
+2. If the assignment is a peer-reviewed assignment, see next section.
+3. At the assignment deadline, all repositories can be downloaded with:
 
    `./start_group.py --get_repos True --get_repos_filepath assignment2_solutions --f Attendance/INF3331-students_base.txt`
    
 
-Steps to start new peer-review group
-------------------------------------
-1. run scripts/copy-attendance-file.py
-2. mark the students that take part of the group with "x"
-3. python start_group.py --f Attendance/INF3331-2015-12-01_others.txt  # Creates teams of 3
+Performing a peer-review
+------------------------
+1. Run scripts/copy-attendance-file.py. 
+2. Mark the students that take part of the group with `x` (this is usefull if some of the students hand in late).
+3. Run `./start_group.py --f Attendance/INF3331-2015-12-01_group1.txt`. This creates github teams of size 3 with access to 3 other student's repositories. 
 
 After review, end the review group with
 
-4. python start_group.py --e True
-
+4. `./start_group.py --e True`
 
 End of semester
 ---------------
