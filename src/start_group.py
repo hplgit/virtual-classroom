@@ -94,9 +94,9 @@ def read_command_line():
                         help="How to divide in to groups, with or without a \
                         classification of the students from 1 to 3, where 1 is \
                         a top student.", metavar="rank")
-    parser.add_argument('--email', type=bool, default=True,
-                        help="Send email or not", metavar="email")
-
+    parser.add_argument('--email', dest='email', action='store_true', help="Send email")
+    parser.add_argument('--no-email', dest='email', action='store_false', help="Send no email")
+    parser.set_defaults(email=True)
 
     args = parser.parse_args()
 
