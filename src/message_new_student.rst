@@ -2,15 +2,15 @@ Hi %(name)s, and welcome to %(course)s
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this course we will use GitHub as a tool for version control and
-collaboration.  You have now access to a repository which is called
+collaboration. You have now access to a repository which is called
 %(repo_name)s. It is very important that every file you make in this
-course that is supposed to be evaluated by others, is added to this
+course that is supposed to be evaluated is added to this
 repo (short for repository). We recommend that you put all your course
 work in the repo, because this serves as a backup and as an archive of
 previous versions of the files. You work with the repo through the Git
 version control system. The workflow may seem a bit cumbersome at
 first sight, but this is how professionals work with software and
-technical documents all around the world in %(year)s.
+technical documents all around the world.
 
 **Important**: Open your primary email on GitHub and confirm that you
 want to join %(university)s-%(course)s. You have to do this to get
@@ -71,5 +71,6 @@ any of them.
 
 More information:
 
+ * Complete the interactive `git demo <https://try.github.io>`_
  * See the `Quick intro to Git and GitHub <http://hplgit.github.io/teamods/bitgit/Langtangen_github.pdf>`_
  * A more extensive introduction to Git is provided by the three first chapters in `this book <http://git-scm.com/book>`_

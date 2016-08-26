@@ -57,9 +57,12 @@ class SMTPGoogle(EmailServer):
       self.server = SMTP(self.smtp_server, self.port)
       self.server.starttls()
       self.server.login(self.username, self.password)
-    except:
+    except Exception as e:
       print('Username or password is wrong for %s, please try again!'\
           % self.username)
+      print(e)
+      print("")
+      print("Maybe you need activate less secure apps on gmail? See https://www.google.com/settings/u/1/security/lesssecureapps")
       exit(1)
 
 
