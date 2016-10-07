@@ -190,9 +190,6 @@ def end_group(org):
     classroom = Classroom(auth, url_orgs)
     teams = classroom.get_teams()
 
-    print [team["name"] for team in teams]
-    print len(teams)
-
     number_not_deleted = 0
     not_deleted = ''
     for team in teams:
