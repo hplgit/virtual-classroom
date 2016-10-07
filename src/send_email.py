@@ -152,6 +152,7 @@ class Email():
         email_var['get_repos_https'] = get_repos_https
         email_var['correcting_names'] = correcting_names
         email_var['team_name'] = team_name
+        email_var['team_url'] = 'https://github.com/orgs/UiO-INF3331/teams/{}/repositories'.format(team_name)
         email_var['course'] = review_group[0].course
 
         for student in review_group:
@@ -168,7 +169,7 @@ class Email():
 
             # Compose message
             text = self.get_text('message_collaboration.rst')
-            text = text % email_var
+            text = text.format(**email_var)
             text = self.rst_to_html(text).encode('utf-8') # ae, o, aa support
 
             # Compose email
