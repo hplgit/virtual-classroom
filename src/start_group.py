@@ -242,6 +242,17 @@ def main():
 
         students = create_students(students_file, course, university, send_email, rank)
         if not start_semester:
+            # The email server logs off again after some time, so we need to
+            # login again
+            if email:
+                # Set up e-mail server
+                if smtp == 'google':
+                    server = SMTPGoogle()
+                elif smtp == 'uio':
+                    server = SMTPUiO()
+                send_email = Email(server)
+            else:
+                send_email = None
             Collaboration(students, max_students, send_email, rank)
 
         # Logout e-mail server
