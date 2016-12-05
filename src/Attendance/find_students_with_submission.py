@@ -6,10 +6,13 @@ delayed_students = []
 assignment_no = 6
 f = open("INF3331-students_base_assignment{}.txt".format(assignment_no), "r").readlines()
 
-solution_path = "../assignment5_solutions/INF3331_all_repos/INF3331-{}/assignment{}"
-solution_path2 = "../assignment5_solutions/INF3331_all_repos/INF3331-{}/Assignment{}"
-solution_path3 = "../assignment5_solutions/INF3331_all_repos/INF3331-{}/assigment{}"
-solution_path4 = "../assignment5_solutions/INF3331_all_repos/INF3331-{}/src/assignment{}"
+solution_paths = ["../assignment{}_solutions/INF3331_all_repos/INF3331-{}/assignment{}",
+                "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/Assignment{}",
+                "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/assigment{}",
+                "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/assignment-{}",
+                "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/Assignment-{}",
+                "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/src/assignment{}",
+                ]
 
 for l in f:
     attends, uio, github, email, course, name =  l.split(r"//")
@@ -17,10 +20,8 @@ for l in f:
         continue
 
     uio = uio.strip()
-    if not exists(solution_path.format(uio, assignment_n5o)) and \
-       not exists(solution_path2.format(uio, assignment_no)) and \
-       not exists(solution_path3.format(uio, assignment_no)) and \
-       not exists(solution_path4.format(uio, assignment_no)):
+    has_solution = any([exists(solution_path.format(assignment_no, uio, assignment_no)) for solution_path in solution_paths])
+    if not has_solution:
             print "Student {} might have not submitted assignment {} but is in the student list".format(uio, assignment_no)
 
 
