@@ -20,7 +20,7 @@ class Collaboration():
         self.send_email = send_email
 
         if len(students.values()) < 2*max_group_size:
-            print "The group is too small for a peer review. Consider reducing the max group size."
+            print "The group is too small for a peer review. Consider reducing the max group size (with --m X)."
             exit(1)
 
         if max_group_size > len(students.values()):

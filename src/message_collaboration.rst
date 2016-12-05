@@ -24,8 +24,10 @@ You can clone these repositories with:
 
 {get_repos}
 
+If you get a "permission denied" error, try changing the URL in the command above to https://github.com/UiO-INF3331/INF3331-NAME.git (replace NAME with the actual repo name).
+
 Guidelines
 ~~~~~~~~~~
 
-* The guidelines and a Latex template for the feedback file is available here: https://www.overleaf.com/read/zzrxxbxbmqws and should be used (you may alternatively use a Markdown version with the same layout). You can write the review with Overleaf (its free to sign up): open link above and click on "Create a new project to start writing!" to get started.
+* The guidelines and a Latex template for the feedback file is available here: https://www.overleaf.com/read/cdtgqrrwktzm and should be used (you may alternatively use a Markdown version with the same layout). You can write the review with Overleaf (its free to sign up): open link above and click on "Create a new project to start writing!" to get started.
 * A review is completed by pushing the review Latex and PDF files to each of the reviewed repositories. The name of the files should be: feedback.tex and feedback.pdf.
