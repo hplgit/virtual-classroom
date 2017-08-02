@@ -11,7 +11,7 @@ solution_paths = ["../assignment{}_solutions/INF3331_all_repos/INF3331-{}/assign
                 "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/assigment{}",
                 "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/assignment-{}",
                 "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/Assignment-{}",
-                "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/src/assignment{}",
+                "../assignment{}_solutions/INF3331_all_repos/INF3331-{}/virtual_classroom/assignment{}",
                 ]
 
 for l in f:
