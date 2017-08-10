@@ -3,17 +3,13 @@
 # For support for python 2 and 3
 from __future__ import print_function
 
-from requests import get, put, post, delete
-from json import dumps
-from sys import exit
-from unicodedata import normalize, category
-from classroom import Classroom
+from api import APIManager
 
-class Student(Classroom):
+
+class Student(object):
     """Holdes all the information about the student."""
 
-    def __init__(self, name, username, university, course,
-                 email, auth, send_email, rank):
+    def __init__(self, name, username, university, course, email, rank):
         """When initialized it testes if the information is correct and if the
            student has been initialized before. If not it calles create_repository()
         """
@@ -33,15 +29,10 @@ class Student(Classroom):
         self.username = username
         self.course = course
         self.university = university
-        self.auth = auth
-        self.send_email = send_email
 
         # Create useful strings
         self.org = "%s-%s" % (university, course)
-        self.url_orgs = 'https://api.github.com/orgs/%s' % (self.org)
-        self.url_teams = 'https://api.github.com/teams'
-
-        Classroom.__init__(self, self.auth, self.url_orgs)
+        self.api = APIManager()
 
         # Check that there is an user with the given username
         if self.is_user():
@@ -51,29 +42,28 @@ class Student(Classroom):
 
             # Get repo name
             else:
-                teams = self.get_teams()
+                teams = self.api.get_teams(self.org)
                 for team in teams:
                     if team['name'].encode('utf-8') == self.name:
                         self.team_id = team['id']
-                        r = get(self.url_teams + "/" + str(self.team_id) + "/repos", auth=auth)
-                        for repo in r.json():
+                        r = self.api.get_team_repos(self.team_id)
+                        for repo in r:
                             # Assumes that the student has not created a new
                             # repository containing the name of the course-<firstname>
                             base_name = "%s-%s" % (self.course, \
                                             self.strip_accents(self.name.split(" ")[0]))
-
                             if base_name in repo['name'].encode('utf-8'):
                                 self.repo_name = repo['name'].encode('utf-8')
                                 break
                         break
 
-
     def is_user(self):
         """
            Check if the given username is a user on GitHub.
-           If it is not a user the program will exit with a warning
+           If it is not a user the program will skip this student
+           and give a warning.
         """
-        ref = get('https://api.github.com/users/%s' % self.username, auth=self.auth)
+        ref = self.api.get_user(self.username)
         msg = "User: %s does not exist on GitHub and a repository will not be created." \
                % self.username
         if ref.status_code != 200:
@@ -81,7 +71,8 @@ class Student(Classroom):
             return False
         return True
 
-    def strip_accents(self, text):
+    @staticmethod
+    def strip_accents(text):
         """Change special characters into ascii counterpart."""
 
         # Remove special characters that unicodedata doesn't handle
@@ -123,17 +114,17 @@ class Student(Classroom):
                    }
 
         # Add team and repo
-        r_repo = post(self.url_orgs + "/repos", data=dumps(key_repo), auth=self.auth)
-        r_team = post(self.url_orgs + "/teams", data=dumps(key_team), auth=self.auth)
+        r_repo = self.api.create_repo(self.org, key_repo)
+        r_team = self.api.create_team(self.org, key_team)
 
         # When creating a team the user is added, fix this by removing
         # auth[0] from the team before the student is added
         if r_team.json()['members_count'] != 0 and r_team.status_code == 201:
-            url_rm_auth = self.url_teams + '/' + str(r_team.json()['id']) + '/members/' + self.auth[0]
-            r_remove_auth = delete(url_rm_auth, auth=self.auth)
+            team_id = str(r_team.json()['id'])
+            r_remove_auth = self.api.delete_team_member(self.org, team_id, self.api.auth[0])
             if r_remove_auth.status_code != 204:
-                print("Could not delete user:%s from team:%s, this should" % (self.name, auth[0]) + \
-                        "be done manualy or by a seperate script")
+                print("Could not delete user:%s from team:%s, this should" % (self.api.auth[0], self.name) + \
+                        "be done manually or by a separate script")
 
         # Check success
         success = True
@@ -148,11 +139,10 @@ class Student(Classroom):
 
         # Add repository to team and invite user to team
         if success:
-            url_add_member = self.url_teams + "/%s/memberships/%s" \
-                              % (r_team.json()['id'], self.username)
-            url_add_repo = self.url_teams + "/%s/repos/%s/%s" % (r_team.json()['id'],                                                                                  self.org, self.repo_name)
-            r_add_repo = put(url_add_repo, auth=self.auth)
-            r_add_member = put(url_add_member, headers={'Content-Length': 0}, auth=self.auth)
+            team_id = str(r_team.json()['id'])
+            # TODO: Is there a reason why you go for Content-Length: 0 for just one of the two PUT requests?
+            r_add_repo = self.api.add_team_repo(team_id, self.org, self.repo_name)
+            r_add_member = self.api.add_team_membership(team_id, self.username)
 
             # Check if everthing succeeded
             if r_add_repo.status_code != 204:
@@ -161,14 +151,10 @@ class Student(Classroom):
             elif r_add_member.status_code != 200:
                 print("Error: %d - did not manage to add usr:%s to team:%s" \
                        % (r_add_member.status_code, self.username, self.name))
-            else:
-                if self.send_email is not None:
-                    # Send information to the student
-                    self.send_email.new_student(self)
 
     def repo_exist(self, repo_name):
         """Check if there exixts a repo with the given name"""
-        repos = self.get_repos()
+        repos = self.api.get_repos(self.org)
         for repo in repos:
             if repo_name == repo['name'].encode('utf-8'):
                 return True
@@ -177,7 +163,7 @@ class Student(Classroom):
 
     def has_team(self):
         """Check if there exist a team <full name>"""
-        teams = self.get_teams()
+        teams = self.api.get_teams(self.org)
         for team in teams:
             if self.name == team['name'].encode('utf-8'):
                 return True

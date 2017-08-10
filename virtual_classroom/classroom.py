@@ -1,44 +1,74 @@
-from requests import get
+from re import split
 
-class Classroom:
+from student import Student
+from send_email import Email, EmailBody, SMTPGoogle, SMTPUiO
+from parameters import get_parameters
+from collaboration import Collaboration
+
+
+class Classroom(object):
     """Contains help functions to get an overveiw of the virtual classroom"""
 
-    def __init__(self, auth, url_orgs):
-        self.auth = auth
-        self.url_orgs = url_orgs
+    def __init__(self, file=None):
+        self.students = {}
+        self.collaboration = None
+        if file is None:
+            # TODO: Fetch default file
+            return
 
-    def get_teams(self):
-        return self._get(self.url_orgs + "/teams")
+        # Load parameters
+        parameters = get_parameters()
+        university = parameters["university"]
+        course = parameters["course"]
 
-    def get_repos(self):
-        return self._get(self.url_orgs + "/repos")
+        lines = open(file, "r").readlines()
+        # Create a dict with students
+        for line in lines:
+            try:
+                present, name, username, email, _, _ = split(r"\s*\/\/\s*", line.replace('\n', ''))
+                rank = 1
+            except:
+                present, name, username, email, _ = split(r"\s*\/\/\s*", line.replace('\n', ''))
+                rank = 1
+            if present.lower() == 'x' and username != "":
+                print "Handle student {0}".format(name)
+                self.students[name] = Student(name, username, university, course, email, rank)
 
-    def get_members(self, role='all'):
-        return self._get(self.url_orgs + "/members", params={'role': role})
+    def email_students(self, filename, subject="", extra_params={}, smtp=None):
+        """Sends an email to all students in the classroom.
 
-    def _get(self, url, params=None):
+        Will try to format the email body text with student attributes and `extra_params`.
 
-        p = {'per_page':100, 'page':1}
-        if params is not None:
-            p.update(params)
+        Parameters
+        ----------
+        filename : str
+            Path to the file containing the email body text
+        subject : str, optional
+            Subject of the email
+        extra_params : dict, optional
+            Dictionary of extra parameters to format the email body text
+        smtp : str, optional
+            The SMTP server to use. Can either be 'google' or 'uio'.
 
-        # Find numer of pages
-        r = get(url, auth=self.auth, params=p)
+        """
+        parameters = get_parameters()
+        smtp = parameters["smtp"] if smtp is None else smtp
+        # Set up e-mail server
+        if smtp == 'google':
+            server = SMTPGoogle()
+        elif smtp == 'uio':
+            server = SMTPUiO()
+        email_body = EmailBody(filename)
+        email = Email(server, email_body, subject=subject)
 
-        if 'Link' not in r.headers.keys():
-            return r.json()
+        for name in self.students:
+            student = self.students[name]
+            params = student.__dict__.copy()
+            params.update(extra_params)
+            email_body.params = params
+            email.send(student.email)
 
-        else:
-            header = r.headers['Link'].split(',')
-            for link in header:
-                if 'rel="last"' in link:
-                    pages = int(link.split(';')[0][-2])
 
-            # Get each page
-            teams = r.json()
-            for page in range(pages-1):
-                p['page'] = page+2
-                r = get(url, auth=self.auth, params=p)
-                teams += r.json()
 
-            return teams
+
+

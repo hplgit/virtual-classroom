@@ -86,17 +86,27 @@ class SMTPUiO(EmailServer):
 
 
 class Email():
-    def __init__(self, server_connection):
+    def __init__(self, server_connection, filename=None, params=None):
         self.server_connection = server_connection
+        self.params = self.extract_params(params)
+        self.filename = filename
 
-    def get_text(self, filename):
+    @staticmethod
+    def extract_params(params):
+        if isinstance(params, dict) or params is None:
+            return params
+        else:
+            return params.__dict__
+
+    def get_text(self, filename=None):
         """Read the given file"""
-        file = open(filename, 'r')
-        text = file.read()
-        file.close()
+        filename = self.filename if filename is None else filename
+        with open(filename, 'r') as f:
+            text = f.read()
         return text
 
-    def rst_to_html(self, text):
+    @staticmethod
+    def rst_to_html(text):
         """Convert the .rst file to html code"""
         parts = core.publish_parts(source=text, writer_name='html')
         return parts['body_pre_docinfo']+parts['fragment']
@@ -194,8 +204,11 @@ class Email():
 
             self.send(msg, recipient)
 
-    def send(self, msg, recipients):
+    def send(self, recipients, msg=None, subject="", params=None):
         """Send email"""
+        if msg is None or params is not None:
+            msg = self.format_mail(recipients, text=msg, subject=subject, params=params)
+
         failed_deliveries = \
                 self.server_connection.server.sendmail(self.server_connection.email,
                                                        recipients, msg.as_string())
@@ -203,3 +216,91 @@ class Email():
             print('Could not reach these addresses:', failed_deliveries)
         else:
             print('Email successfully sent to %s' % recipients)
+
+    def format_body(self, filename=None, text=None, params=None):
+        text = self.get_text(filename=filename) if text is None else text
+        params = self.params if params is None else self.extract_params(params)
+
+        text = text.format(**params)
+        text = self.rst_to_html(text).encode('utf-8')  # ae, o, aa support
+        body_text = MIMEText(text, 'html', 'utf-8')
+        return body_text
+
+    def format_mail(self, recipients, text=None, subject="", params=None):
+        body_text = self.format_body(text=text, params=params)
+        if isinstance(recipients, (list, dict, tuple)):
+            recipients = ", ".join(recipients)
+
+        # Compose email
+        msg = MIMEMultipart()
+        msg['Subject'] = subject
+        msg['To'] = recipients
+        msg['From'] = self.server_connection.email
+        msg.attach(body_text)
+        return msg
+
+
+class Email(object):
+    def __init__(self, server_connection, email_body, subject=""):
+        self.server_connection = server_connection
+        self.email_body = email_body
+        self.subject = subject
+
+    def send(self, recipients, subject=None):
+        """Send email"""
+        subject = self.subject if subject is None else subject
+        msg = self.format_mail(recipients, subject)
+
+        failed_deliveries = \
+                self.server_connection.server.sendmail(self.server_connection.email,
+                                                       recipients, msg.as_string())
+        if failed_deliveries:
+            print('Could not reach these addresses:', failed_deliveries)
+        else:
+            print('Email successfully sent to %s' % recipients)
+
+    def format_mail(self, recipients, subject):
+        if isinstance(recipients, (list, dict, tuple)):
+            recipients = ", ".join(recipients)
+
+        # Compose email
+        msg = MIMEMultipart()
+        msg['Subject'] = subject
+        msg['To'] = recipients
+        msg['From'] = self.server_connection.email
+        msg.attach(self.email_body.format())
+        return msg
+
+
+class EmailBody(object):
+    def __init__(self, filename, params=None):
+        self.filename = filename
+        self.params = params
+        self.cache = True  # Cache pre-formatted content
+        self.cached_content = None
+
+    def read(self):
+        with open(self.filename, "r") as f:
+            contents = f.read()
+        return contents
+
+    @staticmethod
+    def text_to_html(text):
+        """Convert the text to html code"""
+        parts = core.publish_parts(source=text, writer_name='html')
+        return parts['body_pre_docinfo']+parts['fragment']
+
+    def format(self):
+        content = self.cached_content
+        if content is None:
+            content = self.read()
+
+        if self.cache:
+            self.cached_content = content
+
+        body_text = content.format(**self.params)
+        body_text = self.text_to_html(body_text).encode('utf-8')  # ae, o, aa support
+        body_text = MIMEText(body_text, 'html', 'utf-8')
+        return body_text
+
+
