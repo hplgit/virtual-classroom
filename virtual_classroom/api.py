@@ -31,10 +31,16 @@ class Endpoint(object):
 
     USERS_API = EndpointItem(API_URL, "/users/{}")
 
+    REPO_API = EndpointItem(API_URL, "/repos/{}/{}")
+
+    REPOSITORIES_API = EndpointItem(API_URL, "/repositories")
+    REPOSITORY = EndpointItem(REPOSITORIES_API, "/{}")
+
     ORGS_API = EndpointItem(API_URL, "/orgs/{}")
     TEAMS = EndpointItem(ORGS_API, "/teams")
     REPOS = EndpointItem(ORGS_API, "/repos")
     MEMBERS = EndpointItem(ORGS_API, "/members")
+    ORG_MEMBER = EndpointItem(MEMBERS, "/{}")
 
     TEAM_API = EndpointItem(API_URL, "/teams/{}")
     TEAM_REPOS = EndpointItem(TEAM_API, "/repos")
@@ -64,26 +70,40 @@ class APIManager(object):
         # Check if username and password is correct
         r = get(Endpoint.API_URL, auth=(admin, p))
         if r.status_code != 200:
-            from IPython import embed; embed()
             print('Username or password is wrong (GitHub), please try again!')
             exit(1)
 
         return cls.auth
 
-    def delete_team_membership(self, org, team, member):
-        return delete(Endpoint.TEAM_MEMBERSHIP.url(org, team, member), auth=self.auth)
+    def delete_repo(self, owner, name):
+        return delete(Endpoint.REPO_API.url(owner, name), auth=self.auth)
+
+    def delete_team(self, org, team):
+        return delete(Endpoint.TEAM_API.url(team), auth=self.auth)
+
+    def delete_org_member(self, org, member):
+        return delete(Endpoint.ORG_MEMBER.url(org, member), auth=self.auth)
+
+    def delete_team(self, team):
+        return delete(Endpoint.TEAM_API.url(team), auth=self.auth)
+
+    def delete_team_membership(self, team, member):
+        return delete(Endpoint.TEAM_MEMBERSHIP.url(team, member), auth=self.auth)
 
     def add_team_repo(self, team_id, org, repo):
-        return put(Endpoint.TEAM_REPO.url(team_id, org, repo), auth=self.auth)
+        return put(Endpoint.TEAM_REPO.url(team_id, org, repo), headers={'Content-Length': "0"}, auth=self.auth)
 
     def add_team_membership(self, team_id, member):
-        return put(Endpoint.TEAM_MEMBERSHIP.url(team_id, member), headers={'Content-Length': 0}, auth=self.auth)
+        return put(Endpoint.TEAM_MEMBERSHIP.url(team_id, member), headers={'Content-Length': "0"}, auth=self.auth)
 
     def create_repo(self, org, key_repo):
         return post(Endpoint.REPOS.url(org), data=dumps(key_repo), auth=self.auth)
 
     def create_team(self, org, key_team):
         return post(Endpoint.TEAMS.url(org), data=dumps(key_team), auth=self.auth)
+
+    def get_repository(self, repo_id):
+        return get(Endpoint.REPOSITORY.url(repo_id), auth=self.auth)
 
     def get_user(self, username):
         return get(Endpoint.API_URL.url(username), auth=self.auth)

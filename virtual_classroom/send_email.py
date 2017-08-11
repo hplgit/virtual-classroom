@@ -9,6 +9,9 @@ from email.mime.base import MIMEBase
 from sys import exit
 from os import path
 
+# Local imports
+from parameters import get_parameters
+
 try:
   from docutils import core
 except ImportError:
@@ -18,6 +21,31 @@ except ImportError:
 # Python3 and 2 compatible
 try: input = raw_input
 except NameError: pass
+
+
+def connect_to_email_server(smtp=None):
+    """Connects to an email server. Prompting for login information.
+    
+    Parameters
+    ----------
+    smtp : str, optional
+        Name of the smtp server (uio or google).
+        If not specified it will use "smtp" in default parameters.
+
+    Returns
+    -------
+    EmailServer
+        An instance that holds the email server connection.
+
+    """
+    parameters = get_parameters()
+    smtp = parameters["smtp"] if smtp is None else smtp
+    # Set up e-mail server
+    if smtp == 'google':
+        server = SMTPGoogle()
+    elif smtp == 'uio':
+        server = SMTPUiO()
+    return server
 
 
 class EmailServer(object):
@@ -246,10 +274,10 @@ class Email(object):
         self.email_body = email_body
         self.subject = subject
 
-    def send(self, recipients, subject=None):
+    def send(self, recipients, subject=None, msg=None):
         """Send email"""
         subject = self.subject if subject is None else subject
-        msg = self.format_mail(recipients, subject)
+        msg = self.format_mail(recipients, subject) if msg is None else msg
 
         failed_deliveries = \
                 self.server_connection.server.sendmail(self.server_connection.email,
