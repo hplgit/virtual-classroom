@@ -51,6 +51,10 @@ class Classroom(object):
 
         self.review_groups = start_peer_review(self.students, max_group_size, rank)
 
+    def fetch_peer_review(self):
+        # TODO: Would be nice to have. Would allow for interactions with ongoing peer reviews.
+        pass
+
     def end_peer_review(self):
         api = APIManager()
         teams = api.get_teams(self.org)
@@ -99,6 +103,16 @@ class Classroom(object):
         """
         download_repositories(directory)
 
+    def preview_email(self, filename, extra_params={}):
+        email_body = EmailBody(filename)
+
+        student = self.students[self.students.keys()[0]]
+        group = None if self.review_groups is None else self.review_groups[0]
+        params = {"group": group, "student": student, "classroom": self}
+        params.update(extra_params)
+        email_body.params = params
+        return email_body.render()
+
     def email_students(self, filename, subject="", extra_params={}, smtp=None):
         """Sends an email to all students in the classroom.
 
@@ -122,7 +136,7 @@ class Classroom(object):
 
         for name in self.students:
             student = self.students[name]
-            params = student.__dict__.copy()
+            params = {"student": student, "classroom": self}
             params.update(extra_params)
             email_body.params = params
             email.send(student.email)
@@ -150,9 +164,9 @@ class Classroom(object):
         email = Email(server, email_body, subject=subject)
 
         for group in self.review_groups:
-            params = group.__dict__.copy()
+            params = {"group": group, "classroom": self}
             for student in group.students:
-                params.update(student.__dict__)
+                params["student"] = student
                 params.update(extra_params)
                 email_body.params = params
                 email.send(student.email)

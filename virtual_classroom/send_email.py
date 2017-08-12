@@ -18,6 +18,12 @@ except ImportError:
   print('docutils is required, exiting.\n\n sudo pip install docutils')
   exit(1)
 
+try:
+    import jinja2
+except ImportError:
+    print("jinja2 is required, exiting.\n\n sudo pip install jinja2")
+    exit(1)
+
 # Python3 and 2 compatible
 try: input = raw_input
 except NameError: pass
@@ -318,15 +324,17 @@ class EmailBody(object):
         parts = core.publish_parts(source=text, writer_name='html')
         return parts['body_pre_docinfo']+parts['fragment']
 
-    def format(self):
+    def render(self):
         content = self.cached_content
         if content is None:
-            content = self.read()
+            content = jinja2.Template(self.read())
 
         if self.cache:
             self.cached_content = content
+        return content.render(**self.params)
 
-        body_text = content.format(**self.params)
+    def format(self):
+        body_text = self.render()
         body_text = self.text_to_html(body_text).encode('utf-8')  # ae, o, aa support
         body_text = MIMEText(body_text, 'html', 'utf-8')
         return body_text

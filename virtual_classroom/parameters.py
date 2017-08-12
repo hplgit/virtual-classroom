@@ -15,7 +15,11 @@ def parse_config_file():
     _parameters = {} if _parameters is None else _parameters
     for line in contents.readlines():
         key, value = line.split(':')
-        _parameters[key] = value[:-1]
+        process_value = value[:-1].lower()
+        if process_value in ("false", "no", "nei"):
+            _parameters[key] = False
+        else:
+            _parameters[key] = value[:-1]
     contents.close()
 
 
