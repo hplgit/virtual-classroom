@@ -22,8 +22,7 @@ def start_peer_review(students, max_group_size, rank):
         print("Max group size should not be lower than 1.")
         exit(1)
 
-    minimum = max_group_size**2 - max_group_size + 2
-    if len(students.values()) < minimum:
+    if len(students.values()) < 2*max_group_size:
         print "The group is too small for a peer review. Consider reducing the max group size (with --m X)."
         exit(1)
 
@@ -32,15 +31,20 @@ def start_peer_review(students, max_group_size, rank):
     rest = number_of_students % max_group_size
     integer_div = number_of_students // max_group_size
     number_of_groups = integer_div if rest == 0 else integer_div + 1
+    min_size = number_of_students // number_of_groups
+    num_big_groups = number_of_students % number_of_groups
 
     if not rank:
         groups = []
         to_be_reviewed_groups = []
-        shifted_students = students.values()[1:] + students.values()[:1]
+        shifted_students = students.values()[max_group_size:] + students.values()[:max_group_size]
 
+        offset = 0
         for i in range(number_of_groups):
-            groups.append(list(students.values())[i::number_of_groups])
-            to_be_reviewed_groups.append(list(shifted_students)[i::number_of_groups])
+            size = min_size + 1 if i < num_big_groups else min_size
+            groups.append(list(students.values())[offset:offset + size])
+            to_be_reviewed_groups.append(list(shifted_students)[offset:offset + size])
+            offset += size
 
     else:
         rank_1 = []
