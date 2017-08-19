@@ -34,6 +34,9 @@ class Student(object):
         self.org = "%s-%s" % (university, course)
         self.api = APIManager()
 
+        # TODO: There probably is a good way to populate this when finding student repo below.
+        self.last_active = None
+
         # Check that there is an user with the given username
         if self.is_user():
             # Check if user have a team

@@ -7,6 +7,13 @@ from collaboration import start_peer_review
 from get_all_repos import download_repositories
 from api import APIManager
 
+try:
+    from dateutil.parser import parse
+except ImportError:
+    print("This program depends on the module dateutil, install to run" + \
+          " program!\n\n sudo pip install python-dateutil")
+    exit(1)
+
 
 class Classroom(object):
     """Contains help functions to get an overveiw of the virtual classroom"""
@@ -42,6 +49,33 @@ class Classroom(object):
                                               self.course,
                                               email,
                                               rank)
+
+    def mark_active_repositories(self, active_since, dayfirst=True, **kwargs):
+        api = APIManager()
+        repos = api.get_repos(self.org)
+        for repo in repos:
+            name = repo["name"]
+            # A little sub-optimal, but keeps the required api requests at a minimum
+            for student in self.students.values():
+                if name == student.repo_name:
+                    student.last_active = parse(repo["pushed_at"], ignoretz=True)
+
+        # TODO: Use a function argument?
+        filename = "marked_active_students.txt"
+        f = open(filename, "w")
+        string = "Attendance // Name // Github username // Email // Course" + "\n"
+
+        active_since = parse(active_since, dayfirst=dayfirst, **kwargs)
+        for student in self.students.values():
+            mark = "x" if student.last_active > active_since else "-"
+            string += " // ".join((mark,
+                                   student.name,
+                                   student.username,
+                                   student.email,
+                                   student.course)) + "\n"
+
+        f.write(string.encode("utf-8"))
+        f.close()
 
     def start_peer_review(self, max_group_size=None, rank=None):
         parameters = get_parameters()
