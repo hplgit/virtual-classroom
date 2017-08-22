@@ -1,4 +1,5 @@
 from re import split
+from datetime import datetime
 
 from student import Student
 from send_email import Email, EmailBody, SMTPGoogle, SMTPUiO, connect_to_email_server
@@ -50,22 +51,35 @@ class Classroom(object):
                                               email,
                                               rank)
 
-    def mark_active_repositories(self, active_since, dayfirst=True, **kwargs):
-        api = APIManager()
-        repos = api.get_repos(self.org)
-        for repo in repos:
-            name = repo["name"]
-            # A little sub-optimal, but keeps the required api requests at a minimum
-            for student in self.students.values():
-                if name == student.repo_name:
-                    student.last_active = parse(repo["pushed_at"], ignoretz=True)
+    def mark_active_repositories(self, active_since, filename=None, dayfirst=True, **kwargs):
+        """Create a students file where students with active repositories are marked
 
-        # TODO: Use a function argument?
-        filename = "marked_active_students.txt"
+        Active here means that the repository has been pushed changes since the given `active_since` date.
+
+        Parameters
+        ----------
+        active_since : str, datetime
+            A string or datetime object representing a date from which to count a repostiory as active.
+        filename : str, optional
+            A string with the file name of the students file to write to. 
+            Default is "students-active-since-dd-mm-yyyy.txt"
+        dayfirst : bool, optional
+            Used for parsing active_since if it is a string. Then if dayfirst is True ambigious dates will interpret
+            the day before the month.
+            Default is True.
+        kwargs
+            Optional keyword arguments that is sent to the parsing of a string `active_since` value.
+
+        """
+        if not isinstance(active_since, datetime):
+            active_since = parse(active_since, dayfirst=dayfirst, **kwargs)
+
+        if filename is None:
+            filename = "students-active-since-%s.%s.%s.txt" % (active_since.day, active_since.month, active_since.year)
+
         f = open(filename, "w")
         string = "Attendance // Name // Github username // Email // Course" + "\n"
 
-        active_since = parse(active_since, dayfirst=dayfirst, **kwargs)
         for student in self.students.values():
             mark = "x" if student.last_active > active_since else "-"
             string += " // ".join((mark,

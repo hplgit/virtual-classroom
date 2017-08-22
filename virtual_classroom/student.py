@@ -3,6 +3,9 @@
 # For support for python 2 and 3
 from __future__ import print_function
 
+from dateutil.parser import parse
+from datetime import datetime
+
 from api import APIManager
 
 
@@ -42,6 +45,7 @@ class Student(object):
             # Check if user have a team
             if not self.has_team():
                 self.create_repository()
+                self.last_active = parse(datetime.now().isoformat(), ignoretz=True)
 
             # Get repo name
             else:
@@ -57,6 +61,7 @@ class Student(object):
                                             self.strip_accents(self.name.split(" ")[0]))
                             if base_name in repo['name'].encode('utf-8'):
                                 self.repo_name = repo['name'].encode('utf-8')
+                                self.last_active = parse(repo["pushed_at"], ignoretz=True)
                                 break
                         break
 
