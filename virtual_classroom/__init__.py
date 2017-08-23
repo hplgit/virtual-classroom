@@ -1,1 +1,1 @@
-from ui import create_students
+from .ui import create_students

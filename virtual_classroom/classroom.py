@@ -1,12 +1,15 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function
 from re import split
 from datetime import datetime
 
-from student import Student
-from send_email import Email, EmailBody, SMTPGoogle, SMTPUiO, connect_to_email_server
-from parameters import get_parameters
-from collaboration import start_peer_review
-from get_all_repos import download_repositories
-from api import APIManager
+from .student import Student
+from .send_email import Email, EmailBody, SMTPGoogle, SMTPUiO, connect_to_email_server
+from .parameters import get_parameters
+from .collaboration import start_peer_review
+from .get_all_repos import download_repositories
+from .api import APIManager
 
 try:
     from dateutil.parser import parse
@@ -43,7 +46,7 @@ class Classroom(object):
                 present, name, username, email, _ = split(r"\s*\/\/\s*", line.replace('\n', ''))
                 rank = 1
             if present.lower() == 'x' and username != "":
-                print "Handle student {0}".format(name)
+                print("Handle student {0}".format(name))
                 self.students[name] = Student(name,
                                               username,
                                               self.university,
@@ -128,6 +131,9 @@ class Classroom(object):
 
     def end_semester(self):
         # TODO: Also delete teams. Might benefit from iterating through self.students.
+        # TODO: Consider if using self.students is better than fetching all members of org.
+        #       Downside is some students might not be marked anymore in the students file.
+        #       But there would be realistic workarounds for this, and would keep it cleaner here.
         api = APIManager()
         list_repos = api.get_repos(self.org)
         list_members = api.get_members(self.org, "member")
@@ -136,14 +142,14 @@ class Classroom(object):
             # if member['login'].encode('utf-8') in members_to_delete
             print("Deleting %s" % member["login"])
             r = api.delete_org_member(self.org, member["login"])
-            print r.status_code
+            print(r.status_code)
 
         # Delete repos
         for repo in list_repos:
             if self.course in repo['name']:
-                print "Deleting repository ", self.org + repo['name']
+                print("Deleting repository ", self.org + repo['name'])
                 r = api.delete_repo(self.org, repo["name"])
-                print r.status_code
+                print(r.status_code)
 
     def download_repositories(self, directory):
         """Downloads all repositories in the classroom
@@ -154,7 +160,7 @@ class Classroom(object):
     def preview_email(self, filename, extra_params={}):
         email_body = EmailBody(filename)
 
-        student = self.students[self.students.keys()[0]]
+        student = self.students[list(self.students.keys())[0]]
         group = None if self.review_groups is None else self.review_groups[0]
         params = {"group": group, "student": student, "classroom": self}
         params.update(extra_params)

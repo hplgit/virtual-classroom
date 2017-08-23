@@ -1,7 +1,8 @@
+from __future__ import print_function, unicode_literals
 import os
 import json
 
-from parameters import get_parameters
+from .parameters import get_parameters
 
 # Python3 and 2 compatible
 try: input = raw_input
@@ -28,9 +29,9 @@ def download_spreadsheet(name):
         wks = gc.open(name).sheet1
     except gspread.SpreadsheetNotFound:
         json_key = json.load(open(json_file))
-        print "The spreadsheet document '{}' not found. Maybe it does not exist?".format(spreadsheet_name)
-        print "Otherwise, make sure that you shared the spreadsheet with {} and try again.".format(
-            json_key['client_email'])
+        print("The spreadsheet document '{}' not found. Maybe it does not exist?".format(spreadsheet_name))
+        print("Otherwise, make sure that you shared the spreadsheet with {} and try again.".format(
+            json_key['client_email']))
         return None
 
     # Store file in ../Attendance/

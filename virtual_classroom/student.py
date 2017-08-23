@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 # For support for python 2 and 3
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 from dateutil.parser import parse
 from datetime import datetime
 
-from api import APIManager
+from .api import APIManager
 
 
 class Student(object):
@@ -51,7 +51,7 @@ class Student(object):
             else:
                 teams = self.api.get_teams(self.org)
                 for team in teams:
-                    if team['name'].encode('utf-8') == self.name:
+                    if team['name'] == self.name:
                         self.team_id = team['id']
                         r = self.api.get_team_repos(self.team_id)
                         for repo in r:
@@ -59,8 +59,8 @@ class Student(object):
                             # repository containing the name of the course-<firstname>
                             base_name = "%s-%s" % (self.course, \
                                             self.strip_accents(self.name.split(" ")[0]))
-                            if base_name in repo['name'].encode('utf-8'):
-                                self.repo_name = repo['name'].encode('utf-8')
+                            if base_name in repo['name']:
+                                self.repo_name = repo['name']
                                 self.last_active = parse(repo["pushed_at"], ignoretz=True)
                                 break
                         break
@@ -164,7 +164,7 @@ class Student(object):
         """Check if there exixts a repo with the given name"""
         repos = self.api.get_repos(self.org)
         for repo in repos:
-            if repo_name == repo['name'].encode('utf-8'):
+            if repo_name == repo['name']:
                 return True
 
         return False
@@ -173,7 +173,7 @@ class Student(object):
         """Check if there exist a team <full name>"""
         teams = self.api.get_teams(self.org)
         for team in teams:
-            if self.name == team['name'].encode('utf-8'):
+            if self.name == team['name']:
                 return True
 
         return False

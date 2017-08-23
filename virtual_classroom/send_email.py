@@ -10,7 +10,7 @@ from sys import exit
 from os import path
 
 # Local imports
-from parameters import get_parameters
+from .parameters import get_parameters
 
 try:
   from docutils import core

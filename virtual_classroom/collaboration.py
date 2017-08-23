@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, unicode_literals
 from requests import get, put, post, delete
 from sys import exit
 from json import dumps
 
 # Local imports
-from api import APIManager
-from group import ReviewGroup
+from .api import APIManager
+from .group import ReviewGroup
 
 # Python3 and 2 compatible
 try: input = raw_input
@@ -23,7 +26,7 @@ def start_peer_review(students, max_group_size, rank):
         exit(1)
 
     if len(students.values()) < 2*max_group_size:
-        print "The group is too small for a peer review. Consider reducing the max group size (with --m X)."
+        print("The group is too small for a peer review. Consider reducing the max group size (with --m X).")
         exit(1)
 
     # Set up groups with max number of students
@@ -33,16 +36,17 @@ def start_peer_review(students, max_group_size, rank):
     number_of_groups = integer_div if rest == 0 else integer_div + 1
     min_size = number_of_students // number_of_groups
     num_big_groups = number_of_students % number_of_groups
+    students_values = list(students.values())
 
     if not rank:
         groups = []
         to_be_reviewed_groups = []
-        shifted_students = students.values()[max_group_size:] + students.values()[:max_group_size]
+        shifted_students = students_values[max_group_size:] + students_values[:max_group_size]
 
         offset = 0
         for i in range(number_of_groups):
             size = min_size + 1 if i < num_big_groups else min_size
-            groups.append(list(students.values())[offset:offset + size])
+            groups.append(students_values[offset:offset + size])
             to_be_reviewed_groups.append(list(shifted_students)[offset:offset + size])
             offset += size
 
@@ -99,7 +103,7 @@ def start_peer_review(students, max_group_size, rank):
     teams = api.get_teams(org)  # get all teams in the organisation
     max_team_number = 0
     for team in teams:
-        if 'Team-' in team['name'].encode('utf-8'):
+        if 'Team-' in team['name']:
             if max_team_number == 0:
                 print('Warning: There are already teams with collaboration. Delete these by runing' \
                       + ' "python start_group.py --e True"')
@@ -114,7 +118,7 @@ def start_peer_review(students, max_group_size, rank):
             try:
                 student.repo_name
             except:
-                print "Uups. student {} has no repository. You need to fix that.".format(student.email)
+                print("Uups. student {} has no repository. You need to fix that.".format(student.email))
                 import sys;
                 sys.exit(1)
 
@@ -191,7 +195,7 @@ class Collaboration():
         self.send_email = send_email
 
         if len(students.values()) < 2*max_group_size:
-            print "The group is too small for a peer review. Consider reducing the max group size (with --m X)."
+            print("The group is too small for a peer review. Consider reducing the max group size (with --m X).")
             exit(1)
 
         if max_group_size > len(students.values()):
@@ -268,7 +272,7 @@ class Collaboration():
         teams = test_student.get_teams()  # get all teams in the UiO organisation
         max_team_number = 0
         for team in teams:
-            if 'Team-' in team['name'].encode('utf-8'):
+            if 'Team-' in team['name']:
                 if max_team_number == 0:
                     print('Warning: There are already teams with collaboration. Delete these by runing'\
                           +' "python start_group.py --e True"')
@@ -283,7 +287,7 @@ class Collaboration():
                 try:
                     student.repo_name
                 except:
-                    print "Uups. student {} has no repository. You need to fix that.".format(student.email)
+                    print("Uups. student {} has no repository. You need to fix that.".format(student.email))
                     import sys; sys.exit(1)
 
 
