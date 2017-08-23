@@ -22,13 +22,10 @@ except ImportError:
 class Classroom(object):
     """Contains help functions to get an overveiw of the virtual classroom"""
 
-    def __init__(self, file=None):
+    def __init__(self, file="students_base.txt", ignore_present=False):
         self.students = {}
         self.collaboration = None
         self.review_groups = None
-        if file is None:
-            # TODO: Fetch default file
-            return
 
         # Load parameters
         parameters = get_parameters()
@@ -45,7 +42,7 @@ class Classroom(object):
             except:
                 present, name, username, email, _ = split(r"\s*\/\/\s*", line.replace('\n', ''))
                 rank = 1
-            if present.lower() == 'x' and username != "":
+            if (present.lower() == 'x' and username != "") or (ignore_present and present == "-"):
                 print("Handle student {0}".format(name))
                 self.students[name] = Student(name,
                                               username,
