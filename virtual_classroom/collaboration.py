@@ -4,6 +4,7 @@ from __future__ import print_function, unicode_literals
 from requests import get, put, post, delete
 from sys import exit
 from json import dumps
+import random
 
 # Local imports
 from .api import APIManager
@@ -14,7 +15,7 @@ try: input = raw_input
 except NameError: pass
 
 
-def start_peer_review(students, max_group_size, rank):
+def start_peer_review(students, max_group_size, rank, shuffle=False):
     """Divide the students in to groups and give them access to another groups
                repositories."""
 
@@ -37,6 +38,8 @@ def start_peer_review(students, max_group_size, rank):
     min_size = number_of_students // number_of_groups
     num_big_groups = number_of_students % number_of_groups
     students_values = list(students.values())
+    if shuffle:
+        random.shuffle(students_values)
 
     if not rank:
         groups = []

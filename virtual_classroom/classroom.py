@@ -91,13 +91,13 @@ class Classroom(object):
         f.write(string.encode("utf-8"))
         f.close()
 
-    def start_peer_review(self, max_group_size=None, rank=None):
+    def start_peer_review(self, max_group_size=None, rank=None, shuffle=False):
         parameters = get_parameters()
         # TODO: Consider renaming max_students to max_group_size
         max_group_size = parameters["max_students"] if max_group_size is None else max_group_size
         rank = parameters["rank"] if rank is None else rank
 
-        self.review_groups = start_peer_review(self.students, max_group_size, rank)
+        self.review_groups = start_peer_review(self.students, max_group_size, rank, shuffle=shuffle)
 
     def fetch_peer_review(self):
         # TODO: Would be nice to have. Would allow for interactions with ongoing peer reviews.
