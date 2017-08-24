@@ -11,6 +11,7 @@ students_file_columns = ["present",
                          "email",
                          "course"]
 
+
 def get_students_file_path(filename=None):
     if filename is None:
         parameters = get_parameters()

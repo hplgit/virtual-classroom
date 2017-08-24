@@ -35,7 +35,12 @@ class Classroom(object):
         self.course = parameters["course"]
         self.org = "%s-%s" % (self.university, self.course)
 
-        raw_students = parse_students_file(filename)
+        try:
+            raw_students = parse_students_file(filename)
+        except FileNotFoundError as e:
+            print("Error when parsing students file: %s" % e)
+            print("Continuing without built students. Some methods will not work.")
+            return
 
         # Create a dict with students
         for student in raw_students:
@@ -163,7 +168,8 @@ class Classroom(object):
                 r = api.delete_repo(self.org, repo["name"])
                 print(r.status_code)
 
-    def download_repositories(self, directory):
+    @staticmethod
+    def download_repositories(directory):
         """Downloads all repositories in the classroom
         
         """

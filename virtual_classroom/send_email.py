@@ -62,11 +62,16 @@ class EmailServer(object):
   def __init__(self, smtp_server, port):
     self.smtp_server, self.port = smtp_server, port
 
-    # Get username and password from user
-    self.username = input("\nFor %s\nUsername: " % smtp_server)
-    self.password = getpass("Password:")
-
-    self.login()
+    tries = 0
+    while tries < 3:
+        # Get username and password from user
+        self.username = input("\nFor %s\nUsername: " % smtp_server)
+        self.password = getpass("Password:")
+        if self.login():
+            return
+        tries += 1
+    print("Too many tries. Exiting...")
+    exit(1)
 
   def login(self):
     raise NotImplementedError("Only use subclasses of EmailServer.")
@@ -91,13 +96,14 @@ class SMTPGoogle(EmailServer):
       self.server = SMTP(self.smtp_server, self.port)
       self.server.starttls()
       self.server.login(self.username, self.password)
+      return True
     except Exception as e:
       print('Username or password is wrong for %s, please try again!'\
           % self.username)
       print(e)
       print("")
       print("Maybe you need activate less secure apps on gmail? See https://www.google.com/settings/u/1/security/lesssecureapps")
-      exit(1)
+      return False
 
 
 class SMTPUiO(EmailServer):
@@ -113,10 +119,11 @@ class SMTPUiO(EmailServer):
     try:
       self.server = SMTP_SSL(self.smtp_server, self.port)
       self.server.login(self.username, self.password)
+      return True
     except:
       print('Username or password is wrong for %s, please try again!'\
           % self.smtp_server)
-      exit(1)
+      return False
 
 
 class Email():
