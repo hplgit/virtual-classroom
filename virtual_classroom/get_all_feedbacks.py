@@ -4,25 +4,21 @@ import sys
 import base64
 import codecs
 from requests import get
-from classroom import Classroom
+
+from .api import APIManager
 
 # Python3 and 2 compatible
 try: input = raw_input
 except NameError: pass
 
-class Feedbacks:
 
-    def __init__(self, auth, university, course, output_path):
-        self.auth = auth
+class Feedbacks(object):
+    def __init__(self, university, course, output_path):
         self.university = university
         self.course = course
         #self.output_path = output_path
 
         self.org = "%s-%s" % (university, course)
-        url_orgs = 'https://api.github.com/orgs/%s' % (self.org)
-
-        # Need help functions from classroom
-        self.classroom = Classroom(auth, url_orgs)
 
         # To look up information about students
         attendance_path = os.path.join(os.path.dirname(__file__), \
@@ -79,20 +75,21 @@ class Feedbacks:
 
     def __call__(self):
         print("\nLooking for feedbacks, this may take some time ...\n")
-        repos = self.classroom.get_repos()    
+        api = APIManager()
+        repos = api.get_repos(self.org)
         not_done = []
 
         for repo in repos:
             # Assumes that no repo has the same naming convension
-            if self.course + "-" in repo['name'].encode('utf-8'):
+            if self.course + "-" in repo['name']:
 
                 # Get sha from the last commit
                 url_commits = repo['commits_url'][:-6]
-                sha = get(url_commits, auth=self.auth).json()[0]['sha']
+                sha = get(url_commits, auth=api.auth).json()[0]['sha']
 
                 # Get tree
                 self.url_trees = repo['trees_url'][:-6]
-                r = get(self.url_trees + '/' + sha, auth=self.auth)
+                r = get(self.url_trees + '/' + sha, auth=api.auth)
 
                 # Get feedback file
                 success, contents, status, path, extension = self.find_file(r.json()['tree'])
@@ -100,7 +97,7 @@ class Feedbacks:
                 # Get infomation about user and the file
                 # Need some extra tests since multiple teams can have
                 # access to the same repo.
-                r = get(repo['teams_url'], auth=self.auth)
+                r = get(repo['teams_url'], auth=api.auth)
                 for i in range(len(r.json())):
                     try:
                         personal_info = self.students_base_dict[r.json()[i]['name'].encode('utf-8')]
@@ -115,7 +112,7 @@ class Feedbacks:
 
                 if success:
                     # Check if there is reason to belive that the user have cheated
-                    personal_info['editors'] = ", ".join(self.get_correctorss(path, repo))
+                    personal_info['editors'] = ", ".join(self.get_correctors(path, repo))
                     
                     #TODO: Store this feedback in a list of potential cheaters
 
@@ -173,10 +170,11 @@ class Feedbacks:
         return student_dict
 
     def find_file(self, tree):
+        api = APIManager()
         for file in tree:
             # Explore the subdirectories recursively
             if file['type'].encode('utf-8') == 'tree':
-                r = get(file['url'], auth=self.auth)
+                r = get(file['url'], auth=api.auth)
                 success, contents, status, path, extension = self.find_file(r.json()['tree'])
                 if success:
                     return success, contents, status, path, extension
@@ -190,7 +188,7 @@ class Feedbacks:
                     file_name = file['path'].split(os.path.sep)[-1].lower()
                     extension = 'txt'
 
-                r = get(file['url'], auth=self.auth)
+                r = get(file['url'], auth=api.auth)
                 return True, base64.b64decode(r.json()['content']), \
                         file_name.split('_')[-1], file['path'], extension
 
@@ -198,8 +196,9 @@ class Feedbacks:
         return False, "", "", "", ""
 
     def get_correctors(self, path, repo):
+        api = APIManager()
         url_commit = 'https://api.github.com/repos/%s/%s/commits' % (self.org, repo['name'])
-        r = get(url_commit, auth=self.auth, params={'path': path})
+        r = get(url_commit, auth=api.auth, params={'path': path})
         # TODO: Change commiter with author?
         editors = [commit['commit']['author']['name'] for commit in r.json()]
         return editors
