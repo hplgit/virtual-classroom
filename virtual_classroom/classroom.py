@@ -10,7 +10,7 @@ from .parameters import get_parameters
 from .collaboration import start_peer_review
 from .get_all_repos import download_repositories
 from .api import APIManager
-from .students_file import parse_students_file
+from .students_file import parse_students_file, save_students_file
 from .group import ReviewGroup
 
 try:
@@ -40,14 +40,15 @@ class Classroom(object):
         # Create a dict with students
         for student in raw_students:
             if (student["present"].lower() == 'x' or ignore_present) and student["username"] != "":
-                print("Handle student {0}".format(student["name"]))
                 rank = 1  # Rank is not functional at the moment.
+                print("Initialize student {0}".format(student["name"]))
                 self.students[student["username"]] = Student(student["name"],
                                                              student["username"],
                                                              self.university,
                                                              self.course,
                                                              student["email"],
-                                                             rank=rank)
+                                                             student["present"],
+                                                             rank)
 
     def mark_active_repositories(self, active_since, filename=None, dayfirst=True, **kwargs):
         """Create a students file where students with active repositories are marked
@@ -61,6 +62,7 @@ class Classroom(object):
         filename : str, optional
             A string with the file name of the students file to write to. 
             Default is "students-active-since-dd-mm-yyyy.txt"
+            If an empty string is given the default (global) students_file will be overwritten.
         dayfirst : bool, optional
             Used for parsing active_since if it is a string. Then if dayfirst is True ambigious dates will interpret
             the day before the month.
@@ -74,18 +76,12 @@ class Classroom(object):
 
         if filename is None:
             filename = "students-active-since-%s.%s.%s.txt" % (active_since.day, active_since.month, active_since.year)
-
-        string = "Attendance // Name // Github username // Email // Course" + "\n"
+        elif filename == "":
+            filename = None
 
         for student in self.students.values():
-            mark = "x" if student.last_active > active_since else "-"
-            string += " // ".join((mark,
-                                   student.name,
-                                   student.username,
-                                   student.email,
-                                   student.course)) + "\n"
-        with open(filename, "w") as f:
-            f.write(string)
+            student.present = (student.last_active > active_since)
+        save_students_file(self.students.values(), filename=filename)
 
     def start_peer_review(self, max_group_size=None, rank=None, shuffle=False):
         parameters = get_parameters()
@@ -96,7 +92,8 @@ class Classroom(object):
         self.review_groups = start_peer_review(self.students, max_group_size, rank, shuffle=shuffle)
 
     def fetch_peer_review(self):
-        # TODO: Would be nice to have. Would allow for interactions with ongoing peer reviews.
+        # TODO: Limitation is that it fetches all collaborations, not just most recent
+        #       (if multiple are active, or one forgot to delete the old)
         api = APIManager()
         teams = api.get_teams(self.org)
         self.review_groups = []
@@ -107,6 +104,8 @@ class Classroom(object):
                 members = api.get_team_members(team["id"])
                 for member in members:
                     username = member["login"]
+                    # TODO: This might crash. A student could drop out mid-peer-review.
+                    #       What to do if student doesn't exist?
                     group_students.append(self.students[username])
 
                 review_repos = []
@@ -171,6 +170,32 @@ class Classroom(object):
         download_repositories(directory)
 
     def preview_email(self, filename, extra_params={}, student=None, group=None):
+        """Preview the formatted email of the file.
+        
+        Useful for making sure the email templates are rendered correctly.
+        
+        Using the webbrowser package the function will try to open a HTML page,
+        for realistic preview of the formatted email.
+        
+        Parameters
+        ----------
+        filename : str
+            Filename of the template file for the email.
+        extra_params : dict, optional
+            Extra params to format the email body text.
+        student : Student, optional
+            If supplied use the values of this student to format the email.
+            If not supplied the first student in the student list is chosen.
+        group : ReviewGroup, optional
+            If supplied use the values of this group to format the email.
+            If not supplied the first review group is chosen if it exists in this instance.
+
+        Returns
+        -------
+        str
+            The formatted template in text (not HTML) format.
+
+        """
         email_body = EmailBody(filename)
 
         student = self.students[list(self.students.keys())[0]] if student is None else student

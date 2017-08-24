@@ -12,11 +12,12 @@ from .api import APIManager
 class Student(object):
     """Holds all the information about the student."""
 
-    def __init__(self, name, username, university, course, email, rank):
+    def __init__(self, name, username, university, course, email, present, rank):
         """When initialized it testes if the information is correct and if the
            student has been initialized before. If not it calles create_repository()
         """
         self.name = name
+        self._present = "-"
         try:
             self.rank = int(rank)
             if rank > 3 or rank < 1:
@@ -35,11 +36,12 @@ class Student(object):
 
         # Create useful strings
         self.org = "%s-%s" % (university, course)
-        self.api = APIManager()
 
         # TODO: There probably is a good way to populate this when finding student repo below.
         self.last_active = None
+        self.present = present
 
+        self.api = APIManager()
         # Check that there is an user with the given username
         if self.is_user():
             # Check if user have a team
@@ -181,3 +183,14 @@ class Student(object):
     def get_stats(self):
         """Not implemented"""
         pass
+
+    @property
+    def present(self):
+        return self._present
+
+    @present.setter
+    def present(self, value):
+        if value is True or str(value).lower() == "x":
+            self._present = "x"
+        else:
+            self._present = "-"
