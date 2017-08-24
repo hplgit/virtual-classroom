@@ -10,7 +10,7 @@ from .api import APIManager
 
 
 class Student(object):
-    """Holdes all the information about the student."""
+    """Holds all the information about the student."""
 
     def __init__(self, name, username, university, course, email, rank):
         """When initialized it testes if the information is correct and if the

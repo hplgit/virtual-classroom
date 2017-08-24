@@ -1,4 +1,5 @@
 import pkg_resources
+import os
 
 _parameters = None
 
@@ -11,7 +12,11 @@ def get_parameters():
 
 def parse_config_file():
     global _parameters
-    contents = pkg_resources.resource_stream(__name__, "default_parameters.txt")
+    try:
+        contents = open("default_parameters.txt", "rb")
+    except:
+        print("Could not open default_parameters.txt. Using global config file instead.")
+        contents = pkg_resources.resource_stream(__name__, "default_parameters.txt")
     _parameters = {} if _parameters is None else _parameters
     for line in contents.readlines():
         key, value = line.decode().split(":")

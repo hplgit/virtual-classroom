@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 from re import split
 from datetime import datetime
 
@@ -10,6 +10,8 @@ from .parameters import get_parameters
 from .collaboration import start_peer_review
 from .get_all_repos import download_repositories
 from .api import APIManager
+from .students_file import parse_students_file
+from .group import ReviewGroup
 
 try:
     from dateutil.parser import parse
@@ -22,7 +24,7 @@ except ImportError:
 class Classroom(object):
     """Contains help functions to get an overveiw of the virtual classroom"""
 
-    def __init__(self, file="students_base.txt", ignore_present=False):
+    def __init__(self, filename=None, ignore_present=False):
         self.students = {}
         self.collaboration = None
         self.review_groups = None
@@ -33,23 +35,19 @@ class Classroom(object):
         self.course = parameters["course"]
         self.org = "%s-%s" % (self.university, self.course)
 
-        lines = open(file, "r").readlines()
+        raw_students = parse_students_file(filename)
+
         # Create a dict with students
-        for line in lines:
-            try:
-                present, name, username, email, _, _ = split(r"\s*\/\/\s*", line.replace('\n', ''))
-                rank = 1
-            except:
-                present, name, username, email, _ = split(r"\s*\/\/\s*", line.replace('\n', ''))
-                rank = 1
-            if (present.lower() == 'x' and username != "") or (ignore_present and present == "-"):
-                print("Handle student {0}".format(name))
-                self.students[name] = Student(name,
-                                              username,
-                                              self.university,
-                                              self.course,
-                                              email,
-                                              rank)
+        for student in raw_students:
+            if (student["present"].lower() == 'x' or ignore_present) and student["username"] != "":
+                print("Handle student {0}".format(student["name"]))
+                rank = 1  # Rank is not functional at the moment.
+                self.students[student["username"]] = Student(student["name"],
+                                                             student["username"],
+                                                             self.university,
+                                                             self.course,
+                                                             student["email"],
+                                                             rank=rank)
 
     def mark_active_repositories(self, active_since, filename=None, dayfirst=True, **kwargs):
         """Create a students file where students with active repositories are marked
@@ -77,7 +75,6 @@ class Classroom(object):
         if filename is None:
             filename = "students-active-since-%s.%s.%s.txt" % (active_since.day, active_since.month, active_since.year)
 
-        f = open(filename, "w")
         string = "Attendance // Name // Github username // Email // Course" + "\n"
 
         for student in self.students.values():
@@ -87,9 +84,8 @@ class Classroom(object):
                                    student.username,
                                    student.email,
                                    student.course)) + "\n"
-
-        f.write(string.encode("utf-8"))
-        f.close()
+        with open(filename, "w") as f:
+            f.write(string)
 
     def start_peer_review(self, max_group_size=None, rank=None, shuffle=False):
         parameters = get_parameters()
@@ -101,7 +97,27 @@ class Classroom(object):
 
     def fetch_peer_review(self):
         # TODO: Would be nice to have. Would allow for interactions with ongoing peer reviews.
-        pass
+        api = APIManager()
+        teams = api.get_teams(self.org)
+        self.review_groups = []
+        for team in teams:
+            if "Team-" in team["name"]:
+                # This is an ongoing review group.
+                group_students = []
+                members = api.get_team_members(team["id"])
+                for member in members:
+                    username = member["login"]
+                    group_students.append(self.students[username])
+
+                review_repos = []
+                repos = api.get_team_repos(team["id"])
+                for repo in repos:
+                    review_repos.append(repo["name"])
+
+                self.review_groups.append(ReviewGroup(team["name"],
+                                                      group_students,
+                                                      review_repos))
+        print("Found %d review groups." % (len(self.review_groups)))
 
     def end_peer_review(self):
         api = APIManager()
@@ -154,15 +170,32 @@ class Classroom(object):
         """
         download_repositories(directory)
 
-    def preview_email(self, filename, extra_params={}):
+    def preview_email(self, filename, extra_params={}, student=None, group=None):
         email_body = EmailBody(filename)
 
-        student = self.students[list(self.students.keys())[0]]
-        group = None if self.review_groups is None else self.review_groups[0]
+        student = self.students[list(self.students.keys())[0]] if student is None else student
+        if group is None:
+            group = None if self.review_groups is None else self.review_groups[0]
         params = {"group": group, "student": student, "classroom": self}
         params.update(extra_params)
         email_body.params = params
-        return email_body.render()
+        render = email_body.render()
+
+        try:
+            import webbrowser
+            import os
+            path = os.path.abspath('temp.html')
+            url = 'file://' + path
+            html = '<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">' \
+                   + email_body.text_to_html(render) \
+                   + '</html>'
+
+            with open(path, 'w') as f:
+                f.write(html)
+            webbrowser.open(url)
+        except:
+            pass
+        return render
 
     def email_students(self, filename, subject="", extra_params={}, smtp=None):
         """Sends an email to all students in the classroom.
@@ -210,6 +243,9 @@ class Classroom(object):
             The SMTP server to use. Can either be 'google' or 'uio'.
 
         """
+        if self.review_groups is None:
+            self.fetch_peer_review()
+
         server = connect_to_email_server(smtp)
         email_body = EmailBody(filename)
         email = Email(server, email_body, subject=subject)

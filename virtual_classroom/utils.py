@@ -66,14 +66,12 @@ def create_students_file_from_csv(csv_str=None, csv_filename=None, output_filena
         if "yes" != answ.lower():
             exit(1)
 
-    student_base = open(output_filename, 'w')
-
     string = 'Attendance // ' + ' // '.join(csv[0][1:]) + '\n'
     for row in csv[1:]:
         string += '- // ' + ' // '.join(row[1:]) + '\n'  # Remove timestamp from each row
 
-    student_base.write(string)
-    student_base.close()
+    with open(output_filename, 'w') as f:
+        f.write(string)
 
     print('Output written on %s.' % output_filename)
     return output_filename

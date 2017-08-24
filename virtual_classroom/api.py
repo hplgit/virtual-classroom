@@ -47,6 +47,7 @@ class Endpoint(object):
     TEAM_REPO = EndpointItem(TEAM_REPOS, "/{}/{}")
     TEAM_MEMBERSHIPS = EndpointItem(TEAM_API, "/memberships")
     TEAM_MEMBERSHIP = EndpointItem(TEAM_MEMBERSHIPS, "/{}")
+    TEAM_MEMBERS = EndpointItem(TEAM_API, "/members")
 
 
 class APIManager(object):
@@ -107,6 +108,9 @@ class APIManager(object):
 
     def get_user(self, username):
         return get(Endpoint.API_URL.url(username), auth=self.auth)
+
+    def get_team_members(self, team_id):
+        return self._get(Endpoint.TEAM_MEMBERS.url(team_id))
 
     def get_team_repos(self, team_id):
         return self._get(Endpoint.TEAM_REPOS.url(team_id))

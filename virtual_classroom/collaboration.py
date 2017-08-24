@@ -59,7 +59,7 @@ def start_peer_review(students, max_group_size, rank, shuffle=False):
         rank_3 = []
 
         # get a list of students seperated on rank
-        for s in students.itervalues():
+        for s in students.values():
             if s.rank == 1:
                 rank_1.append(s)
             elif s.rank == 2:
