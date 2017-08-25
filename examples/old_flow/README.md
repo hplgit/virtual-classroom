@@ -1,5 +1,7 @@
 # Workflow similar to earlier version
 
+**Please use Python3.**
+
 ## Start of semester
 
 1. Edit `defaults_parameters.txt`.
