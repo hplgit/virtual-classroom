@@ -58,20 +58,20 @@ members_to_delete = []
 # Delete members
 for member in list_members:
     #if member['login'].encode('utf-8') in members_to_delete
-    print "Deleting ", member["login"],
+    print("Deleting ", member["login"])
     r = requests.delete(url_orgs + "/members/" + str(member['login']), auth=auth)
-    print r.status_code
+    print(r.status_code)
 
 # Delete teams
 for team in list_teams:
    if team['name'].encode('utf-8') in teams_to_delete:
-       print "Deleting ", team["name"],
+       print("Deleting ", team["name"])
        r = requests.delete(url + "/teams/" + str(team['id']), auth=auth)
-       print r.status_code
+       print(r.status_code)
 
 # Delete repos
 for repo in list_repos:
    if course in repo['name']:
-       print "Deleting repository ", org + repo['name'],
+       print("Deleting repository ", org + repo['name'])
        r = requests.delete(url + "/repos/%s/" % org + repo['name'], auth=auth)
-       print r.status_code
+       print(r.status_code)

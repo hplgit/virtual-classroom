@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 import re
 import os
 import sys
@@ -125,7 +126,7 @@ class Feedbacks(object):
                     except UnicodeDecodeError as e:
                         if 'ascii' in e:
                             for key, value in personal_info.iteritems():
-                                print value
+                                print(value)
                                 personal_info[key] = value.decode('utf-8')
                             text = self.header % personal_info
                         elif 'utf-8' in e:

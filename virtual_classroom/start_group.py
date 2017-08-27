@@ -148,7 +148,7 @@ def create_students(students_file, course, university, send_email, rank):
             present, name, username, email, subcourse = split(r"\s*\/\/\s*", line.replace('\n', ''))
             rank = 1
         if present.lower() == 'x' and username != "":
-            print "Handle student {0}".format(name)
+            print("Handle student {0}".format(name))
             students[name] = Student(name, username, university, course,
                                      email, auth, send_email, rank)
 

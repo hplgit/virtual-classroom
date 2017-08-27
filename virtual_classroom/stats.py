@@ -29,7 +29,7 @@ for i in range(1,6):
         try:
             students[file_name]['pressent'] += 1
         except:
-            print "Student are no longer taking this course: ", file_name
+            print("Student are no longer taking this course: ", file_name)
 
 # Not in use
 #file = open('INF5620_stats', 'w')
@@ -55,16 +55,16 @@ for parameters in students.itervalues():
         skip = True
 
     if parameters['pressent'] == 0 and not skip:
-        print "None: ", parameters['name'], "NO EMAIL"
+        print("None: ", parameters['name'], "NO EMAIL")
         #text_tmp = text_zero % parameters
 
     if parameters['pressent'] == 1 and not skip:
         #text_tmp = text_one % parameters
-        print "One pressent: ", parameters['name'], "NO EMAIL"
+        print("One pressent: ", parameters['name'], "NO EMAIL")
 
     if parameters['pressent'] == 2 and not skip:
         text_tmp = text_missing_one % parameters
-        print "Two pressent: ", parameters['name']
+        print("Two pressent: ", parameters['name'])
 
     if parameters['pressent'] >= 3 and not skip:
         text_tmp = text_passed % parameters
