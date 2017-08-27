@@ -45,7 +45,7 @@ def download_google_spreadsheet(name, filename=None):
         wks = gc.open(name).sheet1.export()
     except gspread.SpreadsheetNotFound:
         json_key = json.load(open(json_file))
-        print("The spreadsheet document '{}' not found. Maybe it does not exist?".format(spreadsheet_name))
+        print("The spreadsheet document '{}' not found. Maybe it does not exist?".format(name))
         print("Otherwise, make sure that you shared the spreadsheet with {} and try again.".format(
             json_key['client_email']))
         return None
