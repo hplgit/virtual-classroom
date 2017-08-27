@@ -103,6 +103,9 @@ class APIManager(object):
     def create_team(self, org, key_team):
         return post(Endpoint.TEAMS.url(org), data=dumps(key_team), auth=self.auth)
 
+    def get_repo(self, org, repo_name):
+        return get(Endpoint.REPO_API.url(org, repo_name), auth=self.auth)
+
     def get_repository(self, repo_id):
         return get(Endpoint.REPOSITORY.url(repo_id), auth=self.auth)
 

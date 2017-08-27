@@ -7,6 +7,7 @@ from .parameters import get_parameters
 
 students_file_columns = ["present",
                          "name",
+                         "uio_username",
                          "username",
                          "email",
                          "course"]
@@ -53,7 +54,7 @@ def _extract_entries(entries):
 
 
 def save_students_file(students, filename=None):
-    string = "Attendance // Name // Github username // Email // Course" + "\n"
+    string = "Attendance // Name // UiO Username // Github username // Email // Course" + "\n"
     for student in students:
         string += " // ".join([getattr(student, i) for i in students_file_columns])
         string += "\n"

@@ -12,7 +12,7 @@ from .api import APIManager
 class Student(object):
     """Holds all the information about the student."""
 
-    def __init__(self, name, username, university, course, email, present, rank):
+    def __init__(self, name, uio_username, username, university, course, email, present, rank):
         """When initialized it testes if the information is correct and if the
            student has been initialized before. If not it calles create_repository()
         """
@@ -29,6 +29,7 @@ class Student(object):
                   " it has to be an integer. It is now set to 2.")
             self.rank = 2
 
+        self.uio_username = uio_username
         self.email = email
         self.username = username
         self.course = course
@@ -42,30 +43,18 @@ class Student(object):
         self.present = present
 
         self.api = APIManager()
+
+        self.repo_name = "%s-%s" % (self.course, self.uio_username)
         # Check that there is an user with the given username
         if self.is_user():
-            # Check if user have a team
-            if not self.has_team():
+            repo = self.api.get_repo(self.org, self.repo_name)
+            if repo.status_code == 404:
+                # Create repo if it doesn't exist
                 self.create_repository()
                 self.last_active = parse(datetime.now().isoformat(), ignoretz=True)
-
-            # Get repo name
             else:
-                teams = self.api.get_teams(self.org)
-                for team in teams:
-                    if team['name'] == self.name:
-                        self.team_id = team['id']
-                        r = self.api.get_team_repos(self.team_id)
-                        for repo in r:
-                            # Assumes that the student has not created a new
-                            # repository containing the name of the course-<firstname>
-                            base_name = "%s-%s" % (self.course, \
-                                            self.strip_accents(self.name.split(" ")[0]))
-                            if base_name in repo['name']:
-                                self.repo_name = repo['name']
-                                self.last_active = parse(repo["pushed_at"], ignoretz=True)
-                                break
-                        break
+                # Populate last active
+                self.last_active = parse(repo.json()["pushed_at"], ignoretz=True)
 
     def is_user(self):
         """
@@ -100,16 +89,7 @@ class Student(object):
         return text
 
     def create_repository(self):
-        """Creates a repository '<course>-<first name>' and a team '<full name>'."""
-
-        # Find repo name
-        # Convert special characters
-        first_name = self.strip_accents(self.name.split(" ")[0])
-        self.repo_name = "%s-%s" % (self.course, first_name)
-        i = 0
-        while self.repo_exist(self.repo_name):
-            self.repo_name += self.strip_accents(self.name.split(" ")[1+i])
-            i += 1
+        """Creates a repository '<course>-<uio-username>' and a team '<uio-username>'."""
 
         # Arguments to new team and repo
         key_repo = {
@@ -118,7 +98,7 @@ class Student(object):
                     "private": True
                    }
         key_team = {
-                    "name": self.name,
+                    "name": self.uio_username,
                     "repo_names": ["github/%s" % self.repo_name], # correct?
                     "permission": "admin"
                    }
@@ -172,10 +152,10 @@ class Student(object):
         return False
 
     def has_team(self):
-        """Check if there exist a team <full name>"""
+        """Check if there exist a team <uio-username>"""
         teams = self.api.get_teams(self.org)
         for team in teams:
-            if self.name == team['name']:
+            if self.uio_username == team['name']:
                 return True
 
         return False

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals
-from re import split
 from datetime import datetime
 
 from .student import Student
@@ -48,6 +47,7 @@ class Classroom(object):
                 rank = 1  # Rank is not functional at the moment.
                 print("Initialize student {0}".format(student["name"]))
                 self.students[student["username"]] = Student(student["name"],
+                                                             student["uio_username"],
                                                              student["username"],
                                                              self.university,
                                                              self.course,
