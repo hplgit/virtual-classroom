@@ -107,7 +107,7 @@ class APIManager(object):
         return get(Endpoint.REPOSITORY.url(repo_id), auth=self.auth)
 
     def get_user(self, username):
-        return get(Endpoint.API_URL.url(username), auth=self.auth)
+        return get(Endpoint.USERS_API.url(username), auth=self.auth)
 
     def get_team_members(self, team_id):
         return self._get(Endpoint.TEAM_MEMBERS.url(team_id))
