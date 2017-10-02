@@ -36,7 +36,7 @@ class Classroom(object):
 
         try:
             raw_students = parse_students_file(filename)
-        except FileNotFoundError as e:
+        except Exception as e:
             print("Error when parsing students file: %s" % e)
             print("Continuing without built students. Some methods will not work.")
             return
