@@ -47,7 +47,7 @@ class Classroom(object):
             if (student["present"].lower() == 'x' or ignore_present) and student["username"] != "":
                 rank = 1  # Rank is not functional at the moment.
                 print("Initialize student {0}".format(student["name"]))
-                self.students[student["username"]] = Student(student["name"],
+                self.students[student["username"].lower()] = Student(student["name"],
                                                              student["uio_username"],
                                                              student["username"],
                                                              self.university,
@@ -109,7 +109,7 @@ class Classroom(object):
                 group_students = []
                 members = api.get_team_members(team["id"])
                 for member in members:
-                    username = member["login"]
+                    username = member["login"].lower()
                     # TODO: This might crash. A student could drop out mid-peer-review.
                     #       What to do if student doesn't exist?
                     group_students.append(self.students[username])
