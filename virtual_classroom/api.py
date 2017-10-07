@@ -2,6 +2,7 @@
 from requests import get, post, put, delete
 from getpass import getpass
 from json import dumps
+from re import findall
 
 # Python3 and 2 compatible
 try: input = raw_input
@@ -143,7 +144,11 @@ class APIManager(object):
             header = r.headers['Link'].split(',')
             for link in header:
                 if 'rel="last"' in link:
-                    pages = int(link.split(';')[0][-2])
+                    link = link.split(";")[0]
+                    pages = findall("\?page\=(\d+)", link)
+                    if len(pages) <= 0:
+                        pages = findall("\&page\=(\d+)", link)
+                    pages = int(pages[0])
 
             # Get each page
             teams = r.json()
