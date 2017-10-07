@@ -288,7 +288,20 @@ class Email(object):
         self.subject = subject
 
     def send(self, recipients, subject=None, msg=None):
-        """Send email"""
+        """Send email
+
+        This method may raise the following exceptions:
+
+         SMTPHeloError          The server didn't reply properly to
+                                the helo greeting.
+         SMTPRecipientsRefused  The server rejected ALL recipients
+                                (no mail was sent).
+         SMTPSenderRefused      The server didn't accept the from_addr.
+         SMTPDataError          The server replied with an unexpected
+                                error code (other than a refusal of
+                                a recipient).
+
+        """
         subject = self.subject if subject is None else subject
         msg = self.format_mail(recipients, subject) if msg is None else msg
 
@@ -297,8 +310,10 @@ class Email(object):
                                                        recipients, msg.as_string())
         if failed_deliveries:
             print('Could not reach these addresses:', failed_deliveries)
+            return False
         else:
             print('Email successfully sent to %s' % recipients)
+            return True
 
     def format_mail(self, recipients, subject):
         if isinstance(recipients, (list, dict, tuple)):
