@@ -76,6 +76,14 @@ def read_command_line():
                         a top student.", metavar="rank")
     parser.add_argument('--email', dest='email', action='store_true', help="Send email")
     parser.add_argument('--no-email', dest='email', action='store_false', help="Send no email")
+    parser.add_argument("--email_tmp_file", dest="email_tmp_file", type=str, default="email_tmp_%s.txt",
+                        help="This argument is used to determine the name of the file to store information \
+                             emails sent.")
+    parser.add_argument("--email_delay", dest="email_delay", type=float, default=1.0,
+                        help="This argument is used to determine the delay between each email sent.")
+    parser.add_argument("--email_review_groups", dest="email_review_groups", type=bool, default=False,
+                        help="This flag tells the script to only send emails to review groups.\
+                         Useful if sending out the emails was interrupted.")
     parser.set_defaults(email=True)
 
     args = parser.parse_args()
@@ -90,13 +98,14 @@ def read_command_line():
 
     return args.f, args.c, args.u, args.m, args.e, args.i, args.g, args.get_repos_filepath, \
             args.F, args.get_feedback_filepath, args.smtp, args.rank, \
-            args.email
+            args.email, args.email_tmp_file, args.email_delay, args.email_review_groups
 
 
 def main():
     students_file, course, university, max_students, \
      end, start_semester, get_repos, get_repos_filepath, get_feedback, \
-      get_feedback_filepath, smtp, rank, email = read_command_line()
+      get_feedback_filepath, smtp, rank, email, email_tmp_file, email_delay, \
+        email_review_groups = read_command_line()
 
     classroom = Classroom(students_file)
 
@@ -113,16 +122,20 @@ def main():
         feedbacks()
 
     else:
-        if not start_semester:
-            classroom.start_peer_review(max_group_size=max_students, rank=rank)
-            if email:
-                classroom.email_review_groups("message_collaboration.rst",
-                                              "New group",
-                                              smtp=smtp)
-        elif email:
-            classroom.email_students("message_new_student.rst",
-                                     "New repository",
-                                     smtp=smtp)
+        if not email_review_groups:
+            if not start_semester:
+                classroom.start_peer_review(max_group_size=max_students, rank=rank)
+            elif email:
+                classroom.email_students("message_new_student.rst",
+                                         "New repository",
+                                         smtp=smtp)
+
+        if (not start_semester and email) or email_review_groups:
+            classroom.email_review_groups("message_collaboration.rst",
+                                          "New group",
+                                          smtp=smtp,
+                                          tmp_file=email_tmp_file,
+                                          delay=email_delay)
 
 if __name__ == '__main__':
     main()

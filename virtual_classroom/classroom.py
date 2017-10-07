@@ -2,6 +2,7 @@
 
 from __future__ import print_function, unicode_literals
 from datetime import datetime
+from time import sleep
 
 from .student import Student
 from .send_email import Email, EmailBody, SMTPGoogle, SMTPUiO, connect_to_email_server
@@ -256,7 +257,13 @@ class Classroom(object):
             email_body.params = params
             email.send(student.email)
 
-    def email_review_groups(self, filename, subject="", extra_params={}, smtp=None):
+    def email_review_groups(self,
+                            filename,
+                            subject="",
+                            extra_params={},
+                            smtp=None,
+                            tmp_file="review_groups_{}.txt",
+                            delay=1.0):
         """Sends an email to all review groups in the classroom.
 
         Will try to format the email body text with group attributes,
@@ -272,22 +279,49 @@ class Classroom(object):
             Dictionary of extra parameters to format the email body text
         smtp : str, optional
             The SMTP server to use. Can either be 'google' or 'uio'.
+        tmp_file : str, optional
+            A temporary file to write information about which emails have been sent.
+            The filename may contain one {} which will be filled with a timestamp.
+            You can use this file to continue from a previous send email operation that failed midway,
+            just remember to specify the correct timestamp if you used the default timestamp.
+            Default is "review_groups_%s.txt".
+        delay : float, optional
+            Delay between each email procedure. The delay is given in seconds and can be a decimal value.
+            Default is 1.0.
 
         """
         if self.review_groups is None:
             self.fetch_peer_review()
 
+        if tmp_file:
+            now = datetime.now()
+            tmp_file = tmp_file.format(int(now.timestamp()))
+
+        done_mails = []
+        try:
+            with open(tmp_file, "r") as f:
+                contents = f.read()
+                done_mails = contents.split(",")
+        except IOError:
+            pass
+
         server = connect_to_email_server(smtp)
         email_body = EmailBody(filename)
         email = Email(server, email_body, subject=subject)
 
-        for group in self.review_groups:
-            params = {"group": group, "classroom": self}
-            for student in group.students:
-                params["student"] = student
-                params.update(extra_params)
-                email_body.params = params
-                email.send(student.email)
+        with open(tmp_file, "a") as f:
+            for group in self.review_groups:
+                params = {"group": group, "classroom": self}
+                for student in group.students:
+                    if student.email in done_mails:
+                        continue
+                    params["student"] = student
+                    params.update(extra_params)
+                    email_body.params = params
+                    res = email.send(student.email)
+                    if res:
+                        f.write("{},".format(student.email))
+                    sleep(delay)
 
 
 
