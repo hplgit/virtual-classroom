@@ -19,9 +19,22 @@ class CSVObject(object):
         self._parse()
 
     def _parse(self):
+        try:
+            self._csv_read("utf-8")
+        except:
+            self._csv_read(None)
+
+    def _csv_read(self, encoding):
         import csv
-        reader = csv.reader(self.raw_content.splitlines())
+        if encoding is None:
+            gen = self.raw_content.splitlines()
+        else:
+            gen = self.raw_content.encode(encoding).splitlines()
+        reader = csv.reader(gen)
+        # from IPython import embed; embed();
         for row in reader:
+            if encoding is not None:
+                row = [i.decode(encoding) for i in row]
             self.values.append(row)
 
     def __getitem__(self, item):
@@ -54,7 +67,7 @@ def download_google_spreadsheet(name, filename=None):
         with open(filename, "wb") as f:
             f.write(wks.encode("utf-8"))
 
-    return wks.decode()
+    return wks.decode("utf-8")
 
 
 def create_students_file_from_csv(csv_str=None, csv_filename=None, output_filename="students_base.txt"):
