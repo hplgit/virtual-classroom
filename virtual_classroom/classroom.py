@@ -293,8 +293,9 @@ class Classroom(object):
             self.fetch_peer_review()
 
         if tmp_file:
-            now = datetime.now()
-            tmp_file = tmp_file.format(int(now.timestamp()))
+            import time
+            now = time.time()
+            tmp_file = tmp_file.format(int(now))
 
         done_mails = []
         try:
