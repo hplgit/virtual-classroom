@@ -70,24 +70,6 @@ class Student(object):
             return False
         return True
 
-    @staticmethod
-    def strip_accents(text):
-        """Change special characters into ascii counterpart."""
-
-        # Remove special characters that unicodedata doesn't handle
-        text = text.replace('ø', 'o')
-        text = text.replace('Ø', 'O')
-        text = text.replace('æ', 'ae')
-        text = text.replace('é', 'e')
-        text = text.replace("'", "")
-        text = text.replace('Æ', 'AE')
-        text = text.replace('å', 'aa') # Can skip if text is unicode
-        text = text.replace('Å', 'AA')
-
-        # TODO: need the text to be unicode to change it. With unicodedata
-        #return ''.join(c for c in normalize('NFKD', text) if category(c) != 'Mn')
-        return text
-
     def create_repository(self):
         """Creates a repository '<course>-<uio-username>' and a team '<uio-username>'."""
 
