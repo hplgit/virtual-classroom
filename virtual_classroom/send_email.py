@@ -336,8 +336,8 @@ class EmailBody(object):
         self.cached_content = None
 
     def read(self):
-        with open(self.filename, "r") as f:
-            contents = f.read()
+        with open(self.filename, "rb") as f:
+            contents = f.read().decode("utf-8")
         return contents
 
     @staticmethod

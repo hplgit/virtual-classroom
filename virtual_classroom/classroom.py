@@ -221,8 +221,8 @@ class Classroom(object):
                    + email_body.text_to_html(render) \
                    + '</html>'
 
-            with open(path, 'w') as f:
-                f.write(html)
+            with open(path, 'wb') as f:
+                f.write(html.encode("utf-8"))
             webbrowser.open(url)
         except:
             pass

@@ -14,7 +14,7 @@ class CSVObject(object):
         if filename is None:
             self.raw_content = content
         else:
-            self.raw_content = open(filename).read()
+            self.raw_content = open(filename, "rb").read().decode("utf-8")
         self.values = []
         self._parse()
 
@@ -51,8 +51,8 @@ def download_google_spreadsheet(name, filename=None):
         return None
 
     if filename is not None:
-        with open(filename, "w") as f:
-            f.write(wks)
+        with open(filename, "wb") as f:
+            f.write(wks.encode("utf-8"))
 
     return wks.decode()
 
@@ -70,8 +70,8 @@ def create_students_file_from_csv(csv_str=None, csv_filename=None, output_filena
     for row in csv[1:]:
         string += '- // ' + ' // '.join(row[1:]) + '\n'  # Remove timestamp from each row
 
-    with open(output_filename, 'w') as f:
-        f.write(string)
+    with open(output_filename, 'wb') as f:
+        f.write(string.encode("utf-8"))
 
     print('Output written on %s.' % output_filename)
     return output_filename

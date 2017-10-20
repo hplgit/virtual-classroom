@@ -59,5 +59,5 @@ def save_students_file(students, filename=None):
         string += " // ".join([getattr(student, i) for i in students_file_columns])
         string += "\n"
 
-    with open(get_students_file_path(filename), "w") as f:
-        f.write(string)
+    with open(get_students_file_path(filename), "wb") as f:
+        f.write(string.encode("utf-8"))
