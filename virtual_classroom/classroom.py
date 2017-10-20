@@ -26,7 +26,6 @@ class Classroom(object):
 
     def __init__(self, filename=None, ignore_present=False):
         self.students = {}
-        self.collaboration = None
         self.review_groups = None
 
         # Load parameters
