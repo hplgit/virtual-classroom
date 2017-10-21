@@ -1,37 +1,39 @@
-Hi %(name)s, and welcome to %(course)s
+Hi {{ student.name }}, and welcome to {{ student.course }}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this course we will use GitHub as a tool for version control and
-collaboration.  You have now access to a repository which is called
-%(repo_name)s. It is very important that every file you make in this
-course that is supposed to be evaluated by others, is added to this
+collaboration. You have now access to a repository which is called
+{{ student.repo_name }}. It is very important that every file you make in this
+course that is supposed to be evaluated is added to this
 repo (short for repository). We recommend that you put all your course
 work in the repo, because this serves as a backup and as an archive of
 previous versions of the files. You work with the repo through the Git
 version control system. The workflow may seem a bit cumbersome at
 first sight, but this is how professionals work with software and
-technical documents all around the world in %(year)s.
+technical documents all around the world.
 
 **Important**: Open your primary email on GitHub and confirm that you
-want to join %(university)s-%(course)s. You have to do this to get
+want to join {{ classroom.org }}. You have to do this to get
 access to your new repo.
 
 There is a lot of information about git on the web, but below we give
 the quick need-to-know steps for the course. First you need to install
-git. This can be done by the command:
+git. On Ubuntu, this can be done by the command:
 
 .. code-block::
 
 	sudo apt-get install git
+
+On MacOSX follow the instructions on https://git-scm.com/downloads.
 
 The next step is to clone the repository you have been given access
 to. You simply write
 
 .. code-block::
 
-	git clone %(repo_adress)s
+	git clone git@github.com:{{ classroom.org }}/{{ student.repo_name }}.git
 
-which gives you a directory %(repo_name)s. When you enter the folder,
+which gives you a directory {{ student.repo_name }}. When you enter the folder,
 you are in a Git-control directory tree and must use certain Git
 commands to register files and update the repo.
 
@@ -61,7 +63,7 @@ in the repo, it is very important that you do
 
 .. code-block::
 
-        git pull origin master
+    git pull origin master
 
 to download the latest version of the files before you start editing
 any of them.
@@ -69,5 +71,6 @@ any of them.
 
 More information:
 
+ * Complete the interactive `git demo <https://try.github.io>`_
  * See the `Quick intro to Git and GitHub <http://hplgit.github.io/teamods/bitgit/Langtangen_github.pdf>`_
  * A more extensive introduction to Git is provided by the three first chapters in `this book <http://git-scm.com/book>`_

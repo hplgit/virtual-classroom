@@ -1,14 +1,14 @@
 <!--
-Automatically generated HTML file from Doconce source
+Automatically generated HTML file from DocOnce source
 (https://github.com/hplgit/doconce/)
 -->
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Doconce: https://github.com/hplgit/doconce/" />
+<meta name="generator" content="DocOnce: https://github.com/hplgit/doconce/" />
 <meta name="description" content="Virtual classroom for INF5620">
 
-
+<title>Virtual classroom for INF5620</title>
 
 <!-- Bootstrap style: bootswatch_journal -->
 <link href="http://netdna.bootstrapcdn.com/bootswatch/3.1.1/journal/bootstrap.min.css" rel="stylesheet">
@@ -16,18 +16,38 @@ Automatically generated HTML file from Doconce source
 <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 -->
 
+<style type="text/css">
+
+/* Add scrollbar to dropdown menus in bootstrap navigation bar */
+.dropdown-menu {
+   height: auto;
+   max-height: 400px;
+   overflow-x: hidden;
+}
+
+/* Adds an invisible element before each target to offset for the navigation
+   bar */
+.anchor::before {
+  content:"";
+  display:block;
+  height:50px; /* fixed header height*/
+  margin:-50px 0 0; /* negative fixed header height */
+}
+</style>
+
+
 </head>
 
 <!-- tocinfo
 {'highest level': 1,
- 'sections': [(' The workflow in a virtual GitHub classroom ',
+ 'sections': [('The workflow in a virtual GitHub classroom',
                1,
                None,
                '___sec0'),
-              (' Use in INF5620 ', 2, None, '___sec1'),
-              (' Functionality to be developed ', 1, None, '___sec2'),
-              (' Resources ', 3, None, '___sec3'),
-              (' GitHub and education ', 3, None, '___sec4')]}
+              ('Use in INF5620', 2, None, '___sec1'),
+              ('Functionality to be developed', 1, None, '___sec2'),
+              ('Resources', 3, None, '___sec3'),
+              ('GitHub and education', 3, None, '___sec4')]}
 end of tocinfo -->
 
 <body>
@@ -43,14 +63,17 @@ end of tocinfo -->
     </button>
     <a class="navbar-brand" href="workflow.html">Virtual classroom for INF5620</a>
   </div>
+
   <div class="navbar-collapse collapse navbar-responsive-collapse">
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contents <b class="caret"></b></a>
         <ul class="dropdown-menu">
-     <!-- navigation toc: "The workflow in a virtual GitHub classroom" --> <li><a href="#___sec0" style="font-size: 80%;"><b>The workflow in a virtual GitHub classroom</b></a></li>
-     <!-- navigation toc: "Use in INF5620" --> <li><a href="#___sec1" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Use in INF5620</a></li>
-     <!-- navigation toc: "Functionality to be developed" --> <li><a href="#___sec2" style="font-size: 80%;"><b>Functionality to be developed</b></a></li>
+     <!-- navigation toc: --> <li><a href="#___sec0" style="font-size: 80%;"><b>The workflow in a virtual GitHub classroom</b></a></li>
+     <!-- navigation toc: --> <li><a href="#___sec1" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Use in INF5620</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec2" style="font-size: 80%;"><b>Functionality to be developed</b></a></li>
+     <!-- navigation toc: --> <li><a href="#___sec3" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec4" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GitHub and education</a></li>
 
         </ul>
       </li>
@@ -66,7 +89,6 @@ end of tocinfo -->
 <!-- ------------------- main content ---------------------- -->
 
 
-<title>Virtual classroom for INF5620</title>
 
 <div class="jumbotron">
 <center><h1>Virtual classroom for INF5620</h1></center>  <!-- document title -->
@@ -86,17 +108,17 @@ end of tocinfo -->
 <b>Solveig</b> 
 </center>
 
-
 <p>
 <!-- institution(s) -->
-<p>
-<center><h4>Jun 26, 2014</h4></center> <!-- date -->
-<p>
 
-
+<br>
+<p>
+<center><h4>Jul 14, 2016</h4></center> <!-- date -->
+<br>
+<p>
 </div> <!-- end jumbotron -->
 
-<h1>The workflow in a virtual GitHub classroom  <a name="___sec0"></a></h1>
+<h1 id="___sec0" class="anchor">The workflow in a virtual GitHub classroom </h1>
 
 <ul>
  <li> All students have <em>one</em> personal, private repo with all their
@@ -128,7 +150,7 @@ pulled, and a script can visit the relevant files in each repo,
 pop up an editor for writing feedback, add this file, commit, and
 push everything back.
 
-<h2>Use in INF5620  <a name="___sec1"></a></h2>
+<h2 id="___sec1" class="anchor">Use in INF5620 </h2>
 
 <ul>
  <li> Students show up for a 2h project lab.</li>
@@ -161,7 +183,7 @@ Pros and cons:
    will be higher</li>
 </ul>
 
-<h1>Functionality to be developed  <a name="___sec2"></a></h1>
+<h1 id="___sec2" class="anchor">Functionality to be developed </h1>
 
 <ul>
  <li> File format with list of all students. Convention for marking who
@@ -187,7 +209,7 @@ the API (e.g., <a href="http://michaelliao.github.io/githubpy/" target="_self">g
 </div>
 
 
-<h3>Resources  <a name="___sec3"></a></h3>
+<h3 id="___sec3" class="anchor">Resources </h3>
 
 <ul>
  <li> Intro: <a href="http://developer.github.com/guides/getting-started/" target="_self"><tt>http://developer.github.com/guides/getting-started/</tt></a></li>
@@ -195,7 +217,7 @@ the API (e.g., <a href="http://michaelliao.github.io/githubpy/" target="_self">g
  <li> <a href="http://goodcode.io/wp-content/uploads/2012/06/OAuth-edited.pdf" target="_self">All about OAuth authorization from Python</a></li>
 </ul>
 
-<h3>GitHub and education  <a name="___sec4"></a></h3>
+<h3 id="___sec4" class="anchor">GitHub and education </h3>
 
 <ul>
  <li> <a href="https://github.com/blog/1775-github-goes-to-school" target="_self">GitHub goes to school</a>, see also <a href="https://education.github.com/" target="_self"><tt>https://education.github.com/</tt></a></li>

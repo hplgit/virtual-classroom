@@ -1,0 +1,5 @@
+gspread
+oauth2client
+docutils
+jinja2
+dateutil

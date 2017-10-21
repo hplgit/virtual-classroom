@@ -1,0 +1,7 @@
+university:Virtual-Classroom
+course:Test
+max_students:3
+filepath:Attendance/students_base-%s-%s-%s.txt
+smtp:google
+rank:False
+students_file:{course}-students.txt
