@@ -44,8 +44,8 @@ Authors
 virtual-classrom is developed by
 
   * Aslak Bergersen
-  * Sebastian Mitusch
-
+  * Sebstian Mitusch
+  
 under the supervision of
 
   * Hans Petter Langtangen
